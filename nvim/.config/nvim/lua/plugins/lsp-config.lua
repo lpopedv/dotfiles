@@ -52,6 +52,7 @@ return {
       vim.keymap.set('n', '<leader>ci', vim.lsp.buf.hover, {})
       vim.keymap.set('n', '<leader>cd', vim.lsp.buf.definition, {})
       vim.keymap.set('n', '<leader>ca', vim.lsp.buf.code_action, {})
+      vim.keymap.set('n', '<leader>ce', vim.diagnostic.open_float, {})
     end
   }
 }

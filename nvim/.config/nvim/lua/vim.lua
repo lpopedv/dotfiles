@@ -30,3 +30,4 @@ vim.keymap.set('n', '<leader>wk', ':wincmd k<CR>')
 vim.keymap.set('n', '<leader>wj', ':wincmd j<CR>')
 vim.keymap.set('n', '<leader>wh', ':wincmd h<CR>')
 vim.keymap.set('n', '<leader>wl', ':wincmd l<CR>')
+
