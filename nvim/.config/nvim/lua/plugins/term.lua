@@ -23,7 +23,7 @@ return {
 
 
     --keymaps
-    vim.keymap.set('n', '<leader>g', toggle_lazygit)
+    vim.keymap.set('n', '<leader>gg', toggle_lazygit)
     vim.keymap.set('n', '<leader>ot', ':ToggleTerm<CR>')
     vim.keymap.set('t', '<leader><Esc>', '<C-\\><C-n>', { noremap = true })
   end
