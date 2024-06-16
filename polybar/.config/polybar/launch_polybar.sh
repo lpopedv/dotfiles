@@ -1,7 +1,5 @@
-if type "xrandr"; then
-  for m in $(xrandr --query | grep " connected" | cut -d" " -f1); do
-    MONITOR=$m polybar --reload toph &
-  done
+if ! pgrep -x "polybar" > /dev/null; then
+    polybar --reload toph &
 else
-  polybar --reload toph &
+    polybar-msg cmd restart toph &
 fi
