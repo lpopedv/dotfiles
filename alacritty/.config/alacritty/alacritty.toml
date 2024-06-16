@@ -23,7 +23,7 @@ style = "Regular"
 [window]
 title = "Terminal"
 dynamic_title = false
-opacity = 0.9
+#opacity = 0.9
 
 [cursor]
 style = "Underline"
