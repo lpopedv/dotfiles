@@ -31,3 +31,6 @@ vim.keymap.set('n', '<leader>wj', ':wincmd j<CR>')
 vim.keymap.set('n', '<leader>wh', ':wincmd h<CR>')
 vim.keymap.set('n', '<leader>wl', ':wincmd l<CR>')
 
+-- Show file path
+vim.keymap.set('n', '<leader>fp', ":echo expand('%:p')<CR>")
+
