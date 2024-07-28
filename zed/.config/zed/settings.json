@@ -1,0 +1,50 @@
+{
+  "tab_bar": {
+    "show": false
+  },
+  "vim_mode": true,
+  "ui_font_size": 14,
+  "buffer_font_size": 14,
+  "buffer_font_family": "JetBrainsMono Nerd Font",
+  "base_keymap": "VSCode",
+  "relative_line_numbers": true,
+  "cursor_blink": false,
+  "format_on_save": "off",
+
+  "scrollbar": {
+    "show": "never"
+  },
+
+  "buffer_line_height": {
+    "custom": 1.5
+  },
+
+  "theme": {
+    "mode": "system",
+    "light": "One Light",
+    "dark": "Gruvbox Dark Hard"
+  },
+
+  "terminal": {
+    "font_family": "JetBrainsMono Nerd Font",
+    "font_size": 15,
+    "line_height": {
+      "custom": 1.5
+    }
+  },
+
+  "languages": {
+    "TypeScript": {
+      "formatter": {
+        "code_actions": {
+          "source.fixAll.eslint": true
+        }
+      }
+    }
+  },
+
+  "telemetry": {
+    "diagnostics": false,
+    "metrics": false
+  }
+}
