@@ -17,7 +17,7 @@
       "space g d": "editor::GoToDefinition",
       "space n t": "workspace::NewTerminal",
       "space t t": "workspace::NewCenterTerminal",
-      "space t s": "terminal_panel::ToggleFocus",
+      "space o t": "terminal_panel::ToggleFocus",
       "space p p": "workspace::Open",
       "space f s": "zed::ToggleFullScreen",
       "space e b": "editor::ToggleTabBar",
@@ -48,9 +48,10 @@
     "bindings": {
       "space space": "file_finder::Toggle",
       "space .": "pane::DeploySearch",
-      "space o t": "workspace::OpenTerminal",
       "space o p": "workspace::ToggleLeftDock",
-      "space n f": "workspace::NewFile"
+      "space n f": "workspace::NewFile",
+      "space o t": "terminal_panel::ToggleFocus",
+      "space t t": "workspace::NewCenterTerminal"
     }
   },
   {
