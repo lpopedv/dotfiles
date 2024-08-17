@@ -34,3 +34,6 @@ vim.keymap.set('n', '<leader>wl', ':wincmd l<CR>')
 -- Show file path
 vim.keymap.set('n', '<leader>fp', ":echo expand('%:p')<CR>")
 
+-- Coppy file path
+vim.keymap.set('n', '<leader>fy', ":let @+ = expand('%:p')<CR>")
+
