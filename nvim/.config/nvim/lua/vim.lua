@@ -19,6 +19,13 @@ vim.keymap.set('n', '<leader>ws', ':split<CR>')
 vim.keymap.set('n', '<leader>bs', ':w<CR>')
 vim.keymap.set('n', '<leader>sr', ':registers<CR>')
 vim.keymap.set('i', '<C-BS>', '<C-W>', { noremap = true, silent = true })
+vim.keymap.set('n', '<Esc>', ':nohlsearch<CR><Esc>', { silent = true })
+
+vim.keymap.set('n', 'b[', ':bprevious<CR>', { noremap = true, silent = true })
+vim.keymap.set('n', 'b]', ':bnext<CR>', { noremap = true, silent = true })
+vim.keymap.set('n', 'bd', ':bdelete<CR>', { noremap = true, silent = true })
+vim.keymap.set('n', 'bl', ':ls<CR>', { noremap = true, silent = true })
+
 -- Insert mode keybindings
 vim.keymap.set('i', '<C-h>', '<Left>', { silent = true })
 vim.keymap.set('i', '<C-j>', '<Down>', { silent = true })
