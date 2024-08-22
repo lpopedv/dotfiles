@@ -5,7 +5,38 @@ return {
     require("lualine").setup({
       options = {
         icons_enabled = true,
-        theme = "ayu",
+        theme = {
+          normal = {
+            a = { fg = '#ffffff', bg = nil },
+            b = { fg = '#ffffff', bg = nil },
+            c = { fg = '#ffffff', bg = nil },
+          },
+          insert = {
+            a = { fg = '#ffffff', bg = nil },
+            b = { fg = '#ffffff', bg = nil },
+            c = { fg = '#ffffff', bg = nil },
+          },
+          visual = {
+            a = { fg = '#ffffff', bg = nil },
+            b = { fg = '#ffffff', bg = nil },
+            c = { fg = '#ffffff', bg = nil },
+          },
+          replace = {
+            a = { fg = '#ffffff', bg = nil },
+            b = { fg = '#ffffff', bg = nil },
+            c = { fg = '#ffffff', bg = nil },
+          },
+          command = {
+            a = { fg = '#ffffff', bg = nil },
+            b = { fg = '#ffffff', bg = nil },
+            c = { fg = '#ffffff', bg = nil },
+          },
+          inactive = {
+            a = { fg = '#ffffff', bg = nil },
+            b = { fg = '#ffffff', bg = nil },
+            c = { fg = '#ffffff', bg = nil },
+          },
+        },
         component_separators = { left = "", right = "" },
         section_separators = { left = "", right = "" },
         disabled_filetypes = {
@@ -44,3 +75,4 @@ return {
     })
   end,
 }
+
