@@ -18,7 +18,7 @@ vim.keymap.set('n', '<leader>wv', ':vsplit<CR>')
 vim.keymap.set('n', '<leader>ws', ':split<CR>')
 vim.keymap.set('n', '<leader>bs', ':w<CR>')
 vim.keymap.set('n', '<leader>sr', ':registers<CR>')
-
+vim.keymap.set('i', '<C-BS>', '<C-W>', { noremap = true, silent = true })
 -- Insert mode keybindings
 vim.keymap.set('i', '<C-h>', '<Left>', { silent = true })
 vim.keymap.set('i', '<C-j>', '<Down>', { silent = true })
@@ -36,4 +36,3 @@ vim.keymap.set('n', '<leader>fp', ":echo expand('%:p')<CR>")
 
 -- Coppy file path
 vim.keymap.set('n', '<leader>fy', ":let @+ = expand('%:p')<CR>")
-
