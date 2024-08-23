@@ -25,6 +25,7 @@ vim.keymap.set('n', 'b[', ':bprevious<CR>', { noremap = true, silent = true })
 vim.keymap.set('n', 'b]', ':bnext<CR>', { noremap = true, silent = true })
 vim.keymap.set('n', 'bd', ':bdelete<CR>', { noremap = true, silent = true })
 vim.keymap.set('n', 'bl', ':ls<CR>', { noremap = true, silent = true })
+vim.keymap.set('n', '<leader>oT', ':term<CR>')
 
 -- Insert mode keybindings
 vim.keymap.set('i', '<C-h>', '<Left>', { silent = true })
