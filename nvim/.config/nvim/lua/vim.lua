@@ -21,11 +21,12 @@ vim.keymap.set('n', '<leader>sr', ':registers<CR>')
 vim.keymap.set('i', '<C-BS>', '<C-W>', { noremap = true, silent = true })
 vim.keymap.set('n', '<Esc>', ':nohlsearch<CR><Esc>', { silent = true })
 
-vim.keymap.set('n', 'b[', ':bprevious<CR>', { noremap = true, silent = true })
-vim.keymap.set('n', 'b]', ':bnext<CR>', { noremap = true, silent = true })
-vim.keymap.set('n', 'bd', ':bdelete<CR>', { noremap = true, silent = true })
-vim.keymap.set('n', 'bl', ':ls<CR>', { noremap = true, silent = true })
+vim.keymap.set('n', '<leader>b[', ':bprevious<CR>', { noremap = true, silent = true })
+vim.keymap.set('n', '<leader>b]', ':bnext<CR>', { noremap = true, silent = true })
+vim.keymap.set('n', '<leader>bd', ':bdelete<CR>', { noremap = true, silent = true })
+vim.keymap.set('n', '<leader>bl', ':ls<CR>', { noremap = true, silent = true })
 vim.keymap.set('n', '<leader>oT', ':term<CR>')
+vim.keymap.set('n', '<leader>cr', vim.lsp.buf.rename, { noremap = true, silent = true })
 
 -- Insert mode keybindings
 vim.keymap.set('i', '<C-h>', '<Left>', { silent = true })
