@@ -90,4 +90,6 @@
 (define-key evil-insert-state-map (kbd "C-l") 'forward-char)
 
 ;; tailwind css lsp
-(use-package! lsp-tailwindcss)
+(use-package lsp-tailwindcss
+  :init
+  (setq lsp-tailwindcss-add-on-mode t))
