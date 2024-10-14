@@ -88,3 +88,6 @@
 (define-key evil-insert-state-map (kbd "C-j") 'next-line)
 (define-key evil-insert-state-map (kbd "C-k") 'previous-line)
 (define-key evil-insert-state-map (kbd "C-l") 'forward-char)
+
+;; tailwind css lsp
+(use-package! lsp-tailwindcss)
