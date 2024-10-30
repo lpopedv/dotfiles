@@ -36,7 +36,7 @@ Para instalar as configurações, siga estas etapas:
 ## Desinstalação
 Para remover as configurações, navegue até o diretório `dotfiles` e use o comando `stow -D` seguido do nome do pacote:
 ```bash
-cd ~/dotfiles
+cd ~/Dotfiles
 stow -D nvim
 stow -D kitty
 stow -D tmux
