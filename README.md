@@ -6,6 +6,7 @@ GNU Stow é uma ferramenta de gerenciamento de pacotes symlink, que facilita a i
 
 ## Ferramentas Gerenciadas
 - **nvim (Neovim)**: Editor de texto
+- **Kitty **: Terminal acelerado por GPU
 - **tmux**: Um multiplexador de terminais
 - **zed**: Editor de texto
 - **doom emacs**: Editor de texto
@@ -26,6 +27,7 @@ Para instalar as configurações, siga estas etapas:
 3. Use o GNU Stow para criar links simbólicos para os arquivos de configuração desejados:
     ```bash
     stow nvim
+    stow kitty
     stow tmux
     stow doom 
     stow zed
