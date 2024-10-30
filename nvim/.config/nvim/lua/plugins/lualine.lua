@@ -1,5 +1,5 @@
 return {
-  "shadmansaleh/lualine.nvim",
+  "nvim-lualine/lualine.nvim",
   lazy = false,
   priority = 1000,
 
@@ -8,17 +8,17 @@ return {
 
     -- Color table for highlights
     local colors = {
-      bg       = '#0b0e14',
-      fg       = '#bbc2cf',
-      yellow   = '#ECBE7B',
-      cyan     = '#008080',
-      darkblue = '#081633',
-      green    = '#98be65',
-      orange   = '#FF8800',
-      violet   = '#a9a1e1',
-      magenta  = '#c678dd',
-      blue     = '#ff8f40',
-      red      = '#ec5f67',
+      bg = "#0b0e14",
+      fg = "#bbc2cf",
+      yellow = "#ECBE7B",
+      cyan = "#008080",
+      darkblue = "#081633",
+      green = "#98be65",
+      orange = "#FF8800",
+      violet = "#a9a1e1",
+      magenta = "#c678dd",
+      blue = "#ff8f40",
+      red = "#ec5f67",
     }
 
     local conditions = {
