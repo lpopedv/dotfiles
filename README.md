@@ -16,7 +16,7 @@ Para instalar as configurações, siga estas etapas:
 
 1. Clone este repositório para o seu diretório home:
     ```bash
-    git clone https://github.com/lpopedv/dotfiles ~/dotfiles
+    git clone https://github.com/lpopedv/dotfiles ~/Dotfiles
     ```
 
 2. Navegue até o diretório `dotfiles`:
@@ -37,7 +37,8 @@ Para instalar as configurações, siga estas etapas:
 Para remover as configurações, navegue até o diretório `dotfiles` e use o comando `stow -D` seguido do nome do pacote:
 ```bash
 cd ~/dotfiles
-stow nvim
-stow tmux
-stow doom 
-stow zed
+stow -D nvim
+stow -D kitty
+stow -D tmux
+stow -D doom 
+stow -D zed
