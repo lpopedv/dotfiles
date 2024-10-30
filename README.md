@@ -21,7 +21,7 @@ Para instalar as configurações, siga estas etapas:
 
 2. Navegue até o diretório `dotfiles`:
     ```bash
-    cd ~/dotfiles
+    cd ~/Dotfiles
     ```
 
 3. Use o GNU Stow para criar links simbólicos para os arquivos de configuração desejados:
