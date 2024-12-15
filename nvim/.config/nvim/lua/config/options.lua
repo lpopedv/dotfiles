@@ -15,10 +15,3 @@ vim.cmd([[
   set conceallevel=0 
   set concealcursor=""
 ]])
-
--- Telescope custom options
-require("telescope").setup({
-  defaults = {
-    file_ignore_patterns = { "node_modules" },
-  },
-})
