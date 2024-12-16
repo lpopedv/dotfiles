@@ -2,9 +2,6 @@
 -- Default keymaps that are always set: https://github.com/LazyVim/LazyVim/blob/main/lua/lazyvim/config/keymaps.lua
 -- Add any additional keymaps here
 
--- Save file
-vim.keymap.set("n", "<leader>bs", ":w<CR>")
-
 -- Insert mode keybindings
 vim.keymap.set("i", "<C-h>", "<Left>", { silent = true })
 vim.keymap.set("i", "<C-j>", "<Down>", { silent = true })
