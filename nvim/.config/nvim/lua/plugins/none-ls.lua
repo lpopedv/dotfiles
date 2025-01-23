@@ -21,8 +21,8 @@ return {
 				-- Biome js
 				null_ls.builtins.formatting.biome,
 
-        null_ls.builtins.formatting.prettier,
-        require("none-ls.diagnostics.eslint")
+        --null_ls.builtins.formatting.prettier,
+        --require("none-ls.diagnostics.eslint")
 			},
 		})
 	end,
