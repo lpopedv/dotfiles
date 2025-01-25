@@ -87,3 +87,11 @@ vim.keymap.set("n", "<leader>gd", vim.lsp.buf.definition, {})
 vim.keymap.set("n", "<leader>gr", vim.lsp.buf.references, {})
 vim.keymap.set("n", "<leader>ca", vim.lsp.buf.code_action, {})
 vim.keymap.set("n", "<leader>e", vim.diagnostic.open_float, {})
+
+-- Open Ex mode on VimEnter
+vim.api.nvim_create_autocmd("VimEnter", {
+  group = vim.api.nvim_create_augroup("custom-vim-enter", { clear = true }),
+  callback = function()
+    vim.cmd.Ex()
+  end,
+})
