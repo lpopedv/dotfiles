@@ -36,6 +36,9 @@ return {
         capabilities = capabilities,
       cmd = { vim.fn.stdpath('data') .. "/mason/packages/elixir-ls/language_server.sh" },
       })
+      lspconfig.rust_analyzer.setup({
+        capabilities = capabilities
+      })
     end,
   },
 }
