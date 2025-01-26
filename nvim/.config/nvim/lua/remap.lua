@@ -35,11 +35,11 @@ vim.keymap.set("n", "<leader>wl", "<C-w>l")
 
 -- Use <C-j> and <C-k> for navigating the popup menu only when it is visible
 vim.keymap.set("i", "<C-j>", function()
-	return vim.fn.pumvisible() == 1 and "<C-n>" or "<Down>"
+  return vim.fn.pumvisible() == 1 and "<C-n>" or "<Down>"
 end, { expr = true, noremap = true, silent = true })
 
 vim.keymap.set("i", "<C-k>", function()
-	return vim.fn.pumvisible() == 1 and "<C-p>" or "<Up>"
+  return vim.fn.pumvisible() == 1 and "<C-p>" or "<Up>"
 end, { expr = true, noremap = true, silent = true })
 
 -- Exit terminal mode
@@ -50,30 +50,30 @@ local term_buf = nil
 local term_win = nil
 
 vim.keymap.set("n", "<leader>st", function()
-	if term_win and vim.api.nvim_win_is_valid(term_win) then
-		vim.api.nvim_win_hide(term_win)
-		term_win = nil
-	else
-		if not term_buf or not vim.api.nvim_buf_is_valid(term_buf) then
-			vim.cmd("belowright new")
-			vim.cmd("term")
-			term_buf = vim.api.nvim_get_current_buf()
-		else
-			vim.cmd("belowright split | buffer " .. term_buf)
-		end
-		term_win = vim.api.nvim_get_current_win()
-		vim.api.nvim_win_set_height(term_win, 10)
-	end
+  if term_win and vim.api.nvim_win_is_valid(term_win) then
+    vim.api.nvim_win_hide(term_win)
+    term_win = nil
+  else
+    if not term_buf or not vim.api.nvim_buf_is_valid(term_buf) then
+      vim.cmd("belowright new")
+      vim.cmd("term")
+      term_buf = vim.api.nvim_get_current_buf()
+    else
+      vim.cmd("belowright split | buffer " .. term_buf)
+    end
+    term_win = vim.api.nvim_get_current_win()
+    vim.api.nvim_win_set_height(term_win, 10)
+  end
 end)
 
 -- Buffer terminal
 vim.keymap.set("n", "<leader>bt", function()
-	vim.cmd.term()
+  vim.cmd.term()
 end)
 
 vim.keymap.set("n", "<leader>gg", function()
-	vim.cmd("term lazygit")
-	vim.cmd("startinsert")
+  vim.cmd("term lazygit")
+  vim.cmd("startinsert")
 end)
 
 -- Indent with tab
@@ -95,3 +95,6 @@ vim.api.nvim_create_autocmd("VimEnter", {
     vim.cmd.Ex()
   end,
 })
+
+-- Open lazy package manager
+vim.keymap.set("n", "<leader>l", ":Lazy <cr>")
