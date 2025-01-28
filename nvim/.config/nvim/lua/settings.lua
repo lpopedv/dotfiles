@@ -14,7 +14,7 @@ vim.opt.smartindent = true
 -- Line warp
 vim.opt.wrap = false
 
--- Backup files, swap files and undo 
+-- Backup files, swap files and undo
 vim.opt.swapfile = false
 vim.opt.backup = false
 vim.opt.undodir = os.getenv("HOME") .. "/.vim/undodir"
@@ -42,7 +42,7 @@ vim.opt.colorcolumn = "80"
 vim.api.nvim_create_autocmd('TermOpen', {
   group = vim.api.nvim_create_augroup('custom-term-open', { clear = true }),
   callback = function()
-    vim.opt.number = false
-    vim.opt.relativenumber = false
+    vim.api.nvim_buf_set_option(0, 'number', false)
+    vim.api.nvim_buf_set_option(0, 'relativenumber', false)
   end
 })
