@@ -97,4 +97,4 @@ vim.api.nvim_create_autocmd("VimEnter", {
 })
 
 -- Open lazy package manager
-vim.keymap.set("n", "<leader>l", ":Lazy <cr>")
+vim.keymap.set("n", "<leader>lz", ":Lazy <cr>")
