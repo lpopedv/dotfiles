@@ -101,3 +101,6 @@ vim.keymap.set("n", "<leader>zz", ":Lazy <cr>")
 
 -- Coppy file name
 vim.keymap.set("n", "<leader>yf", ":let @+ = expand('%')<CR>", { noremap = true, silent = true })
+
+-- Reload file
+vim.keymap.set("n", "<leader>ff", ":e!<CR>", { noremap = true, silent = true })
