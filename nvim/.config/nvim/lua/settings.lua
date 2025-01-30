@@ -36,9 +36,6 @@ vim.opt.scrolloff = 8
 -- update time
 vim.opt.updatetime = 50
 
--- add color in column
-vim.opt.colorcolumn = "80"
-
 vim.api.nvim_create_autocmd('TermOpen', {
   group = vim.api.nvim_create_augroup('custom-term-open', { clear = true }),
   callback = function()
