@@ -97,4 +97,7 @@ vim.api.nvim_create_autocmd("VimEnter", {
 })
 
 -- Open lazy package manager
-vim.keymap.set("n", "<leader>lz", ":Lazy <cr>")
+vim.keymap.set("n", "<leader>zz", ":Lazy <cr>")
+
+-- Coppy file name
+vim.keymap.set("n", "<leader>yf", ":let @+ = expand('%')<CR>", { noremap = true, silent = true })
