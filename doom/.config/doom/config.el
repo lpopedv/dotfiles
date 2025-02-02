@@ -32,7 +32,7 @@
 ;; There are two ways to load a theme. Both assume the theme is installed and
 ;; available. You can either set `doom-theme' or manually load a theme with the
 ;; `load-theme' function. This is the default:
-(setq doom-theme 'doom-ayu-mirage)
+(setq doom-theme 'doom-spacegrey)
 
 ;; This determines the style of line numbers in effect. If set to `nil', line
 ;; numbers are disabled. For relative line numbers, set this to `relative'.
@@ -79,10 +79,6 @@
 ;; (set-frame-parameter (selected-frame) 'alpha '(90 . 90))
 ;; (add-to-list 'default-frame-alist '(alpha . (90 . 90)))
 
-;; gopls path
-(setenv "PATH" (concat (getenv "PATH") ":" (expand-file-name "~/go/bin")))
-(add-to-list 'exec-path (expand-file-name "~/go/bin"))
-
 ;; move cursor in insert mode
 (define-key evil-insert-state-map (kbd "C-h") 'backward-char)
 (define-key evil-insert-state-map (kbd "C-j") 'next-line)
@@ -93,3 +89,5 @@
 (use-package lsp-tailwindcss
   :init
   (setq lsp-tailwindcss-add-on-mode t))
+
+(setq scroll-margin 12)
