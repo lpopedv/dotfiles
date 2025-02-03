@@ -21,7 +21,7 @@
 ;; See 'C-h v doom-font' for documentation and more examples of what they
 ;; accept. For example:
 ;;
-(setq doom-font (font-spec :family "JetBrainsMono Nerd Font" :size 16 :weight 'semi-light)
+(setq doom-font (font-spec :family "JetBrainsMono Nerd Font" :size 16 :weight 'medium)
       doom-variable-pitch-font (font-spec :family "JetBrainsMono Nerd Font" :size 13))
 ;;
 ;; If you or Emacs can't find your font, use 'M-x describe-font' to look them
@@ -90,4 +90,15 @@
   :init
   (setq lsp-tailwindcss-add-on-mode t))
 
+;; scroll margin
 (setq scroll-margin 12)
+
+;; flycheck configs
+(setq flycheck-elixir-credo-strict t)
+
+;; lsp configs
+(setq lsp-enable-file-watchers t)
+(setq lsp-file-watch-threshold 20000)
+(setq lsp-elixir-fetch-deps t)
+
+(add-hook 'lsp-after-initialize-hook (setq typescript-indent-level 2))
