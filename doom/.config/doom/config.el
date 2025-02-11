@@ -105,3 +105,6 @@
 (map! :leader
       :desc "Format buffer with LSP"
       "l" #'lsp-format-buffer)
+
+;; set default shell
+(setq shell-file-name "/bin/zsh")
