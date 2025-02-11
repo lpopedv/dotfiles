@@ -85,11 +85,6 @@
 (define-key evil-insert-state-map (kbd "C-k") 'previous-line)
 (define-key evil-insert-state-map (kbd "C-l") 'forward-char)
 
-;; tailwind css lsp
-(use-package lsp-tailwindcss
-  :init
-  (setq lsp-tailwindcss-add-on-mode t))
-
 ;; scroll margin
 (setq scroll-margin 12)
 
