@@ -1,8 +1,2 @@
--- Remaps
-require("remap")
-
--- Lazy Package Manager
-require("packer")
-
--- Vim settings
-require("settings")
+-- bootstrap lazy.nvim, LazyVim and your plugins
+require("config.lazy")
