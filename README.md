@@ -10,7 +10,7 @@ GNU Stow is a symlink package management tool that simplifies the installation o
 
 - **nvim (Neovim)**: Text editor
 - **Kitty**: GPU-accelerated terminal
-- **doom emacs**: Text editor
+- **zsh**: Shell
 
 ## Installation
 
@@ -33,7 +33,7 @@ To install the configurations, follow these steps:
     ```bash
     stow nvim
     stow kitty
-    stow doom
+    stow zsh
     ```
 
 ## Uninstallation
@@ -44,5 +44,5 @@ To remove the configurations, navigate to the `dotfiles` directory and use the `
 cd ~/Dotfiles
 stow -D nvim
 stow -D kitty
-stow -D doom
+stow -D zsh
 ```
