@@ -203,6 +203,18 @@ return {
 
     ins_right({
       function()
+        local recording = vim.fn.reg_recording()
+        if recording == "" then
+          return ""
+        else
+          return "Recording @" .. recording
+        end
+      end,
+      color = { fg = colors.red, gui = "bold" },
+    })
+
+    ins_right({
+      function()
         return "▊"
       end,
       color = { fg = colors.blue },
