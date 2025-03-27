@@ -10,3 +10,6 @@ vim.opt.swapfile = false
 vim.opt.backup = false
 vim.opt.undodir = os.getenv("HOME") .. "/.vim/undodir"
 vim.opt.undofile = true
+
+-- Manually set PATH to include ASDF shims
+vim.env.PATH = vim.env.PATH .. ":" .. vim.fn.expand("~/.asdf/shims")
