@@ -19,4 +19,12 @@ if status is-interactive
 
     # Doom emacs
     set -gx PATH "$HOME/.config/emacs/bin" $PATH
+
+    # Elixir Lsp
+    set -gx PATH $PATH /home/tr3v0r/.lsp/elixir-ls/release
+
+    # Direnv configuration
+    if command -v direnv > /dev/null
+        direnv hook fish | source
+    end
 end
