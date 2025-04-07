@@ -6,8 +6,8 @@
 
 ;; Some functionality uses this to identify you, e.g. GPG configuration, email
 ;; clients, file templates and snippets. It is optional.
- (setq user-full-name "Lucas Pope"
-       user-mail-address "lpopedv@proton.me")
+(setq user-full-name "Lucas Pope"
+      user-mail-address "lpopedv@proton.me")
 
 ;; Doom exposes five (optional) variables for controlling fonts in Doom:
 ;;
@@ -21,8 +21,10 @@
 ;; See 'C-h v doom-font' for documentation and more examples of what they
 ;; accept. For example:
 ;;
-(setq doom-font (font-spec :family "JetBrainsMono Nerd Font" :size 16 :weight 'semi-light)
-      doom-variable-pitch-font (font-spec :family "JetBrainsMono Nerd Font" :size 16))
+;;
+(setq doom-font (font-spec :family "CaskaydiaCove Nerd Font Mono" :size 17)
+      doom-variable-pitch-font (font-spec :family "CaskaydiaCove Nerd Font Mono" :size 17))
+
 ;;
 ;; If you or Emacs can't find your font, use 'M-x describe-font' to look them
 ;; up, `M-x eval-region' to execute elisp code, and 'M-x doom/reload-font' to
@@ -32,7 +34,8 @@
 ;; There are two ways to load a theme. Both assume the theme is installed and
 ;; available. You can either set `doom-theme' or manually load a theme with the
 ;; `load-theme' function. This is the default:
-(setq doom-theme 'doom-spacegray)
+(setq doom-theme 'doom-ayu-mirage)
+
 
 ;; This determines the style of line numbers in effect. If set to `nil', line
 ;; numbers are disabled. For relative line numbers, set this to `relative'.
@@ -66,6 +69,7 @@
 ;;   `require' or `use-package'.
 ;; - `map!' for binding new keys
 ;;
+;;
 ;; To get information about any of these functions/macros, move the cursor over
 ;; the highlighted symbol at press 'K' (non-evil users must press 'C-c c k').
 ;; This will open documentation for it, including demos of how they are used.
@@ -78,8 +82,6 @@
 ;; elixir
 (setq flycheck-elixir-credo-strict t)
 (setq lsp-elixir-fetch-deps t)
-(after! lsp-mode
-  (setq lsp-elixir-server-command '("~/.asdf/shims/elixir-ls")))
 
 ;; lsp configs
 (setq lsp-enable-file-watchers t)
@@ -93,3 +95,5 @@
     (kbd "C-k") 'evil-previous-line
     (kbd "C-l") 'evil-forward-char))
 
+;; cursor margin
+(setq scroll-margin 6)
