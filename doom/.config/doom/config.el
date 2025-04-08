@@ -97,3 +97,27 @@
 
 ;; cursor margin
 (setq scroll-margin 6)
+
+;; lsp fuzzy matching autocomplete
+(use-package! orderless
+  :init
+  (setq orderless-matching-styles '(orderless-flex orderless-regexp)
+        orderless-component-separator "[ &]"))
+
+(after! corfu
+  (setq corfu-auto t
+        corfu-cycle t
+        corfu-min-width 80
+        corfu-max-width 100
+        corfu-count 14
+        corfu-separator ?\s
+        corfu-quit-no-match 'separator))
+
+(after! vertico
+  (setq completion-styles '(orderless flex basic)
+        completion-category-defaults nil
+        vertico-count 20
+        vertico-cycle t))
+
+(after! lsp-mode
+  (setq lsp-completion-provider :capf))
