@@ -121,3 +121,7 @@
 
 (after! lsp-mode
   (setq lsp-completion-provider :capf))
+
+;; transparency
+(set-frame-parameter (selected-frame) 'alpha '(98 . 98))
+(add-to-list 'default-frame-alist '(alpha . (98 . 98)))
