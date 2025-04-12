@@ -10,7 +10,7 @@ GNU Stow is a symlink package management tool that simplifies the installation o
 
 - **Neovim (Lazyvim)**: Text Editor
 - **Kitty**: GPU-accelerated Terminal
-- **fish**: Shell
+- **Fish**: Shell
 - **Emacs (Doom)**: Dark Side Text Editor
 
 ## Installation
