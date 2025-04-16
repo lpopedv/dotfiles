@@ -1,6 +1,7 @@
 if status is-interactive
     # Aliases 
     alias v nvim
+    alias l "eza --icons"
 
     # ASDF configuration code
     if test -z $ASDF_DATA_DIR
