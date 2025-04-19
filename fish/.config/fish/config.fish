@@ -1,7 +1,7 @@
 if status is-interactive
     # Aliases 
     alias v nvim
-    alias l "eza --icons"
+    alias ls "eza --icons"
 
     # ASDF configuration code
     if test -z $ASDF_DATA_DIR
@@ -25,7 +25,7 @@ if status is-interactive
     set -gx PATH $PATH /home/tr3v0r/.lsp/elixir-ls/release
 
     # Direnv configuration
-    if command -v direnv > /dev/null
+    if command -v direnv >/dev/null
         direnv hook fish | source
     end
 end
@@ -33,6 +33,6 @@ end
 # pnpm
 set -gx PNPM_HOME "$HOME/.local/share/pnpm"
 if not string match -q -- $PNPM_HOME $PATH
-  set -gx PATH "$PNPM_HOME" $PATH
+    set -gx PATH "$PNPM_HOME" $PATH
 end
 # pnpm end
