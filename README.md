@@ -12,6 +12,8 @@ GNU Stow is a symlink package management tool that simplifies the installation o
 - **Kitty**: GPU-accelerated Terminal
 - **Fish**: Shell
 - **Emacs (Doom)**: Dark Side Text Editor
+- **Hyprland (BTW)**: Wayland Tiling Window Manager
+- **Waybar**: Hyprland Bar
 
 ## Installation
 
@@ -36,6 +38,8 @@ To install the configurations, follow these steps:
     stow kitty
     stow fish 
     stow doom 
+    stow hypr
+    stow waybar
     ```
 
 ## Uninstallation
@@ -48,4 +52,6 @@ stow -D nvim
 stow -D kitty
 stow -D fish 
 stow -D doom
+stow hypr
+stow waybar
 ```

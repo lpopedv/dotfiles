@@ -1,0 +1,103 @@
+@import "colors.css";
+
+* {
+    color: @text_color;
+    border: none;
+    padding: 0;
+    font-family: "Fira Sans Semibold", "Font Awesome 6 Free", sans-serif;
+}
+
+window#waybar {
+    background-color: transparent;
+}
+
+#workspaces,
+#window,
+#cpu,
+#memory,
+#network,
+#custom-vpn,
+#pulseaudio,
+#pulseaudio.microphone,
+#clock,
+#tray,
+#custom-power {
+    background-color: shade(@base, 0.9);
+    opacity: 0.9;
+}
+
+#workspaces {
+    margin: 4px 0 4px 4px;
+    padding: 2px 10px;
+    border-radius: 8px;
+}
+
+#window {
+    background-color: shade(@base, 0.9);
+    opacity: 0.9;
+    margin: 4px;
+    padding: 2px 12px;
+    border-radius: 8px;
+    font-family: inherit;
+    color: inherit;
+}
+
+#window.active {
+    background-color: shade(@base, 1.1);
+}
+
+#workspaces button {
+    margin: 0 2px;
+    padding: 2px 6px;
+    border-radius: 6px;
+    transition: all 0.3s ease;
+}
+
+#workspaces button.urgent {
+    margin: 0 3px;
+    animation: pulse 2s infinite;
+}
+
+#cpu {
+    margin: 4px 0 4px 4px;
+    padding: 2px 10px;
+    border-radius: 8px 0 0 8px;
+}
+#memory {
+    margin: 4px 4px 4px 0;
+    padding: 2px 10px;
+    border-radius: 0 8px 8px 0;
+}
+
+#network {
+    margin: 4px 0 4px 4px;
+    padding: 2px 10px;
+    border-radius: 8px 0 0 8px;
+}
+#custom-vpn {
+    min-width: 24px;
+    padding: 0 8px;
+    margin: 4px 4px 4px 0;
+    background-color: shade(@base, 0.9);
+    border-radius: 0 8px 8px 0;
+    color: @text_color;
+}
+
+#pulseaudio {
+    margin: 4px 0 4px 4px;
+    padding: 2px 10px;
+    border-radius: 8px 0 0 8px;
+}
+#pulseaudio.microphone {
+    margin: 4px 4px 4px 0;
+    padding: 2px 10px;
+    border-radius: 0 8px 8px 0;
+}
+
+#clock,
+#tray,
+#custom-power {
+    margin: 4px;
+    padding: 2px 12px;
+    border-radius: 8px;
+}

@@ -1,0 +1,82 @@
+{
+    "hyprland/workspaces": {
+        "disable-scroll": true,
+        "all-outputs": true,
+        "warp-on-scroll": false,
+        "format": "{name}: {icon}",
+        "format-icons": {
+            "urgent": "",
+            "active": "",
+            "default": ""
+        }
+    },
+    "network": {
+        "format-wifi": " {essid} ({signalStrength}%)",
+        "format-ethernet": "",
+        "format-disconnected": "⚠ Offline",
+        "tooltip-format": "IP: {ipaddr}\nGateway: {gwaddr}",
+        "interval": 5
+    },
+    "custom/vpn": {
+        "format": "{icon}",
+        "interval": 5,
+        "exec": "if ip link show wg0 >/dev/null 2>&1; then echo '{\"text\":\"\", \"alt\":\"connected\", \"class\":\"connected\"}'; else echo '{\"text\":\"\", \"alt\":\"disconnected\", \"class\":\"disconnected\"}'; fi",
+        "return-type": "json",
+        "format-icons": {
+            "connected": "",
+            "disconnected": ""
+        },
+        "on-click": "sudo wg-quick down wg0 || sudo wg-quick up wg0"
+    },
+    "cpu": {
+        "format": " {usage}%",
+        "interval": 2,
+        "tooltip": false
+    },
+    "memory": {
+        "format": " {percentage}%",
+        "interval": 2
+    },
+    "pulseaudio": {
+        "format": "{volume}% {icon}",
+        "format-muted": " Muted",
+        "format-icons": {
+            "default": [
+                "",
+                "",
+                ""
+            ],
+            "headphone": "",
+            "hands-free": "",
+            "headset": "",
+            "phone": "",
+            "portable": "",
+            "car": ""
+        },
+        "scroll-step": 1,
+        "on-click": "pactl set-sink-mute @DEFAULT_SINK@ toggle",
+        "on-scroll-up": "pactl set-sink-volume @DEFAULT_SINK@ +1%",
+        "on-scroll-down": "pactl set-sink-volume @DEFAULT_SINK@ -1%"
+    },
+    "pulseaudio#microphone": {
+        "format": "{format_source}",
+        "format-source": " {volume}%",
+        "format-source-muted": " Muted",
+        "scroll-step": 1,
+        "on-click": "pactl set-source-mute @DEFAULT_SOURCE@ toggle",
+        "on-scroll-up": "pactl set-source-volume @DEFAULT_SOURCE@ +1%",
+        "on-scroll-down": "pactl set-source-volume @DEFAULT_SOURCE@ -1%"
+    },
+    "custom/power": {
+        "format": "⏻ ",
+        "tooltip": false,
+        "menu": "on-click",
+        "menu-file": "$HOME/.config/waybar/power_menu.xml",
+        "menu-actions": {
+            "shutdown": "shutdown",
+            "reboot": "reboot",
+            "suspend": "systemctl suspend",
+            "hibernate": "systemctl hibernate"
+        }
+    }
+}
