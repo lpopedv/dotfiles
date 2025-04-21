@@ -11,7 +11,7 @@
         }
     },
     "network": {
-        "format-wifi": " {essid} ({signalStrength}%)",
+        "format-wifi": "   {essid} ({signalStrength}%)",
         "format-ethernet": "",
         "format-disconnected": "⚠ Offline",
         "tooltip-format": "IP: {ipaddr}\nGateway: {gwaddr}",
@@ -29,12 +29,12 @@
         "on-click": "sudo wg-quick down wg0 || sudo wg-quick up wg0"
     },
     "cpu": {
-        "format": " {usage}%",
+        "format": "  {usage}%",
         "interval": 2,
         "tooltip": false
     },
     "memory": {
-        "format": " {percentage}%",
+        "format": "  {percentage}%",
         "interval": 2
     },
     "pulseaudio": {
@@ -67,13 +67,26 @@
         "on-scroll-up": "pactl set-source-volume @DEFAULT_SOURCE@ +1%",
         "on-scroll-down": "pactl set-source-volume @DEFAULT_SOURCE@ -1%"
     },
+    "battery": {
+        "format": "{icon}  {capacity}%",
+        "format-charging": "  {capacity}%",
+        "format-icons": [
+            "",
+            "",
+            "",
+            "",
+            ""
+        ],
+        "interval": 30,
+        "tooltip": false
+    },
     "custom/power": {
         "format": "⏻ ",
         "tooltip": false,
         "menu": "on-click",
         "menu-file": "$HOME/.config/waybar/power_menu.xml",
         "menu-actions": {
-            "shutdown": "shutdown",
+            "shutdown": "shutdown now",
             "reboot": "reboot",
             "suspend": "systemctl suspend",
             "hibernate": "systemctl hibernate"

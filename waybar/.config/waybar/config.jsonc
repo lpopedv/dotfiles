@@ -19,6 +19,7 @@
     "pulseaudio#microphone",
     "clock",
     "tray",
+    "battery",
     "custom/power"
   ],
   "include": [
