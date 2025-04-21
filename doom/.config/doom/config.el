@@ -22,8 +22,8 @@
 ;; accept. For example:
 ;;
 ;;
-(setq doom-font (font-spec :family "CaskaydiaCove Nerd Font Mono" :size 17)
-      doom-variable-pitch-font (font-spec :family "CaskaydiaCove Nerd Font Mono" :size 17))
+(setq doom-font (font-spec :family "JetBrainsMono Nerd Font" :size 17)
+      doom-variable-pitch-font (font-spec :family "CaskaydiaCove Nerd Font Mono" :size 16))
 
 ;;
 ;; If you or Emacs can't find your font, use 'M-x describe-font' to look them
@@ -34,7 +34,7 @@
 ;; There are two ways to load a theme. Both assume the theme is installed and
 ;; available. You can either set `doom-theme' or manually load a theme with the
 ;; `load-theme' function. This is the default:
-(setq doom-theme 'doom-ayu-mirage)
+(setq doom-theme 'doom-tokyo-night)
 
 
 ;; This determines the style of line numbers in effect. If set to `nil', line
