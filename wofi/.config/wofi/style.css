@@ -1,0 +1,48 @@
+* {
+    color: rgba(219, 219, 219, 0.859);
+    border: none;
+    padding: 0;
+    font-family: "Fira Sans Semibold", "Font Awesome 6 Free", sans-serif;
+}
+
+window {
+margin: 0px;
+border: 1px solid #5a7da1;
+border-radius: 15px;
+background-color: shade(#24273a, 0.9);
+}
+
+#input {
+margin: 9px;
+padding: 10px;
+border: none;
+color: #D3C6AA;
+background-color: shade(#24273a, 0.9);
+}
+
+#inner-box {
+margin: 5px;
+border: none;
+background-color: shade(#24273a, 0.9);
+}
+
+#outer-box {
+margin: 5px;
+border: none;
+background-color: shade(#24273a, 0.9);
+}
+
+#scroll {
+margin: 0px;
+border: none;
+}
+
+#text {
+margin: 5px;
+border: none;
+}
+
+#entry:selected {
+padding: 4px;
+background-color: shade(#24273a, 0.9);
+}

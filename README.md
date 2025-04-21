@@ -14,6 +14,7 @@ GNU Stow is a symlink package management tool that simplifies the installation o
 - **Emacs (Doom)**: Dark Side Text Editor
 - **Hyprland (BTW)**: Wayland Tiling Window Manager
 - **Waybar**: Hyprland Bar
+- **Wofi**: App search for Hyprland
 
 ## Installation
 
@@ -40,6 +41,7 @@ To install the configurations, follow these steps:
     stow doom 
     stow hypr
     stow waybar
+    stow wofi
     ```
 
 ## Uninstallation
@@ -52,6 +54,7 @@ stow -D nvim
 stow -D kitty
 stow -D fish 
 stow -D doom
-stow hypr
-stow waybar
+stow -D hypr
+stow -D waybar
+stow -D wofi
 ```
