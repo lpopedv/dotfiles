@@ -23,7 +23,7 @@
 ;;
 ;;
 (setq doom-font (font-spec :family "JetBrainsMono Nerd Font" :size 17)
-      doom-variable-pitch-font (font-spec :family "CaskaydiaCove Nerd Font Mono" :size 16))
+      doom-variable-pitch-font (font-spec :family "JetBrainsMono Nerd Font" :size 16))
 
 ;;
 ;; If you or Emacs can't find your font, use 'M-x describe-font' to look them
