@@ -28,6 +28,12 @@
         },
         "on-click": "sudo wg-quick down wg0 || sudo wg-quick up wg0"
     },
+"custom/window": {
+    "exec": "~/.config/waybar/scripts/window_title.sh",
+    "interval": 1,
+    "return-type": "text",
+    "tooltip": false
+},
     "cpu": {
         "format": "  {usage}%",
         "interval": 2,
