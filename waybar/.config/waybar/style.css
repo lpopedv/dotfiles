@@ -11,6 +11,16 @@ window#waybar {
     background-color: transparent;
 }
 
+#custom-window {
+    background-color: shade(@base, 0.9);
+    opacity: 0.9;
+    margin: 4px;
+    padding: 2px 12px;
+    border-radius: 8px;
+    font-family: inherit;
+    color: inherit;
+}
+
 #workspaces,
 #window,
 #cpu,
