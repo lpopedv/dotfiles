@@ -25,6 +25,7 @@ window#waybar {
 
 #custom-window:hover {
     background-color: #181823;
+    opacity: 0.8;
 }
 
 #workspaces {
@@ -32,7 +33,7 @@ window#waybar {
     padding: 2px 10px;
     border-radius: 8px;
     background-color: @base;
-    opacity: 0.9;
+    opacity: 0.8;
 }
 
 #workspaces button {
