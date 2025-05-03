@@ -23,8 +23,8 @@
         "exec": "if ip link show wg0 >/dev/null 2>&1; then echo '{\"text\":\"\", \"alt\":\"connected\", \"class\":\"connected\"}'; else echo '{\"text\":\"\", \"alt\":\"disconnected\", \"class\":\"disconnected\"}'; fi",
         "return-type": "json",
         "format-icons": {
-            "connected": "",
-            "disconnected": ""
+            "connected": "  ",
+            "disconnected": "  "
         },
         "on-click": "sudo wg-quick down wg0 || sudo wg-quick up wg0"
     },
@@ -48,16 +48,16 @@
         "format-muted": " Muted",
         "format-icons": {
             "default": [
-                "",
-                "",
-                ""
+                "  ",
+                "  ",
+                "  "
             ],
-            "headphone": "",
-            "hands-free": "",
-            "headset": "",
-            "phone": "",
-            "portable": "",
-            "car": ""
+            "headphone": "   ",
+            "hands-free": "  ",
+            "headset": "  ",
+            "phone": "  ",
+            "portable": "  ",
+            "car": "   "
         },
         "scroll-step": 1,
         "on-click": "pactl set-sink-mute @DEFAULT_SINK@ toggle",
@@ -67,7 +67,7 @@
     "pulseaudio#microphone": {
         "format": "{format_source}",
         "format-source": " {volume}%",
-        "format-source-muted": " Muted",
+        "format-source-muted": "  Muted",
         "scroll-step": 1,
         "on-click": "pactl set-source-mute @DEFAULT_SOURCE@ toggle",
         "on-scroll-up": "pactl set-source-volume @DEFAULT_SOURCE@ +1%",
@@ -77,17 +77,17 @@
         "format": "{icon}  {capacity}%",
         "format-charging": "  {capacity}%",
         "format-icons": [
-            "",
-            "",
-            "",
-            "",
-            ""
+            "   ",
+            "   ",
+            "   ",
+            "   ",
+            "   "
         ],
         "interval": 30,
         "tooltip": false
     },
     "custom/power": {
-        "format": "⏻ ",
+        "format": " ⏻ ",
         "tooltip": false,
         "menu": "on-click",
         "menu-file": "$HOME/.config/waybar/power_menu.xml",
