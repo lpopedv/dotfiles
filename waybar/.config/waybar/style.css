@@ -16,7 +16,7 @@ window#waybar {
 
 #custom-window {
     background-color: @base;
-    opacity: 0.9;
+    opacity: 0.8;
     margin: 4px;
     padding: 2px 12px;
     border-radius: 8px;
@@ -25,7 +25,6 @@ window#waybar {
 
 #custom-window:hover {
     background-color: #181823;
-    opacity: 0.8;
 }
 
 #workspaces {
