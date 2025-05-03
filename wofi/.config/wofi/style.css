@@ -1,48 +1,52 @@
-* {
-    color: rgba(219, 219, 219, 0.859);
-    border: none;
-    padding: 0;
-    font-family: "Fira Sans Semibold", "Font Awesome 6 Free", sans-serif;
-}
-
 window {
-margin: 0px;
-border: 1px solid #5a7da1;
-border-radius: 15px;
-background-color: shade(#24273a, 0.9);
-}
-
-#input {
-margin: 9px;
-padding: 10px;
-border: none;
-color: #D3C6AA;
-background-color: shade(#24273a, 0.9);
-}
-
-#inner-box {
-margin: 5px;
-border: none;
-background-color: shade(#24273a, 0.9);
+    margin: 0;
+    border: 1px solid #5a7da1;
+    border-radius: 15px;
+    background-color: rgba(36, 39, 58, 0.9);
 }
 
 #outer-box {
-margin: 5px;
-border: none;
-background-color: shade(#24273a, 0.9);
+    margin: 5px;
+    background-color: rgba(36, 39, 58, 0.9);
+}
+
+#input {
+    margin: 9px;
+    padding: 10px;
+    background-color: rgba(36, 39, 58, 0.9);
+    color: #D3C6AA;
+    border: none;
 }
 
 #scroll {
-margin: 0px;
-border: none;
+    margin: 0;
+}
+
+#inner-box {
+    margin: 5px;
+    background-color: rgba(36, 39, 58, 0.9);
+}
+
+#entry {
+    margin: 5px;
+    padding: 8px;
+    border-radius: 8px;
+    transition: background-color 0.2s ease;
 }
 
 #text {
-margin: 5px;
-border: none;
+    margin: 5px;
+    color: rgba(219, 219, 219, 0.859);
 }
 
 #entry:selected {
-padding: 4px;
-background-color: shade(#24273a, 0.9);
+    background-color: #5a7da1;
+}
+
+#text:selected {
+    color: #ffffff;
+}
+
+#img {
+    margin-right: 8px;
 }
