@@ -123,8 +123,8 @@
   (setq lsp-completion-provider :capf))
 
 ;; transparency
-(set-frame-parameter (selected-frame) 'alpha '(98 . 98))
-(add-to-list 'default-frame-alist '(alpha . (98 . 98)))
+(set-frame-parameter (selected-frame) 'alpha '(95 . 95))
+(add-to-list 'default-frame-alist '(alpha . (95 . 95)))
 
 (setq shell-file-name "/run/current-system/sw/bin/fish")
 (setenv "SHELL" shell-file-name)
