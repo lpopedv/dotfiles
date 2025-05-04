@@ -1,7 +1,7 @@
 @define-color text_color rgba(200, 200, 200, 0.9);
 @define-color base       #1f1f2e;
-@define-color accent #1B263B;
-
+@define-color accent     #1B263B;
+@define-color border     rgba(255, 255, 255, 0.15);
 
 * {
     color: @text_color;
@@ -11,7 +11,7 @@
 }
 
 window#waybar {
-    background-color: transparent;
+    background-color: rgba(31, 31, 46, 0.4);
 }
 
 #custom-window {
@@ -20,11 +20,13 @@ window#waybar {
     margin: 4px;
     padding: 2px 12px;
     border-radius: 8px;
-    transition: background-color 0.3s ease;
+    border: 2px solid @border;
+    transition: background-color 0.3s ease, border-color 0.3s ease;
 }
 
 #custom-window:hover {
     background-color: #181823;
+    border-color: @accent;
 }
 
 #workspaces {
@@ -33,13 +35,14 @@ window#waybar {
     border-radius: 8px;
     background-color: @base;
     opacity: 0.8;
+    border: 2px solid @border;
 }
 
 #workspaces button {
     margin: 0 2px;
     padding: 2px 6px;
     border-radius: 6px;
-    transition: background-color 0.3s ease;
+    transition: background-color 0.3s ease, border-color 0.3s ease;
 }
 
 #workspaces button.active,
@@ -58,7 +61,8 @@ window#waybar {
     background-color: @base;
     opacity: 0.8;
     border-radius: 8px;
-    transition: background-color 0.2s ease;
+    border: 2px solid @border;
+    transition: background-color 0.2s ease, border-color 0.3s ease;
 }
 
 #cpu:hover,
@@ -72,4 +76,5 @@ window#waybar {
 #battery:hover,
 #custom-power:hover {
     background-color: #181823;
+    border-color: @accent;
 }
