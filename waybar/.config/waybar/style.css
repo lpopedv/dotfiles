@@ -47,7 +47,7 @@ window#waybar {
 
 #workspaces button.active,
 #workspaces button.urgent {
-    background-color: @accent;
+    background-color: @base;
     color: #ffffff;
 }
 
