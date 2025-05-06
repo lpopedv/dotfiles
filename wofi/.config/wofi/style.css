@@ -1,52 +1,133 @@
+/* ==============================
+   Wofi - Minimal Gray Theme (Darker Gray)
+   ============================== */
+
+/* Main window style */
 window {
     margin: 0;
-    border: 1px solid #5a7da1;
-    border-radius: 15px;
-    background-color: rgba(36, 39, 58, 0.9);
+    border: 1px solid rgba(216, 222, 233, 1); /* Active border color (rgba(d8dee9ff)) */
+    border-radius: 15px; /* Rounded corners */
+    background-color: rgba(19, 21, 30, 0.9); /* Darker gray, almost black */
+    color: rgba(216, 222, 233, 1); /* Soft off-white text */
+    animation: fadeInWindow 0.5s ease-out; /* Fade-in animation for the window */
 }
 
+/* Outer box */
 #outer-box {
     margin: 5px;
-    background-color: rgba(36, 39, 58, 0.9);
+    background-color: rgba(19, 21, 30, 0.9); /* Darker gray, almost black */
+    animation: fadeIn 0.3s ease-out; /* Fade-in animation */
 }
 
+/* Input field */
 #input {
     margin: 9px;
     padding: 10px;
-    background-color: rgba(36, 39, 58, 0.9);
-    color: #D3C6AA;
+    background-color: rgba(19, 21, 30, 0.9); /* Darker gray, almost black */
+    color: rgba(216, 222, 233, 1); /* Soft off-white text */
     border: none;
+    border-radius: 8px; /* Rounded borders */
+    transition: background-color 0.2s ease, color 0.2s ease; /* Smooth transitions */
+    animation: slideInFromBottom 0.4s ease-out; /* Slide-in animation for the input field */
 }
 
+/* Scroll */
 #scroll {
     margin: 0;
 }
 
+/* Inner box */
 #inner-box {
     margin: 5px;
-    background-color: rgba(36, 39, 58, 0.9);
+    background-color: rgba(19, 21, 30, 0.9); /* Darker gray, almost black */
+    animation: fadeIn 0.3s ease-out; /* Fade-in animation */
 }
 
+/* Entry items (highlighted on hover) */
 #entry {
     margin: 5px;
     padding: 8px;
     border-radius: 8px;
-    transition: background-color 0.2s ease;
+    background-color: rgba(19, 21, 30, 0.8); /* Darker gray, almost black */
+    color: rgba(216, 222, 233, 1); /* Soft off-white text */
+    transition: background-color 0.3s ease, color 0.3s ease, transform 0.2s ease;
+    animation: scaleUpOnLoad 0.3s ease-out; /* Scale-up animation on load */
 }
 
+/* Background color when an entry is selected */
+#entry:selected {
+    background-color: rgba(67, 76, 94, 0.7); /* Slightly subtler inactive border color */
+    color: #ffffff; /* White text when selected */
+    animation: glowSelected 0.4s ease-out; /* Glow effect on selected entry */
+}
+
+/* Entry text */
 #text {
     margin: 5px;
-    color: rgba(219, 219, 219, 0.859);
+    color: rgba(216, 222, 233, 0.859); /* Soft off-white text */
+    transition: color 0.3s ease; /* Smooth text color transition */
 }
 
-#entry:selected {
-    background-color: #5a7da1;
-}
-
+/* Text color when selected */
 #text:selected {
-    color: #ffffff;
+    color: #ffffff; /* White text when selected */
 }
 
+/* Image in the list */
 #img {
     margin-right: 8px;
+}
+
+/* Hover effects and transitions */
+#entry:hover {
+    background-color: rgba(19, 21, 30, 0.9); /* Slightly brighter gray background on hover */
+    color: rgba(216, 222, 233, 1); /* Lighter text on hover */
+    box-shadow: 0 0 10px rgba(125, 207, 255, 0.4), 0 0 20px rgba(125, 207, 255, 0.4); /* Soft glowing effect */
+    transform: scale(1.05); /* Scale up on hover */
+    animation: glowOnHover 0.4s ease-out; /* Glowing effect on hover */
+}
+
+/* Input box hover effect */
+#input:hover {
+    background-color: rgba(19, 21, 30, 0.9); /* Darker gray, almost black on hover */
+    color: rgba(216, 222, 233, 1); /* Lighter text on hover */
+    box-shadow: 0 0 10px rgba(125, 207, 255, 0.4), 0 0 20px rgba(125, 207, 255, 0.4); /* Soft glowing effect */
+    transform: scale(1.05); /* Scale up on hover */
+}
+
+/* Animation Keyframes */
+
+/* Fade-in effect for window and elements */
+@keyframes fadeInWindow {
+    0% { opacity: 0; }
+    100% { opacity: 1; }
+}
+
+@keyframes fadeIn {
+    0% { opacity: 0; }
+    100% { opacity: 1; }
+}
+
+/* Slide-in animation for the input field */
+@keyframes slideInFromBottom {
+    0% { transform: translateY(20px); opacity: 0; }
+    100% { transform: translateY(0); opacity: 1; }
+}
+
+/* Scale-up effect for entries */
+@keyframes scaleUpOnLoad {
+    0% { transform: scale(0.9); opacity: 0; }
+    100% { transform: scale(1); opacity: 1; }
+}
+
+/* Glow effect for selected entry */
+@keyframes glowSelected {
+    0% { box-shadow: 0 0 5px rgba(67, 76, 94, 0.9); }
+    100% { box-shadow: 0 0 15px rgba(67, 76, 94, 1); }
+}
+
+/* Glow effect on hover */
+@keyframes glowOnHover {
+    0% { box-shadow: 0 0 5px rgba(125, 207, 255, 0.4), 0 0 10px rgba(125, 207, 255, 0.4); }
+    100% { box-shadow: 0 0 20px rgba(125, 207, 255, 0.6), 0 0 30px rgba(125, 207, 255, 0.6); }
 }
