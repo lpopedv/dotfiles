@@ -11,7 +11,8 @@
     "custom/window"
   ],
   "modules-right": [
-   "cpu",
+    "custom/bluetooth",
+    "cpu",
     "memory",
     "network",
     "custom/vpn",

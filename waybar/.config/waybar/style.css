@@ -1,80 +1,96 @@
-@define-color text_color rgba(200, 200, 200, 0.9);
-@define-color base       #1f1f2e;
-@define-color accent     #1B263B;
-@define-color border     rgba(255, 255, 255, 0.15);
+/* ===========================
+   Waybar – Minimal Gray Theme
+   =========================== */
 
+/* General fonts and transitions */
 * {
-    color: @text_color;
-    border: none;
-    padding: 0;
-    font-family: "Fira Sans Semibold", "Font Awesome 6 Free", sans-serif;
+  font-family: "JetBrainsMono Nerd Font", monospace;
+  font-size: 13px;
+  border: none;
+  border-radius: 5px;
+  min-height: 0;
+  transition: all 0.2s ease-in-out;
 }
 
-window#waybar {
-    background-color: rgba(31, 31, 46, 0.4);
+/* Background of the bar window */
+window {
+  background-color: rgba(0, 0, 0, 0.5); /* semi-transparent */
+  color: #d8dee9;                      /* soft off-white */
 }
 
-#custom-window {
-    background-color: @base;
-    opacity: 0.8;
-    margin: 4px;
-    padding: 2px 12px;
-    border-radius: 8px;
-    border: 2px solid @border;
-    transition: background-color 0.3s ease, border-color 0.3s ease;
+/* Base style for all modules */
+#custom-bluetooth,
+#custom-vpn,
+#cpu,
+#memory,
+#network,
+#battery,
+#tray,
+#custom-window,
+#pulseaudio,
+#pulseaudio-microphone,
+#custom-power,
+#hyprland-workspaces,
+#clock {
+  padding: 4px 8px;
+  margin: 2px 5px;
+  background-color: rgba(0, 0, 0, 0.6);
+  color: #d8dee9;
+  transition: background-color 0.3s, color 0.3s;
 }
 
-#custom-window:hover {
-    background-color: #181823;
-    border-color: @accent;
+/* Special states */
+#custom-bluetooth.connected,
+#battery.charging,
+#cpu,
+#memory {
+  color: #d8dee9; /* neutral highlight color */
 }
 
-#workspaces {
-    margin: 4px 0 4px 4px;
-    padding: 2px 10px;
-    border-radius: 8px;
-    background-color: @base;
-    opacity: 0.8;
-    border: 2px solid @border;
+#custom-bluetooth.off,
+#battery.critical,
+#pulseaudio.muted,
+#pulseaudio-microphone.muted {
+  color: #bf616a; /* soft red for alerts */
 }
 
-#workspaces button {
-    margin: 0 2px;
-    padding: 2px 6px;
-    border-radius: 6px;
-    transition: background-color 0.3s ease, border-color 0.3s ease;
-}
-
-#workspaces button.active,
-#workspaces button.urgent {
-    background-color: @base;
-    color: #ffffff;
-}
-
-#cpu, #memory,
-#network, #custom-vpn,
-#pulseaudio, #pulseaudio\.microphone,
-#clock, #tray, #battery, #custom-power {
-    margin: 4px;
-    padding-left: 10px;
-    padding-right: 10px;
-    background-color: @base;
-    opacity: 0.8;
-    border-radius: 8px;
-    border: 2px solid @border;
-    transition: background-color 0.2s ease, border-color 0.3s ease;
-}
-
+/* General hover effect */
+#custom-bluetooth:hover,
+#custom-vpn:hover,
 #cpu:hover,
 #memory:hover,
 #network:hover,
-#custom-vpn:hover,
-#pulseaudio:hover,
-#pulseaudio\.microphone:hover,
-#clock:hover,
-#tray:hover,
 #battery:hover,
+#pulseaudio:hover,
+#pulseaudio-microphone:hover,
+#clock:hover,
+#hyprland-workspaces:hover {
+  background-color: rgba(0, 0, 0, 0.8);
+  color: #eceff4; /* almost white on hover for contrast */
+}
+
+/* Power button with the same style */
+#custom-power {
+  background-color: rgba(0, 0, 0, 0.6);
+  color: #d8dee9;
+  font-weight: bold;
+}
 #custom-power:hover {
-    background-color: #181823;
-    border-color: @accent;
+  background-color: rgba(0, 0, 0, 0.8);
+  color: #eceff4;
+}
+
+/* Soft glow effect on icons */
+#custom-bluetooth,
+#custom-vpn,
+#cpu,
+#memory,
+#network,
+#battery,
+#pulseaudio,
+#pulseaudio-microphone,
+#custom-power,
+#clock,
+#hyprland-workspaces {
+  text-shadow: 0 0 4px rgba(216, 222, 233, 0.6);
 }
