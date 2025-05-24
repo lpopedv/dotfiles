@@ -34,7 +34,7 @@
 ;; There are two ways to load a theme. Both assume the theme is installed and
 ;; available. You can either set `doom-theme' or manually load a theme with the
 ;; `load-theme' function. This is the default:
-(setq doom-theme 'doom-ayu-mirage)
+(setq doom-theme 'doom-ayu-dark)
 
 
 ;; This determines the style of line numbers in effect. If set to `nil', line
@@ -126,5 +126,11 @@
 (set-frame-parameter (selected-frame) 'alpha '(95 . 95))
 (add-to-list 'default-frame-alist '(alpha . (95 . 95)))
 
-(setq shell-file-name "/run/current-system/sw/bin/fish")
-(setenv "SHELL" shell-file-name)
+;; Aidermacs
+(use-package! aidermacs
+  :bind (("C-c a" . aidermacs-transient-menu))
+  :config
+  (setenv "OPENROUTER_API_KEY" "")
+  :custom
+  (aidermacs-use-architect-mode t)
+  (aidermacs-default-model "openrouter/deepseek/deepseek-chat"))
