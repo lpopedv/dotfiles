@@ -1,5 +1,10 @@
 if status is-interactive
-    # Aliases 
+    function fish_greeting
+        echo "Terminal ready." | cowsay -f dragon | lolcat
+        date "+%A, %d de %B de %Y" | lolcat
+    end
+
+    # Aliases
     alias v nvim
     alias ls "eza --icons"
 
@@ -29,10 +34,3 @@ if status is-interactive
         direnv hook fish | source
     end
 end
-
-# pnpm
-set -gx PNPM_HOME "$HOME/.local/share/pnpm"
-if not string match -q -- $PNPM_HOME $PATH
-    set -gx PATH "$PNPM_HOME" $PATH
-end
-# pnpm end
