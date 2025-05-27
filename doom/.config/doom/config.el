@@ -90,10 +90,10 @@
 ;; move with vim keys in insert mode
 (after! evil
   (evil-define-key 'insert 'global
-    (kbd "C-h") 'evil-backward-char
+    (kbd "C-h") 'backward-char
     (kbd "C-j") 'evil-next-line
     (kbd "C-k") 'evil-previous-line
-    (kbd "C-l") 'evil-forward-char))
+    (kbd "C-l") 'forward-char))
 
 ;; cursor margin
 (setq scroll-margin 6)
