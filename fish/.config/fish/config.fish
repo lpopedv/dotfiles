@@ -27,7 +27,10 @@ if status is-interactive
     set -gx PATH "$HOME/.config/emacs/bin" $PATH
 
     # Elixir Lsp
-    set -gx PATH $PATH /home/tr3v0r/.lsp/elixir-ls/release
+    set -gx PATH $PATH $HOME/.lsp/elixir-ls/release
+
+    # Go Binaries
+    set -gx PATH $PATH $HOME/go/bin
 
     # Direnv configuration
     if command -v direnv >/dev/null
