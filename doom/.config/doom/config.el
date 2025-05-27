@@ -134,3 +134,7 @@
   :custom
   (aidermacs-use-architect-mode t)
   (aidermacs-default-model "openrouter/deepseek/deepseek-chat"))
+
+;; Elixir lsp
+(after! lsp-mode
+  (setq lsp-elixir-ls-server-file (expand-file-name "~/.lsp/elixir-ls/release/language_server.sh")))
