@@ -36,4 +36,10 @@ if status is-interactive
     if command -v direnv >/dev/null
         direnv hook fish | source
     end
+
+    # Pnpm
+    set -gx PNPM_HOME "$HOME/.local/share/pnpm"
+    if not string match -q -- $PNPM_HOME $PATH
+        set -gx PATH "$PNPM_HOME" $PATH
+    end
 end
