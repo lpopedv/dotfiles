@@ -29,3 +29,6 @@ vim.keymap.set("n", "<leader>fY", ":let @+ = expand('%:.')<CR>", {
   silent = true,
   desc = "Copy relative file path to clipboard",
 })
+
+-- Open MCPHub
+vim.keymap.set("n", "<leader>h", ":MCPHub<CR>")
