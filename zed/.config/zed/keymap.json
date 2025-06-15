@@ -13,7 +13,7 @@
       "ctrl-b": "project_panel::ToggleFocus",
       "ctrl-j": "terminal_panel::ToggleFocus",
 
-      "space h": "editor::Hover",
+      "K": "editor::Hover",
 
       "space w v": "pane::SplitRight",
       "space w s": "pane::SplitDown",
@@ -28,7 +28,7 @@
       "space space": "file_finder::Toggle",
       "space ,": "pane::DeploySearch",
 
-      "space l": "editor::Format"
+      "space f": "editor::Format"
     }
   },
   {
