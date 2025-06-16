@@ -29,6 +29,8 @@ if status is-interactive
     # Elixir Lsp
     set -gx PATH $PATH $HOME/.lsp/elixir-ls/release
 
+    set -gx PATH PATH="$HOME/.mix/escripts:$PATH"
+
     # Go Binaries
     set -gx PATH $PATH $HOME/go/bin
 
