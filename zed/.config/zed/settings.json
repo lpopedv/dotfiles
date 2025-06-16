@@ -1,5 +1,6 @@
 {
   // Editor General UI settings
+  "icon_theme": "Zed (Default)",
   "vim_mode": true,
   "theme": {
     "mode": "system",
@@ -17,7 +18,7 @@
     "show": "never"
   },
   "tab_bar": {
-    "show": true
+    "show": false
   },
   "toolbar": {
     "breadcrumbs": true,
@@ -27,6 +28,10 @@
 
   // AI
   "agent": {
+    "default_model": {
+      "provider": "deepseek",
+      "model": "deepseek-chat"
+    },
     "default_profile": "write",
     "model_parameters": [],
     "always_allow_tool_actions": true,
