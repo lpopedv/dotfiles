@@ -47,4 +47,7 @@
 ;; (unpin! pinned-package another-pinned-package)
 ;; ...Or *all* packages (NOT RECOMMENDED; will likely break things)
 ;; (unpin! t)
-(package! aidermacs :recipe (:host github :repo "MatthewZMD/aidermacs"))
+(package! gptel :recipe (:nonrecursive t))
+
+(package! mcp
+  :recipe (:host github :repo "lizqwerscott/mcp.el"))

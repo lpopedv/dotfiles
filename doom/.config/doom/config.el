@@ -126,15 +126,31 @@
 (set-frame-parameter (selected-frame) 'alpha '(95 . 95))
 (add-to-list 'default-frame-alist '(alpha . (95 . 95)))
 
-;; Aidermacs
-(use-package! aidermacs
-  :bind (("C-c a" . aidermacs-transient-menu))
-  :config
-  (setenv "OPENROUTER_API_KEY" "")
-  :custom
-  (aidermacs-use-architect-mode t)
-  (aidermacs-default-model "openrouter/deepseek/deepseek-chat"))
-
 ;; Elixir lsp
 (after! lsp-mode
   (setq lsp-elixir-ls-server-file (expand-file-name "~/.lsp/elixir-ls/release/language_server.sh")))
+
+;; gptel config
+(use-package! gptel
+  :config
+  (setq gptel-backend
+        (gptel-make-openai "OpenRouter"
+          :host "openrouter.ai"
+          :endpoint "/api/v1/chat/completions"
+          :stream t
+          :key (getenv "OPENROUTER_API_KEY")
+          :models '(google/gemini-2.5-flash-preview-05-20
+                    deepseek/deepseek-chat-v3-0324)))
+  (setq gptel-model (intern "deepseek/deepseek-chat-v3-0324")))
+
+(require 'gptel-integrations)
+
+(use-package! mcp
+  :after gptel
+  :custom
+  (mcp-hub-servers
+   '(("context7" . (:command "npx" :args ("-y" "@upstash/context7-mcp@latest")))))
+  :config
+  (require 'mcp-hub)
+  (add-hook 'after-init-hook #'mcp-hub-start-all-server))
+
