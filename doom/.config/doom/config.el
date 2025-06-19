@@ -165,6 +165,7 @@
   (setq presence-display-buffer-details t)
   (setq presence-display-line-numbers t)
   (setq presence-show-small-icon t)
+  (setq presence-use-major-mode-as-main-icon t)
 
   (setq presence-buffer-details-format-function
         (lambda ()
