@@ -35,12 +35,6 @@ window {
   color: #eceff4;
 }
 
-#workspaces button.active {
-  background-color: rgba(216, 222, 233, 0.2);
-  color: #d8dee9;
-  font-weight: bold;
-}
-
 #workspaces button.urgent {
   background-color: rgba(191, 97, 106, 0.3);
   color: #bf616a;
