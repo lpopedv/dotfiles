@@ -44,4 +44,9 @@ if status is-interactive
     if not string match -q -- $PNPM_HOME $PATH
         set -gx PATH "$PNPM_HOME" $PATH
     end
+
+    # Load general variables
+    if test -f ~/.env
+        source ~/.env
+    end
 end
