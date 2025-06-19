@@ -30,11 +30,6 @@ window {
   border-radius: 3px;
 }
 
-#workspaces button:hover {
-  background-color: rgba(0, 0, 0, 0.8);
-  color: #eceff4;
-}
-
 #workspaces button.urgent {
   background-color: rgba(191, 97, 106, 0.3);
   color: #bf616a;
@@ -82,8 +77,7 @@ window {
 #battery:hover,
 #pulseaudio:hover,
 #pulseaudio-microphone:hover,
-#clock:hover,
-#hyprland-workspaces:hover {
+#clock:hover {
   background-color: rgba(0, 0, 0, 0.8);
   color: #eceff4;
 }
