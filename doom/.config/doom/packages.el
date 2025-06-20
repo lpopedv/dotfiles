@@ -51,6 +51,3 @@
 
 (package! mcp
   :recipe (:host github :repo "lizqwerscott/mcp.el"))
-
-(package! presence
-  :recipe (:host github :repo "richardhbtz/emacs-presence"))
