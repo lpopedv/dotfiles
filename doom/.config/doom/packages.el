@@ -51,3 +51,5 @@
 
 (package! mcp
   :recipe (:host github :repo "lizqwerscott/mcp.el"))
+
+(package! elcord)
