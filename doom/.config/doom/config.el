@@ -153,3 +153,9 @@
   :config
   (require 'mcp-hub)
   (add-hook 'after-init-hook #'mcp-hub-start-all-server))
+
+(use-package! elcord
+  :config
+  (setq elcord-editor-icon "emacs_icon")
+  (setq elcord-use-major-mode-as-main-icon t)
+  (elcord-mode))
