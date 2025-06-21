@@ -141,7 +141,7 @@
           :key (getenv "OPENROUTER_API_KEY")
           :models '(google/gemini-2.5-flash-preview-05-20
                     deepseek/deepseek-chat-v3-0324)))
-  (setq gptel-model (intern "deepseek/deepseek-chat-v3-0324")))
+  (setq gptel-model (intern "google/gemini-2.5-flash-preview-05-20")))
 
 (require 'gptel-integrations)
 
