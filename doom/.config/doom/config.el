@@ -159,3 +159,6 @@
   (setq elcord-editor-icon "emacs_icon")
   (setq elcord-use-major-mode-as-main-icon t)
   (elcord-mode))
+
+(setq shell-file-name "/usr/bin/fish")
+(setq explicit-shell-file-name "/usr/bin/fish")
