@@ -25,7 +25,7 @@
     "quick_actions": false,
     "selections_menu": true
   },
-
+  "format_on_save": "on",
   // AI
   "agent": {
     "inline_assistant_model": {
@@ -50,23 +50,54 @@
     }
   },
   "edit_predictions": {
-    "mode": "subtle"
+    "mode": "eager"
   },
 
+  // Custom languages config
+  "languages": {
+    "JavaScript": {
+      "formatter": { "language_server": { "name": "biome" } },
+
+      "code_actions_on_format": {
+        "source.fixAll.biome": true,
+
+        "source.organizeImports.biome": true
+      }
+    },
+
+    "TypeScript": {
+      "formatter": { "language_server": { "name": "biome" } },
+
+      "code_actions_on_format": {
+        "source.fixAll.biome": true,
+
+        "source.organizeImports.biome": true
+      }
+    },
+
+    "JSX": {
+      "formatter": { "language_server": { "name": "biome" } },
+
+      "code_actions_on_format": {
+        "source.fixAll.biome": true,
+
+        "source.organizeImports.biome": true
+      }
+    },
+
+    "TSX": {
+      "formatter": { "language_server": { "name": "biome" } },
+
+      "code_actions_on_format": {
+        "source.fixAll.biome": true,
+
+        "source.organizeImports.biome": true
+      }
+    }
+  },
   // Privacy
   "telemetry": {
     "metrics": false,
     "diagnostics": false
-  },
-
-  // Custom languages
-  "formatter": {
-    "language_server": {
-      "name": "biome"
-    }
-  },
-  "code_actions_on_format": {
-    "source.fixAll.biome": true,
-    "source.organizeImports.biome": true
   }
 }
