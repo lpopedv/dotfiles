@@ -1,10 +1,3 @@
-// Zed keymap
-//
-// For information on binding keys, see the Zed
-// documentation: https://zed.dev/docs/key-bindings
-//
-// To see the default key bindings run `zed: open default keymap`
-// from the command palette.
 [
   {
     // Normal Mode
@@ -28,17 +21,24 @@
       "space space": "file_finder::Toggle",
       "space /": "pane::DeploySearch",
 
-      "space f": "editor::Format"
+      "space f": "editor::Format",
+      "ctrl-g ctrl-g": [
+        "workspace::SendKeystrokes",
+        "alt-shift-t lazygit enter shift-escape"
+      ]
     }
   },
   {
-    // Insert Mode
-    "context": "Editor && vim_mode == insert && !VimWaiting && !menu",
+    // When vim mode is off
+    "context": "Editor && !vim_mode",
     "bindings": {
-      "ctrl-h": "editor::MoveLeft",
-      "ctrl-j": "editor::MoveDown",
-      "ctrl-k": "editor::MoveUp",
-      "ctrl-l": "editor::MoveRight"
+      "ctrl-g ctrl-g": [
+        "task::Spawn",
+        {
+          "task_name": "lazygit",
+          "reveal_target": "center"
+        }
+      ]
     }
   }
 ]
