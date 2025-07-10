@@ -26,6 +26,7 @@
     "selections_menu": true
   },
   "format_on_save": "on",
+
   // AI
   "agent": {
     "inline_assistant_model": {
@@ -42,6 +43,17 @@
     "version": "2"
   },
   "context_servers": {
+    "some-mcp-server": {
+      "source": "custom",
+      "enabled": true,
+      "command": {
+        "path": "/home/lpope/.mcp-proxy/mcp-proxy",
+        "args": [
+          "http://localhost:4000/tidewave/mcp"
+        ],
+        "env": {}
+      }
+    },
     "mcp-server-context7": {
       "source": "extension",
       "settings": {
