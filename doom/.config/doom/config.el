@@ -67,16 +67,8 @@
 (unless (display-graphic-p)
   (require 'term)
   (setq xterm-extra-capabilities '(setSelection getSelection))
-  (load-theme 'doom-one t)
 
-  ;; Evil cursor shapes and colors
-  (setq evil-normal-state-cursor    '(box "#81A1C1")
-        evil-insert-state-cursor    '(bar "#A3BE8C")
-        evil-visual-state-cursor    '(hollow "#D08770")
-        evil-replace-state-cursor   '(hbar "#BF616A")
-        evil-operator-state-cursor  '(hollow "#81A1C1")
-        evil-motion-state-cursor    '(box "#81A1C1")
-        evil-emacs-state-cursor     '(bar "#B48EAD"))
+  (load-theme 'doom-spacegrey t)
 
   (when (fboundp 'evil-refresh-cursor)
     (add-hook 'post-command-hook #'evil-refresh-cursor))
