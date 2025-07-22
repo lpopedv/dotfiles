@@ -63,6 +63,10 @@
 (setq shell-file-name "/usr/bin/fish")
 (setq explicit-shell-file-name "/usr/bin/fish")
 
+;; Vterm escape key handler - send ESC to terminal with C-c c q
+(after! vterm
+  (define-key vterm-mode-map (kbd "C-c c q") 'vterm-send-escape))
+
 ;; Terminal configuration
 (unless (display-graphic-p)
   (require 'term)
