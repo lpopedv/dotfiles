@@ -46,6 +46,9 @@ if status is-interactive
         set -gx PATH "$PNPM_HOME" $PATH
     end
 
+    set -gx TERM xterm-256color
+    set -gx COLORTERM truecolor
+
     # Load general variables
     if test -f ~/.env
         source ~/.env
