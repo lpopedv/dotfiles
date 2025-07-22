@@ -1,7 +1,7 @@
 if status is-interactive
     function fish_greeting
-        echo "Terminal ready." | cowsay -f dragon | lolcat
-        date "+%A, %d de %B de %Y" | lolcat
+#        echo "Terminal ready." | cowsay -f dragon | lolcat
+ #       date "+%A, %d de %B de %Y" | lolcat
     end
 
     # Aliases
