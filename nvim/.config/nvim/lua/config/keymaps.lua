@@ -32,3 +32,10 @@ vim.keymap.set("n", "<leader>fY", ":let @+ = expand('%:.')<CR>", {
 
 -- Open MCPHub
 vim.keymap.set("n", "<leader>h", ":MCPHub<CR>")
+
+-- Sort selected lines alphabetically
+vim.keymap.set("v", "<leader>s", ":sort<CR>", {
+  noremap = true,
+  silent = true,
+  desc = "Sort selected lines alphabetically",
+})
