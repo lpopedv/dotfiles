@@ -53,4 +53,9 @@ if status is-interactive
     if test -f ~/.env
         source ~/.env
     end
+
+    # Auto-start Zellij
+    if not set -q ZELLIJ
+        zellij
+    end
 end
