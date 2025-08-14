@@ -57,8 +57,9 @@
   (set-frame-parameter (selected-frame) 'alpha '(95 . 95))
   (add-to-list 'default-frame-alist '(alpha . (95 . 95))))
 
-(after! lsp-mode
-  (setq lsp-elixir-ls-server-file (expand-file-name "~/.lsp/elixir-ls/release/language_server.sh")))
+(use-package! lsp-mode
+  :config
+  (setq lsp-clients-elixir-server-executable '("~/.elixir-ls/release/language_server.sh")))
 
 (setq shell-file-name "/usr/bin/fish")
 (setq explicit-shell-file-name "/usr/bin/fish")
