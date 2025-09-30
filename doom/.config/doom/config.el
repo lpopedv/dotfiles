@@ -6,7 +6,7 @@
 (setq doom-font (font-spec :family "JetBrainsMono Nerd Font" :size 17)
       doom-variable-pitch-font (font-spec :family "JetBrainsMono Nerd Font" :size 16))
 
-(setq doom-theme 'doom-ayu-mirage)
+(setq doom-theme 'doom-gruvbox)
 (setq display-line-numbers-type 'relative)
 (setq org-directory "~/org/")
 
