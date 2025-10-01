@@ -3,8 +3,8 @@
 (setq user-full-name "Lucas Pope"
       user-mail-address "lpopedv@proton.me")
 
-(setq doom-font (font-spec :family "JetBrainsMono Nerd Font" :size 17)
-      doom-variable-pitch-font (font-spec :family "JetBrainsMono Nerd Font" :size 16))
+(setq doom-font (font-spec :family "CaskaydiaMono Nerd Font" :size 17)
+      doom-variable-pitch-font (font-spec :family "CaskaydiaMono Nerd Font" :size 16))
 
 (setq doom-theme 'doom-monokai-pro)
 (setq display-line-numbers-type 'relative)
@@ -59,7 +59,7 @@
 
 (use-package! lsp-mode
   :config
-  (setq lsp-clients-elixir-server-executable '("~/.elixir-ls/release/language_server.sh")))
+  (setq lsp-clients-elixir-server-executable '("~/.elixir-ls/language_server.sh")))
 
 (setq shell-file-name "/usr/bin/fish")
 (setq explicit-shell-file-name "/usr/bin/fish")
