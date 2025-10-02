@@ -1,41 +1,68 @@
--- Keymaps are automatically loaded on the VeryLazy event
--- Default keymaps that are always set: https://github.com/LazyVim/LazyVim/blob/main/lua/lazyvim/config/keymaps.lua
--- Add any additional keymaps here
+-- Normal mode mappings
+vim.keymap.set("n", "<leader>c", ":nohlsearch<CR>", { desc = "Clear search highlights" })
 
--- Move selected lines
-vim.keymap.set("v", "J", ":m '>+1<CR>gv=gv")
-vim.keymap.set("v", "K", ":m '<-2<CR>gv=gv")
+-- Center screen when jumping
+vim.keymap.set("n", "n", "nzzzv", { desc = "Next search result (centered)" })
+vim.keymap.set("n", "N", "Nzzzv", { desc = "Previous search result (centered)" })
+vim.keymap.set("n", "<C-d>", "<C-d>zz", { desc = "Half page down (centered)" })
+vim.keymap.set("n", "<C-u>", "<C-u>zz", { desc = "Half page up (centered)" })
 
--- Disable C-k of LSP
-local keys = require("lazyvim.plugins.lsp.keymaps").get()
-keys[#keys + 1] = { "<C-k>", false, mode = { "i" } }
+-- Delete without yanking
+vim.keymap.set({ "n", "v" }, "<leader>d", '"_d', { desc = "Delete without yanking" })
 
--- Move in lines in insert mode
-vim.keymap.set("i", "<C-h>", "<Left>", { silent = true, desc = "Move left" })
-vim.keymap.set("i", "<C-j>", "<Down>", { silent = true, desc = "Move down" })
-vim.keymap.set("i", "<C-k>", "<Up>", { silent = true, desc = "Move up" })
-vim.keymap.set("i", "<C-l>", "<Right>", { silent = true, desc = "Move right" })
+-- Buffer navigation
+vim.keymap.set("n", "<leader>bn", ":bnext<CR>", { desc = "Next buffer" })
+vim.keymap.set("n", "<leader>bp", ":bprevious<CR>", { desc = "Previous buffer" })
 
---  Copy full file path
-vim.keymap.set("n", "<leader>fy", ":let @+ = expand('%:p')<CR>", {
-  noremap = true,
-  silent = true,
-  desc = "Copy full file path to clipboard",
-})
+-- Better window navigation
+vim.keymap.set("n", "<leader>wh", "<C-w>h", { desc = "Move to left window" })
+vim.keymap.set("n", "<leader>wj", "<C-w>j", { desc = "Move to bottom window" })
+vim.keymap.set("n", "<leader>wk", "<C-w>k", { desc = "Move to top window" })
+vim.keymap.set("n", "<leader>wl", "<C-w>l", { desc = "Move to right window" })
 
--- Copy Relative file path
-vim.keymap.set("n", "<leader>fY", ":let @+ = expand('%:.')<CR>", {
-  noremap = true,
-  silent = true,
-  desc = "Copy relative file path to clipboard",
-})
+-- Close buffer
+vim.keymap.set("n", "<leader>q", ":q<CR>", { desc = "Quit" })
 
--- Open MCPHub
-vim.keymap.set("n", "<leader>h", ":MCPHub<CR>")
+-- Save buffer
+vim.keymap.set("n", "<leader>bs", ":w<CR>", { desc = "Write changes" })
 
--- Sort selected lines alphabetically
-vim.keymap.set("v", "<leader>s", ":sort<CR>", {
-  noremap = true,
-  silent = true,
-  desc = "Sort selected lines alphabetically",
-})
+-- Open terminal in full buffer
+vim.keymap.set("n", "<leader>oT", ":term<CR>", { desc = "Open full terminal" })
+
+-- Splitting & Resizing
+vim.keymap.set("n", "<leader>wv", ":vsplit<CR>", { desc = "Split window vertically" })
+vim.keymap.set("n", "<leader>ws", ":split<CR>", { desc = "Split window horizontally" })
+vim.keymap.set("n", "<C-Up>", ":resize +2<CR>", { desc = "Increase window height" })
+vim.keymap.set("n", "<C-Down>", ":resize -2<CR>", { desc = "Decrease window height" })
+vim.keymap.set("n", "<C-Left>", ":vertical resize -2<CR>", { desc = "Decrease window width" })
+vim.keymap.set("n", "<C-Right>", ":vertical resize +2<CR>", { desc = "Increase window width" })
+
+-- Move lines up/down
+vim.keymap.set("n", "<A-j>", ":m .+1<CR>==", { desc = "Move line down" })
+vim.keymap.set("n", "<A-k>", ":m .-2<CR>==", { desc = "Move line up" })
+vim.keymap.set("v", "<A-j>", ":m '>+1<CR>gv=gv", { desc = "Move selection down" })
+vim.keymap.set("v", "<A-k>", ":m '<-2<CR>gv=gv", { desc = "Move selection up" })
+
+-- Better indenting in visual mode
+vim.keymap.set("v", "<", "<gv", { desc = "Indent left and reselect" })
+vim.keymap.set("v", ">", ">gv", { desc = "Indent right and reselect" })
+
+-- Quick file navigation
+vim.keymap.set("n", "<leader>e", ":Explore<CR>", { desc = "Open file explorer" })
+vim.keymap.set("n", "<leader>ff", ":find ", { desc = "Find file" })
+
+-- Better J behavior
+vim.keymap.set("n", "J", "mzJ`z", { desc = "Join lines and keep cursor position" })
+
+-- Quick config editing
+vim.keymap.set("n", "<leader>fc", ":e ~/.config/nvim/init.lua<CR>", { desc = "Edit config" })
+
+-- Source file config
+vim.keymap.set("n", "<leader>sf", ":so<CR>", { desc = "Source config" })
+
+-- Copy Full File-Path
+vim.keymap.set("n", "<leader>fy", function()
+  local path = vim.fn.expand("%:p")
+  vim.fn.setreg("+", path)
+  print("file:", path)
+end, { desc = "Copy file path" })
