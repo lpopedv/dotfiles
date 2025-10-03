@@ -6,14 +6,14 @@
 vim.g.mapleader = " "
 vim.g.maplocalleader = " "
 
+-- Load lazy.nvim plugin manager
+require("config.lazy")
+
 -- Theme & transparency
-vim.cmd.colorscheme("unokai")
+vim.cmd.colorscheme("ayu-mirage")
 vim.api.nvim_set_hl(0, "Normal", { bg = "none" })
 vim.api.nvim_set_hl(0, "NormalNC", { bg = "none" })
 vim.api.nvim_set_hl(0, "EndOfBuffer", { bg = "none" })
-
--- Load lazy.nvim plugin manager
-require("config.lazy")
 
 -- Load configuration modules
 require("config.settings")    -- Basic vim settings
