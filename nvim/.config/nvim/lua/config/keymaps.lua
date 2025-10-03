@@ -24,7 +24,10 @@ vim.keymap.set("n", "<leader>wl", "<C-w>l", { desc = "Move to right window" })
 vim.keymap.set("n", "<leader>q", ":q<CR>", { desc = "Quit" })
 
 -- Save buffer
-vim.keymap.set("n", "<leader>bs", ":w<CR>", { desc = "Write changes" })
+vim.keymap.set("n", "<C-s>", ":w<CR>", { desc = "Write changes" })
+
+-- Reload buffer from disk
+vim.keymap.set("n", "<leader>br", ":edit<CR>", { desc = "Reload buffer from disk" })
 
 -- Open terminal in full buffer
 vim.keymap.set("n", "<leader>oT", ":term<CR>", { desc = "Open full terminal" })
@@ -47,8 +50,7 @@ vim.keymap.set("v", "<A-k>", ":m '<-2<CR>gv=gv", { desc = "Move selection up" })
 vim.keymap.set("v", "<", "<gv", { desc = "Indent left and reselect" })
 vim.keymap.set("v", ">", ">gv", { desc = "Indent right and reselect" })
 
--- Quick file navigation
-vim.keymap.set("n", "<leader>e", ":Explore<CR>", { desc = "Open file explorer" })
+-- Quick file navigation (oil.nvim overrides <leader>e)
 vim.keymap.set("n", "<leader>ff", ":find ", { desc = "Find file" })
 
 -- Better J behavior
