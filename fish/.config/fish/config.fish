@@ -7,6 +7,7 @@ if status is-interactive
     # Aliases
     alias v nvim
     alias ls "eza --icons"
+    alias claude="$HOME/.claude/local/claude"
 
     # ASDF configuration code
     if test -z $ASDF_DATA_DIR
@@ -35,6 +36,9 @@ if status is-interactive
     # Go Binaries
     set -gx PATH $PATH $HOME/go/bin
 
+    # General binaries
+   set -gx PATH $HOME/.local/bin $PATH
+
     # Direnv configuration
     if command -v direnv >/dev/null
         direnv hook fish | source
@@ -62,3 +66,4 @@ set --export PATH $BUN_INSTALL/bin $PATH
 set -x RADV_PERFTEST aco
 set -x AMD_VULKAN_ICD RADV
 set -x VK_ICD_FILENAMES /usr/share/vulkan/icd.d/radeon_icd.x86_64.json
+

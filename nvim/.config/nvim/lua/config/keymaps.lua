@@ -1,44 +1,60 @@
--- Normal mode mappings
+-- ============================================================================
+-- GENERAL KEYMAPS
+-- ============================================================================
+
+-- Clear search highlights
 vim.keymap.set("n", "<leader>c", ":nohlsearch<CR>", { desc = "Clear search highlights" })
 
 -- Center screen when jumping
 vim.keymap.set("n", "n", "nzzzv", { desc = "Next search result (centered)" })
 vim.keymap.set("n", "N", "Nzzzv", { desc = "Previous search result (centered)" })
-vim.keymap.set("n", "<C-d>", "<C-d>zz", { desc = "Half page down (centered)" })
-vim.keymap.set("n", "<C-u>", "<C-u>zz", { desc = "Half page up (centered)" })
+vim.keymap.set("n", "<C-d>", "<C-d>zz", { desc = "Scroll half page down (centered)" })
+vim.keymap.set("n", "<C-u>", "<C-u>zz", { desc = "Scroll half page up (centered)" })
 
--- Delete without yanking
-vim.keymap.set({ "n", "v" }, "<leader>d", '"_d', { desc = "Delete without yanking" })
+-- Delete without yanking to clipboard
+vim.keymap.set({ "n", "v" }, "<leader>d", '"_d', { desc = "Delete to black hole register" })
+
+-- Join lines keeping cursor position
+vim.keymap.set("n", "J", "mzJ`z", { desc = "Join lines (preserve cursor)" })
+
+-- ============================================================================
+-- BUFFER MANAGEMENT
+-- ============================================================================
 
 -- Buffer navigation
-vim.keymap.set("n", "<leader>bn", ":bnext<CR>", { desc = "Next buffer" })
-vim.keymap.set("n", "<leader>bp", ":bprevious<CR>", { desc = "Previous buffer" })
+vim.keymap.set("n", "<leader>bn", ":bnext<CR>", { desc = "Buffer: next" })
+vim.keymap.set("n", "<leader>bp", ":bprevious<CR>", { desc = "Buffer: previous" })
 
--- Better window navigation
-vim.keymap.set("n", "<leader>wh", "<C-w>h", { desc = "Move to left window" })
-vim.keymap.set("n", "<leader>wj", "<C-w>j", { desc = "Move to bottom window" })
-vim.keymap.set("n", "<leader>wk", "<C-w>k", { desc = "Move to top window" })
-vim.keymap.set("n", "<leader>wl", "<C-w>l", { desc = "Move to right window" })
+-- Save and reload buffer
+vim.keymap.set({ "n", "i" }, "<C-s>", "<Esc>:w<CR>", { desc = "Save buffer" })
+vim.keymap.set("n", "<leader>br", ":edit<CR>", { desc = "Buffer: reload from disk" })
 
 -- Close buffer
-vim.keymap.set("n", "<leader>q", ":q<CR>", { desc = "Quit" })
+vim.keymap.set("n", "<leader>q", ":q<CR>", { desc = "Quit window" })
 
--- Save buffer
-vim.keymap.set("n", "<C-s>", ":w<CR>", { desc = "Write changes" })
+-- ============================================================================
+-- WINDOW MANAGEMENT
+-- ============================================================================
 
--- Reload buffer from disk
-vim.keymap.set("n", "<leader>br", ":edit<CR>", { desc = "Reload buffer from disk" })
+-- Window navigation
+vim.keymap.set("n", "<leader>wh", "<C-w>h", { desc = "Window: focus left" })
+vim.keymap.set("n", "<leader>wj", "<C-w>j", { desc = "Window: focus down" })
+vim.keymap.set("n", "<leader>wk", "<C-w>k", { desc = "Window: focus up" })
+vim.keymap.set("n", "<leader>wl", "<C-w>l", { desc = "Window: focus right" })
 
--- Open terminal in full buffer
-vim.keymap.set("n", "<leader>oT", ":term<CR>", { desc = "Open full terminal" })
+-- Window splitting
+vim.keymap.set("n", "<leader>wv", ":vsplit<CR>", { desc = "Window: split vertical" })
+vim.keymap.set("n", "<leader>ws", ":split<CR>", { desc = "Window: split horizontal" })
 
--- Splitting & Resizing
-vim.keymap.set("n", "<leader>wv", ":vsplit<CR>", { desc = "Split window vertically" })
-vim.keymap.set("n", "<leader>ws", ":split<CR>", { desc = "Split window horizontally" })
-vim.keymap.set("n", "<C-Up>", ":resize +2<CR>", { desc = "Increase window height" })
-vim.keymap.set("n", "<C-Down>", ":resize -2<CR>", { desc = "Decrease window height" })
-vim.keymap.set("n", "<C-Left>", ":vertical resize -2<CR>", { desc = "Decrease window width" })
-vim.keymap.set("n", "<C-Right>", ":vertical resize +2<CR>", { desc = "Increase window width" })
+-- Window resizing
+vim.keymap.set("n", "<C-Up>", ":resize +2<CR>", { desc = "Window: increase height" })
+vim.keymap.set("n", "<C-Down>", ":resize -2<CR>", { desc = "Window: decrease height" })
+vim.keymap.set("n", "<C-Left>", ":vertical resize -2<CR>", { desc = "Window: decrease width" })
+vim.keymap.set("n", "<C-Right>", ":vertical resize +2<CR>", { desc = "Window: increase width" })
+
+-- ============================================================================
+-- EDITING
+-- ============================================================================
 
 -- Move lines up/down
 vim.keymap.set("n", "<A-j>", ":m .+1<CR>==", { desc = "Move line down" })
@@ -47,24 +63,36 @@ vim.keymap.set("v", "<A-j>", ":m '>+1<CR>gv=gv", { desc = "Move selection down" 
 vim.keymap.set("v", "<A-k>", ":m '<-2<CR>gv=gv", { desc = "Move selection up" })
 
 -- Better indenting in visual mode
-vim.keymap.set("v", "<", "<gv", { desc = "Indent left and reselect" })
-vim.keymap.set("v", ">", ">gv", { desc = "Indent right and reselect" })
+vim.keymap.set("v", "<", "<gv", { desc = "Indent left (keep selection)" })
+vim.keymap.set("v", ">", ">gv", { desc = "Indent right (keep selection)" })
+
+-- ============================================================================
+-- FILE NAVIGATION
+-- ============================================================================
 
 -- Quick file navigation (oil.nvim overrides <leader>e)
-vim.keymap.set("n", "<leader>ff", ":find ", { desc = "Find file" })
+vim.keymap.set("n", "<leader>ff", ":find ", { desc = "Find file by name" })
 
--- Better J behavior
-vim.keymap.set("n", "J", "mzJ`z", { desc = "Join lines and keep cursor position" })
-
--- Quick config editing
-vim.keymap.set("n", "<leader>fc", ":e ~/.config/nvim/init.lua<CR>", { desc = "Edit config" })
-
--- Source file config
-vim.keymap.set("n", "<leader>sf", ":so<CR>", { desc = "Source config" })
-
--- Copy Full File-Path
+-- Copy file path to clipboard
 vim.keymap.set("n", "<leader>fy", function()
   local path = vim.fn.expand("%:p")
   vim.fn.setreg("+", path)
-  print("file:", path)
-end, { desc = "Copy file path" })
+  print("Copied: " .. path)
+end, { desc = "File: copy full path" })
+
+-- ============================================================================
+-- CONFIG MANAGEMENT
+-- ============================================================================
+
+-- Quick config editing
+vim.keymap.set("n", "<leader>fc", ":e ~/.config/nvim/init.lua<CR>", { desc = "File: edit nvim config" })
+
+-- Source current file
+vim.keymap.set("n", "<leader>sc", ":so<CR>", { desc = "Source current file" })
+
+-- ============================================================================
+-- TERMINAL
+-- ============================================================================
+
+-- Open terminal in full buffer
+vim.keymap.set("n", "<leader>oT", ":term<CR>", { desc = "Open terminal buffer" })
