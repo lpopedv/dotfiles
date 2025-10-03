@@ -9,11 +9,8 @@ vim.g.maplocalleader = " "
 -- Load lazy.nvim plugin manager
 require("config.lazy")
 
--- Theme & transparency
-vim.cmd.colorscheme("ayu-mirage")
-vim.api.nvim_set_hl(0, "Normal", { bg = "none" })
-vim.api.nvim_set_hl(0, "NormalNC", { bg = "none" })
-vim.api.nvim_set_hl(0, "EndOfBuffer", { bg = "none" })
+-- Theme
+vim.cmd.colorscheme("gruvbox")
 
 -- Load configuration modules
 require("config.settings")    -- Basic vim settings

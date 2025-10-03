@@ -1,11 +1,10 @@
 return {
-  "Shatur/neovim-ayu",
+  "ellisonleao/gruvbox.nvim",
   priority = 1000,
   config = function()
-    require("ayu").setup({
-      mirage = true,
-      terminal = true,
-      overrides = {},
+    require("gruvbox").setup({
+      contrast = "hard",
+      transparent_mode = true,
     })
   end,
 }

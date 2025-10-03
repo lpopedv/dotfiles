@@ -29,8 +29,9 @@ vim.keymap.set("n", "<leader>bp", ":bprevious<CR>", { desc = "Buffer: previous" 
 vim.keymap.set({ "n", "i" }, "<C-s>", "<Esc>:w<CR>", { desc = "Save buffer" })
 vim.keymap.set("n", "<leader>br", ":edit<CR>", { desc = "Buffer: reload from disk" })
 
--- Close buffer
-vim.keymap.set("n", "<leader>q", ":q<CR>", { desc = "Quit window" })
+-- Close buffer and window
+vim.keymap.set("n", "<leader>bd", ":bd<CR>", { desc = "Close buffer" })
+vim.keymap.set("n", "<space>q", ":q<CR>", { desc = "Quit window" })
 
 -- ============================================================================
 -- WINDOW MANAGEMENT
@@ -55,6 +56,12 @@ vim.keymap.set("n", "<C-Right>", ":vertical resize +2<CR>", { desc = "Window: in
 -- ============================================================================
 -- EDITING
 -- ============================================================================
+
+-- Insert mode navigation
+vim.keymap.set("i", "<C-h>", "<Left>", { desc = "Move cursor left" })
+vim.keymap.set("i", "<C-j>", "<Down>", { desc = "Move cursor down" })
+vim.keymap.set("i", "<C-k>", "<Up>", { desc = "Move cursor up" })
+vim.keymap.set("i", "<C-l>", "<Right>", { desc = "Move cursor right" })
 
 -- Move lines up/down
 vim.keymap.set("n", "<A-j>", ":m .+1<CR>==", { desc = "Move line down" })

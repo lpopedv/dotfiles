@@ -81,6 +81,9 @@ vim.opt.maxmempattern = 20000
 vim.opt.showtabline = 1  -- Always show tabline (0=never, 1=when multiple tabs, 2=always)
 vim.opt.tabline = ''     -- Use default tabline (empty string uses built-in)
 
+-- Global statusline (appears only once at the bottom)
+vim.opt.laststatus = 3   -- Global statusline (3=global, 2=always per window, 0=never)
+
 -- Create undo directory if it doesn't exist
 local undodir = vim.fn.expand("~/.vim/undodir")
 if vim.fn.isdirectory(undodir) == 0 then

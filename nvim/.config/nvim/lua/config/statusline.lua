@@ -89,39 +89,25 @@ _G.file_type = file_type
 _G.file_size = file_size
 _G.lsp_status = lsp_status
 
+-- Statusline colors with transparency
 vim.cmd([[
-  highlight StatusLineBold gui=bold cterm=bold
+  highlight StatusLine guibg=NONE ctermbg=NONE
+  highlight StatusLineNC guibg=NONE ctermbg=NONE
+  highlight StatusLineBold gui=bold cterm=bold guibg=NONE ctermbg=NONE
 ]])
 
--- Function to change statusline based on window focus
-local function setup_dynamic_statusline()
-  vim.api.nvim_create_autocmd({"WinEnter", "BufEnter"}, {
-    callback = function()
-    vim.opt_local.statusline = table.concat {
-      "  ",
-      "%#StatusLineBold#",
-      "%{v:lua.mode_icon()}",
-      "%#StatusLine#",
-      " │ %f %h%m%r",
-      "%{v:lua.git_branch()}",
-      " │ ",
-      "%{v:lua.file_type()}",
-      " | ",
-      "%{v:lua.file_size()}",
-      " | ",
-      "%{v:lua.lsp_status()}",
-      "%=",                     -- Right-align everything after this
-      "%l:%c  %P ",             -- Line:Column and Percentage
-    }
-    end
-  })
-  vim.api.nvim_set_hl(0, "StatusLineBold", { bold = true })
-
-  vim.api.nvim_create_autocmd({"WinLeave", "BufLeave"}, {
-    callback = function()
-      vim.opt_local.statusline = "  %f %h%m%r │ %{v:lua.file_type()} | %=  %l:%c   %P "
-    end
-  })
-end
-
-setup_dynamic_statusline()
+-- Set global statusline (clean and transparent)
+vim.opt.statusline = table.concat {
+  "  ",
+  "%#StatusLineBold#",
+  "%{v:lua.mode_icon()}",
+  "%#StatusLine#",
+  "  %f%h%m%r",
+  "%{v:lua.git_branch()}",
+  "%{v:lua.lsp_status()}",
+  "%=",
+  "%{v:lua.file_type()}",
+  "  %{v:lua.file_size()}",
+  "  %{strftime('%H:%M')}",
+  "  %l:%c  %P  ",
+}
