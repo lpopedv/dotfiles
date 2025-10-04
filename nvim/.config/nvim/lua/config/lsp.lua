@@ -138,8 +138,9 @@ vim.api.nvim_create_autocmd('LspAttach', {
     -- Diagnostics
     vim.keymap.set('n', '<leader>nd', vim.diagnostic.goto_next, opts)
     vim.keymap.set('n', '<leader>pd', vim.diagnostic.goto_prev, opts)
-    vim.keymap.set('n', '<leader>d', vim.diagnostic.open_float, opts)
-    vim.keymap.set('n', '<leader>q', vim.diagnostic.setloclist, opts)
+    vim.keymap.set('n', '<leader>d', function()
+      vim.diagnostic.open_float({ focus = true, scope = 'cursor' })
+    end, opts)
   end,
 })
 
