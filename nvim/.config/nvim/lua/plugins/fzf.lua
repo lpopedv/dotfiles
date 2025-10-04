@@ -4,7 +4,7 @@ return {
   keys = {
     { "<leader><leader>", "<cmd>FzfLua files<cr>", desc = "Find Files" },
     { "<leader>fg", "<cmd>FzfLua live_grep<cr>", desc = "Live Grep" },
-    { "<leader>fb", "<cmd>FzfLua buffers<cr>", desc = "Buffers" },
+    { "<leader>bb", "<cmd>FzfLua buffers<cr>", desc = "Buffers" },
     { "<leader>sb", "<cmd>FzfLua blines<cr>", desc = "Search in Buffer" },
     { "<leader>fh", "<cmd>FzfLua help_tags<cr>", desc = "Help Tags" },
     { "<leader>fr", "<cmd>FzfLua oldfiles<cr>", desc = "Recent Files" },
