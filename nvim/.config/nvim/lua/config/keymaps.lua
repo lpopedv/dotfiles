@@ -34,6 +34,18 @@ vim.keymap.set("n", "<leader>bd", ":bd<CR>", { desc = "Close buffer" })
 vim.keymap.set("n", "<space>q", ":q<CR>", { desc = "Quit window" })
 
 -- ============================================================================
+-- TAB MANAGEMENT
+-- ============================================================================
+
+-- Tab navigation
+vim.keymap.set("n", "<leader><tab>n", ":tabnext<CR>", { desc = "Tab: next" })
+vim.keymap.set("n", "<leader><tab>p", ":tabprevious<CR>", { desc = "Tab: previous" })
+vim.keymap.set("n", "<leader><tab><tab>", ":tabnew<CR>", { desc = "Tab: new" })
+vim.keymap.set("n", "<leader><tab>d", ":tabclose<CR>", { desc = "Tab: close" })
+vim.keymap.set("n", "<leader><tab>o", ":tabonly<CR>", { desc = "Tab: close others" })
+vim.keymap.set("n", "<leader><tab>l", ":tabs<CR>", { desc = "Tab: list all" })
+
+-- ============================================================================
 -- WINDOW MANAGEMENT
 -- ============================================================================
 

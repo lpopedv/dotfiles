@@ -83,11 +83,32 @@ local function mode_icon()
   return modes[mode] or "  " .. mode:upper()
 end
 
+-- Relative path from cwd
+local function relative_path()
+  local full_path = vim.fn.expand('%:p')
+  if full_path == '' then
+    return '[No Name]'
+  end
+
+  local cwd = vim.fn.getcwd()
+  -- Add trailing slash to cwd if not present
+  if cwd:sub(-1) ~= '/' then
+    cwd = cwd .. '/'
+  end
+
+  if full_path:find(cwd, 1, true) == 1 then
+    return full_path:sub(#cwd + 1)
+  end
+
+  return full_path
+end
+
 _G.mode_icon = mode_icon
 _G.git_branch = git_branch
 _G.file_type = file_type
 _G.file_size = file_size
 _G.lsp_status = lsp_status
+_G.relative_path = relative_path
 
 -- Statusline colors with transparency
 vim.cmd([[
@@ -102,12 +123,13 @@ vim.opt.statusline = table.concat {
   "%#StatusLineBold#",
   "%{v:lua.mode_icon()}",
   "%#StatusLine#",
-  "  %f%h%m%r",
-  "%{v:lua.git_branch()}",
+  "  %{v:lua.relative_path()}%h%m%r",
   "%{v:lua.lsp_status()}",
   "%=",
   "%{v:lua.file_type()}",
   "  %{v:lua.file_size()}",
   "  %{strftime('%H:%M')}",
-  "  %l:%c  %P  ",
+  "  %l:%c  %P",
+  "%{v:lua.git_branch()}",
+  "  ",
 }

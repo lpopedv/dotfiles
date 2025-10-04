@@ -56,7 +56,27 @@ local function FloatingLazygit()
   end
 
   if not has_terminal then
+    -- Create a temporary script that uses nvim RPC to open files
+    local tmp_script = vim.fn.tempname()
+    local servername = vim.v.servername
+
+    local script_content = string.format([[#!/bin/sh
+nvim --server "%s" --remote "$@"
+]], servername)
+
+    vim.fn.writefile(vim.split(script_content, '\n'), tmp_script)
+    vim.fn.setfperm(tmp_script, 'rwxr-xr-x')
+
+    -- Get current working directory for lazygit
+    local cwd = vim.fn.getcwd()
+
     vim.fn.termopen('lazygit', {
+      cwd = cwd,
+      env = {
+        EDITOR = tmp_script,
+        GIT_EDITOR = tmp_script,
+        VISUAL = tmp_script,
+      },
       on_exit = function()
         -- Close window when lazygit exits
         if lazygit_state.is_open and vim.api.nvim_win_is_valid(lazygit_state.win) then
@@ -75,6 +95,25 @@ local function FloatingLazygit()
   lazygit_state.is_open = true
   vim.cmd("startinsert")
 end
+
+-- Close lazygit float when a file is opened via --remote
+vim.api.nvim_create_autocmd('BufEnter', {
+  callback = function(ev)
+    -- Only close if lazygit is open, it's not a terminal, and it's not the lazygit buffer itself
+    if lazygit_state.is_open
+       and vim.bo.buftype ~= 'terminal'
+       and ev.buf ~= lazygit_state.buf
+       and vim.fn.buflisted(ev.buf) == 1 then
+      vim.schedule(function()
+        if vim.api.nvim_win_is_valid(lazygit_state.win) then
+          vim.api.nvim_win_close(lazygit_state.win, false)
+          lazygit_state.is_open = false
+        end
+      end)
+    end
+  end,
+  desc = 'Close lazygit float when opening file'
+})
 
 -- Key mapping
 vim.keymap.set("n", "<leader>gg", FloatingLazygit, { noremap = true, silent = true, desc = "Toggle floating lazygit" })
