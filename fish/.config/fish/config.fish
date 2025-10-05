@@ -66,4 +66,3 @@ set --export PATH $BUN_INSTALL/bin $PATH
 set -x RADV_PERFTEST aco
 set -x AMD_VULKAN_ICD RADV
 set -x VK_ICD_FILENAMES /usr/share/vulkan/icd.d/radeon_icd.x86_64.json
-
