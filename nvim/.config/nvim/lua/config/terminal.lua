@@ -96,3 +96,13 @@ vim.keymap.set("t", "<Esc>", function()
     vim.cmd("stopinsert")
   end
 end, { noremap = true, silent = true, desc = "Exit terminal mode or close floating terminal" })
+
+-- Send Enter in terminal when in normal mode
+vim.keymap.set("n", "<CR>", function()
+  if vim.bo.buftype == "terminal" then
+    vim.cmd("startinsert")
+    vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes("<CR>", true, false, true), "n", false)
+  else
+    vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes("<CR>", true, false, true), "n", false)
+  end
+end, { noremap = true, silent = true, desc = "Send Enter in terminal from normal mode" })
