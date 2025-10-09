@@ -6,7 +6,7 @@
 (setq doom-font (font-spec :family "CaskaydiaMono Nerd Font" :size 17)
       doom-variable-pitch-font (font-spec :family "CaskaydiaMono Nerd Font" :size 16))
 
-(setq doom-theme 'doom-monokai-pro)
+(setq doom-theme 'doom-ayu-dark)
 (setq display-line-numbers-type 'relative)
 (setq org-directory "~/org/")
 
@@ -52,7 +52,6 @@
 (after! lsp-mode
   (setq lsp-completion-provider :capf))
 
-;; GUI only
 (when (display-graphic-p)
   (set-frame-parameter (selected-frame) 'alpha '(95 . 95))
   (add-to-list 'default-frame-alist '(alpha . (95 . 95))))
@@ -67,18 +66,3 @@
 ;; Vterm escape key handler - send ESC to terminal with C-c c q
 (after! vterm
   (define-key vterm-mode-map (kbd "C-c c q") 'vterm-send-escape))
-
-;; Terminal configuration
-(unless (display-graphic-p)
-  (require 'term)
-  (setq xterm-extra-capabilities '(setSelection getSelection))
-
-  (load-theme 'doom-spacegrey t)
-
-  (when (fboundp 'evil-refresh-cursor)
-    (add-hook 'post-command-hook #'evil-refresh-cursor))
-
-  ;; Clipboard support
-  (when (getenv "DISPLAY")
-    (setq select-enable-clipboard t
-          select-enable-primary t)))
