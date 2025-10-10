@@ -1,115 +1,59 @@
 {
-  // Editor General UI settings
-  "icon_theme": "Zed (Default)",
+  // General options
+  "agent": {
+    "always_allow_tool_actions": true
+  },
   "vim_mode": false,
+  "inlay_hints": {
+    "enabled": false
+  },
+
+  // Pricvacy
+  "telemetry": {
+    "diagnostics": false,
+    "metrics": false
+  },
+
+  // Design
+  "ui_font_size": 16,
+  "ui_font_family": "CaskaydiaMono Nerd Font Mono",
+  "buffer_font_family": "CaskaydiaMono Nerd Font Mono",
+  "buffer_font_size": 15,
   "theme": {
     "mode": "system",
-    "light": "One Light",
-    "dark": "Github Dark Dimmed"
+    "light": "Ayu Light",
+    "dark": "Min Dark (Solid)"
   },
-  "ui_font_size": 16,
-  "buffer_font_size": 16,
-  "ui_font_family": "JetBrainsMono Nerd Font",
-  "buffer_font_family": "JetBrainsMono Nerd Font",
-  "hide_mouse": "on_typing_and_movement",
-  "cursor_blink": false,
-  "relative_line_numbers": true,
-  "scrollbar": {
-    "show": "auto"
-  },
-  "tab_bar": {
-    "show": true
-  },
-  "toolbar": {
-    "breadcrumbs": true,
-    "quick_actions": false,
-    "selections_menu": true
-  },
-  "format_on_save": "on",
 
-  // AI
-  "agent": {
-    "inline_assistant_model": {
-      "provider": "openrouter",
-      "model": "google/gemini-2.5-flash-lite-preview-06-17"
-    },
-    "default_model": {
-      "provider": "zed.dev",
-      "model": "claude-sonnet-4"
-    },
-    "default_profile": "write",
-    "model_parameters": [],
-    "always_allow_tool_actions": true,
-    "version": "2"
-  },
-  "context_servers": {
-    "some-mcp-server": {
-      "source": "custom",
-      "enabled": true,
-      "command": {
-        "path": "/home/lpope/.mcp-proxy/mcp-proxy",
-        "args": [
-          "http://localhost:4000/tidewave/mcp"
-        ],
-        "env": {}
-      }
-    },
-    "mcp-server-context7": {
-      "source": "extension",
+  // Biome.js Settings
+  "lsp": {
+    "biome": {
       "settings": {
-        "default_minimum_tokens": "10000"
+        "require_config_file": true
       }
     }
   },
-  "edit_predictions": {
-    "mode": "eager"
-  },
-
-  // Custom languages config
   "languages": {
     "JavaScript": {
       "formatter": { "language_server": { "name": "biome" } },
-
       "code_actions_on_format": {
         "source.fixAll.biome": true,
-
         "source.organizeImports.biome": true
       }
     },
-
     "TypeScript": {
       "formatter": { "language_server": { "name": "biome" } },
-
       "code_actions_on_format": {
         "source.fixAll.biome": true,
-
         "source.organizeImports.biome": true
       }
     },
-
-    "JSX": {
-      "formatter": { "language_server": { "name": "biome" } },
-
-      "code_actions_on_format": {
-        "source.fixAll.biome": true,
-
-        "source.organizeImports.biome": true
-      }
-    },
-
     "TSX": {
       "formatter": { "language_server": { "name": "biome" } },
-
       "code_actions_on_format": {
         "source.fixAll.biome": true,
-
         "source.organizeImports.biome": true
       }
     }
-  },
-  // Privacy
-  "telemetry": {
-    "metrics": false,
-    "diagnostics": false
   }
 }
