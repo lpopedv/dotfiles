@@ -66,3 +66,27 @@
 ;; Vterm escape key handler - send ESC to terminal with C-c c q
 (after! vterm
   (define-key vterm-mode-map (kbd "C-c c q") 'vterm-send-escape))
+
+;; Biome.js formatter configuration via Apheleia
+(after! apheleia
+  (setf (alist-get 'biome apheleia-formatters)
+        '("biome" "format" "--stdin-file-path" filepath))
+
+  (setf (alist-get 'js-mode apheleia-mode-alist) 'biome)
+  (setf (alist-get 'js2-mode apheleia-mode-alist) 'biome)
+  (setf (alist-get 'typescript-mode apheleia-mode-alist) 'biome)
+  (setf (alist-get 'typescript-ts-mode apheleia-mode-alist) 'biome)
+  (setf (alist-get 'tsx-ts-mode apheleia-mode-alist) 'biome)
+  (setf (alist-get 'rjsx-mode apheleia-mode-alist) 'biome)
+  (setf (alist-get 'json-mode apheleia-mode-alist) 'biome)
+  (setf (alist-get 'json-ts-mode apheleia-mode-alist) 'biome))
+
+(setq-hook! '(js-mode-hook
+              js2-mode-hook
+              typescript-mode-hook
+              typescript-ts-mode-hook
+              tsx-ts-mode-hook
+              rjsx-mode-hook
+              json-mode-hook
+              json-ts-mode-hook)
+  +format-with-lsp nil)
