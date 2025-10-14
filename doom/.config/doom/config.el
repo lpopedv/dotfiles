@@ -90,3 +90,25 @@
               json-mode-hook
               json-ts-mode-hook)
   +format-with-lsp nil)
+
+
+;; Terminal settings (emacs -nw)
+(use-package! evil-terminal-cursor-changer
+  :when (not (display-graphic-p))
+  :hook (tty-setup . evil-terminal-cursor-changer-activate))
+
+(setq evil-motion-state-cursor 'box)   ; █
+(setq evil-visual-state-cursor 'box)   ; █
+(setq evil-normal-state-cursor 'box)   ; █
+(setq evil-insert-state-cursor 'bar)   ; ⎸
+(setq evil-emacs-state-cursor 'hbar)    ; _
+
+(unless (display-graphic-p)
+  (require 'term)
+  (setq xterm-extra-capabilities '(setSelection getSelection))
+  (when (fboundp 'evil-refresh-cursor)
+    (add-hook 'post-command-hook #'evil-refresh-cursor))
+  ;; Clipboard support
+  (when (getenv "DISPLAY")
+    (setq select-enable-clipboard t
+          select-enable-primary t)))
