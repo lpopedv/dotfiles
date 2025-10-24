@@ -91,6 +91,23 @@
               json-ts-mode-hook)
   +format-with-lsp nil)
 
+;; Elixir: use LSP (elixir-ls) for formatting instead of apheleia
+(after! apheleia
+  ;; Remove elixir-mode from apheleia to avoid conflicts with LSP formatting
+  (setf (alist-get 'elixir-mode apheleia-mode-alist) nil)
+  (setf (alist-get 'elixir-ts-mode apheleia-mode-alist) nil))
+
+(setq-hook! 'elixir-mode-hook
+  +format-with-lsp t)
+
+;; Ensure LSP formatting is enabled for Elixir
+(after! lsp-mode
+  (add-hook 'elixir-mode-hook #'lsp-deferred)
+  ;; Format on save using LSP
+  (add-hook 'elixir-mode-hook
+            (lambda ()
+              (add-hook 'before-save-hook #'lsp-format-buffer nil t))))
+
 
 ;; Terminal settings (emacs -nw)
 (use-package! evil-terminal-cursor-changer
