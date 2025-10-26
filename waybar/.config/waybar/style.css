@@ -1,51 +1,44 @@
-/* Waybar Modern Transparent Theme - 2025 */
-
 * {
     border: none;
     border-radius: 0;
-    font-family: "CaskaydiaCove Nerd Font", "Cascadia Code", "SF Pro Display", "Roboto", sans-serif;
+    font-family: "CaskaydiaCove Nerd Font", "Cascadia Code", "SF Pro Display", "Inter", sans-serif;
     font-weight: 500;
     font-size: 14px;
     min-height: 0;
 }
 
-/* Main waybar - Completely transparent */
+/* Main waybar */
 window#waybar {
     background: transparent;
-    color: #ffffff;
+    color: #eaeaea;
 }
 
-/* Left module container - Workspaces */
-.modules-left {
-    background: rgba(30, 30, 46, 0.85);
-    border: 2px solid rgba(116, 199, 236, 0.3);
+/* Glass containers - GTK-safe "glass" illusion */
+.modules-left,
+.modules-center,
+.modules-right {
+    background: rgba(25, 25, 35, 0.65);
+    border: 1.5px solid rgba(255, 255, 255, 0.15);
     border-radius: 16px;
+}
+
+/* Margins/padding */
+.modules-left {
     margin: 8px 0px 8px 16px;
     padding: 4px 8px;
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
 }
 
-/* Center module container - Clock */
 .modules-center {
-    background: rgba(30, 30, 46, 0.85);
-    border: 2px solid rgba(166, 227, 161, 0.3);
-    border-radius: 16px;
     margin: 8px;
     padding: 4px 8px;
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
 }
 
-/* Right module container - System tray */
 .modules-right {
-    background: rgba(30, 30, 46, 0.85);
-    border: 2px solid rgba(250, 179, 135, 0.3);
-    border-radius: 16px;
     margin: 8px 16px 8px 0px;
     padding: 4px 8px;
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
 }
 
-/* Workspaces styling */
+/* Workspaces */
 #workspaces {
     background: transparent;
     margin: 0;
@@ -54,7 +47,7 @@ window#waybar {
 
 #workspaces button {
     background: transparent;
-    color: rgba(205, 214, 244, 0.8);
+    color: rgba(235, 235, 245, 0.7);
     border: none;
     padding: 6px 12px;
     margin: 0 2px;
@@ -66,36 +59,35 @@ window#waybar {
 }
 
 #workspaces button.active {
-    color: #cdd6f4;
-    background: rgba(116, 199, 236, 0.3);
-    border: 1px solid rgba(116, 199, 236, 0.5);
-    box-shadow: 0 4px 16px rgba(116, 199, 236, 0.2);
+    color: #ffffff;
+    background: rgba(255, 255, 255, 0.14);
+    border: 1px solid rgba(255, 255, 255, 0.25);
 }
 
 #workspaces button:hover {
-    color: #cdd6f4;
-    background: rgba(116, 199, 236, 0.2);
+    color: #ffffff;
+    background: rgba(255, 255, 255, 0.08);
 }
 
-/* Clock styling */
+/* Clock */
 #clock {
     background: transparent;
-    color: #cdd6f4;
+    color: #f0f0f0;
     padding: 6px 16px;
     margin: 0;
     font-weight: 600;
     font-size: 14px;
-    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+    text-shadow: 0 0 8px rgba(255, 255, 255, 0.1);
 }
 
-/* Right modules - All white/neutral colors */
+/* Right modules */
 #bluetooth,
 #pulseaudio,
 #network,
 #battery,
 #tray {
     background: transparent;
-    color: #cdd6f4;
+    color: #e6e6e6;
     padding: 6px 10px;
     margin: 0 3px;
     border-radius: 10px;
@@ -108,18 +100,18 @@ window#waybar {
 #pulseaudio:hover,
 #network:hover,
 #battery:hover {
-    background: rgba(205, 214, 244, 0.1);
+    background: rgba(255, 255, 255, 0.06);
+    box-shadow: 0 0 8px rgba(255, 255, 255, 0.05);
 }
 
 /* Battery states */
 #battery.warning {
-    color: #fab387;
+    color: #f1d89a;
 }
 
 #battery.critical {
-    color: #f38ba8;
+    color: #e89b9b;
 }
-
 
 /* System tray */
 #tray {
@@ -132,20 +124,19 @@ window#waybar {
 
 #tray > .needs-attention {
     opacity: 1;
-    color: #f9e2af;
+    color: #ffffff;
 }
 
-/* Tooltip styling */
+/* Tooltip */
 tooltip {
-    background: rgba(30, 30, 46, 0.95);
-    border: 2px solid rgba(116, 199, 236, 0.3);
+    background: rgba(25, 25, 35, 0.9);
+    border: 1.5px solid rgba(255, 255, 255, 0.2);
     border-radius: 12px;
-    color: #cdd6f4;
+    color: #e6e6e6;
     padding: 12px 16px;
-    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.5);
 }
 
 tooltip label {
     font-weight: 500;
-    color: #cdd6f4;
+    color: #f0f0f0;
 }

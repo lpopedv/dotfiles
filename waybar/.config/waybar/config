@@ -61,16 +61,15 @@
     },
 
     "network": {
-        "format-wifi": "󰤬 {signalStrength}%",
-        "format-ethernet": "󰎛",
-        "format-linked": "󰎛 (No IP)",
-        "format-disconnected": "󰤯",
+        "format-wifi": "󰤨 {essid}",
+        "format-ethernet": "󰈀 Connected",
+        "format-linked": "󰈀 (No IP)",
+        "format-disconnected": "󰌙 Disconnected",
         "format-alt": "{ifname}: {ipaddr}/{cidr}",
         "tooltip-format": "{ifname} via {gwaddr}",
         "tooltip-format-wifi": "{essid} ({signalStrength}%)",
-        "tooltip-format-ethernet": "{ifname}",
-        "tooltip-format-disconnected": "Disconnected",
-        "on-click": "nm-connection-editor"
+        "tooltip-format-ethernet": "{ifname}: {ipaddr}",
+        "tooltip-format-disconnected": "Disconnected"
     },
 
     "battery": {
