@@ -1,0 +1,151 @@
+/* Waybar Modern Transparent Theme - 2025 */
+
+* {
+    border: none;
+    border-radius: 0;
+    font-family: "CaskaydiaCove Nerd Font", "Cascadia Code", "SF Pro Display", "Roboto", sans-serif;
+    font-weight: 500;
+    font-size: 14px;
+    min-height: 0;
+}
+
+/* Main waybar - Completely transparent */
+window#waybar {
+    background: transparent;
+    color: #ffffff;
+}
+
+/* Left module container - Workspaces */
+.modules-left {
+    background: rgba(30, 30, 46, 0.85);
+    border: 2px solid rgba(116, 199, 236, 0.3);
+    border-radius: 16px;
+    margin: 8px 0px 8px 16px;
+    padding: 4px 8px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+}
+
+/* Center module container - Clock */
+.modules-center {
+    background: rgba(30, 30, 46, 0.85);
+    border: 2px solid rgba(166, 227, 161, 0.3);
+    border-radius: 16px;
+    margin: 8px;
+    padding: 4px 8px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+}
+
+/* Right module container - System tray */
+.modules-right {
+    background: rgba(30, 30, 46, 0.85);
+    border: 2px solid rgba(250, 179, 135, 0.3);
+    border-radius: 16px;
+    margin: 8px 16px 8px 0px;
+    padding: 4px 8px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+}
+
+/* Workspaces styling */
+#workspaces {
+    background: transparent;
+    margin: 0;
+    padding: 0;
+}
+
+#workspaces button {
+    background: transparent;
+    color: rgba(205, 214, 244, 0.8);
+    border: none;
+    padding: 6px 12px;
+    margin: 0 2px;
+    font-size: 13px;
+    font-weight: 600;
+    border-radius: 10px;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    min-width: 28px;
+}
+
+#workspaces button.active {
+    color: #cdd6f4;
+    background: rgba(116, 199, 236, 0.3);
+    border: 1px solid rgba(116, 199, 236, 0.5);
+    box-shadow: 0 4px 16px rgba(116, 199, 236, 0.2);
+}
+
+#workspaces button:hover {
+    color: #cdd6f4;
+    background: rgba(116, 199, 236, 0.2);
+}
+
+/* Clock styling */
+#clock {
+    background: transparent;
+    color: #cdd6f4;
+    padding: 6px 16px;
+    margin: 0;
+    font-weight: 600;
+    font-size: 14px;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+/* Right modules - All white/neutral colors */
+#bluetooth,
+#pulseaudio,
+#network,
+#battery,
+#tray {
+    background: transparent;
+    color: #cdd6f4;
+    padding: 6px 10px;
+    margin: 0 3px;
+    border-radius: 10px;
+    font-size: 14px;
+    font-weight: 500;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+#bluetooth:hover,
+#pulseaudio:hover,
+#network:hover,
+#battery:hover {
+    background: rgba(205, 214, 244, 0.1);
+}
+
+/* Battery states */
+#battery.warning {
+    color: #fab387;
+}
+
+#battery.critical {
+    color: #f38ba8;
+}
+
+
+/* System tray */
+#tray {
+    padding: 6px 8px;
+}
+
+#tray > .passive {
+    opacity: 0.7;
+}
+
+#tray > .needs-attention {
+    opacity: 1;
+    color: #f9e2af;
+}
+
+/* Tooltip styling */
+tooltip {
+    background: rgba(30, 30, 46, 0.95);
+    border: 2px solid rgba(116, 199, 236, 0.3);
+    border-radius: 12px;
+    color: #cdd6f4;
+    padding: 12px 16px;
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.5);
+}
+
+tooltip label {
+    font-weight: 500;
+    color: #cdd6f4;
+}
