@@ -58,7 +58,7 @@
 
 (use-package! lsp-mode
   :config
-  (setq lsp-clients-elixir-server-executable '("~/.elixir-ls/release/language_server.sh")))
+  (setq lsp-clients-elixir-server-executable '("/run/current-system/sw/bin/elixir-ls")))
 
 (setq shell-file-name "/run/current-system/sw/bin/fish")
 (setq explicit-shell-file-name "/run/current-system/sw/bin/fish")
