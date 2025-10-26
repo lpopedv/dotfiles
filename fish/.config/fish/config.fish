@@ -7,7 +7,6 @@ if status is-interactive
     # Aliases
     alias v nvim
     alias ls "eza --icons"
-    alias claude="$HOME/.claude/local/claude"
 
     # ASDF configuration code
     if test -z $ASDF_DATA_DIR
