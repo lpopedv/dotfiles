@@ -1,6 +1,5 @@
 #!/bin/bash
 
-# Beautiful power menu using wofi with cosmic styling
 entries="󰐥 Shutdown\n󰜉 Reboot\n󰍃 Logout\n󰒲 Suspend\n󰤄 Hibernate\n󰌾 Lock"
 
 selected=$(echo -e $entries | wofi --dmenu \
