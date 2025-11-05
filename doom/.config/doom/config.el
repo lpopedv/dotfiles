@@ -58,12 +58,7 @@
 
 (use-package! lsp-mode
   :config
-  (setq lsp-clients-elixir-server-executable '("/run/current-system/sw/bin/elixir-ls")))
-
-(setq shell-file-name "/run/current-system/sw/bin/fish")
-(setq explicit-shell-file-name "/run/current-system/sw/bin/fish")
-(setq vterm-shell "/run/current-system/sw/bin/fish")
-(setenv "SHELL" "/run/current-system/sw/bin/fish")
+  (setq lsp-clients-elixir-server-executable (expand-file-name "~/.local/share/elixir-ls/release/language_server.sh")))
 
 ;; Vterm escape key handler - send ESC to terminal with C-c c q
 (after! vterm
