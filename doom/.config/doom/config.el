@@ -1,132 +1,47 @@
 ;;; $DOOMDIR/config.el -*- lexical-binding: t; -*-
 
+;; Basic settings
+
 (setq user-full-name "Lucas Pope"
       user-mail-address "lpopedv@proton.me")
 
 (setq doom-font (font-spec :family "CaskaydiaMono Nerd Font Mono" :size 17)
       doom-variable-pitch-font (font-spec :family "CaskaydiaMono Nerd Font Mono" :size 16))
 
+;;; Theme
+
 (setq doom-theme 'doom-gruvbox)
 
-;; Customize Gruvbox
-(custom-set-faces!
+(custom-set-faces! ;; Custom gruvbox colors
   '(font-lock-keyword-face :foreground "#fe8019")
   '(font-lock-string-face :foreground "#fb4934")
   '(font-lock-function-name-face :foreground "#fe8019"))
 (setq display-line-numbers-type 'relative)
 (setq org-directory "~/org/")
 
-;; Elixir
-(setq flycheck-elixir-credo-strict t)
-(setq lsp-elixir-fetch-deps t)
+;;; Custom bidings
 
-;; LSP
-(setq lsp-enable-file-watchers t)
-(setq lsp-file-watch-threshold 20000)
-
-;; Move with vim keys in insert mode
-(after! evil
+(after! evil ;; Move with vim keys in insert mode
   (evil-define-key 'insert 'global
     (kbd "C-h") 'backward-char
     (kbd "C-j") 'evil-next-line
     (kbd "C-k") 'evil-previous-line
     (kbd "C-l") 'forward-char))
 
-;; Completion
-(use-package! orderless
-  :init
-  (setq orderless-matching-styles '(orderless-flex orderless-regexp)
-        orderless-component-separator "[ &]"))
+;;; Languages settings
 
-(after! corfu
-  (setq corfu-auto t
-        corfu-cycle t
-        corfu-min-width 80
-        corfu-max-width 100
-        corfu-count 14
-        corfu-separator ?\s
-        corfu-quit-no-match 'separator))
+;; Elixir
+(setq flycheck-elixir-credo-strict t)
+(setq lsp-elixir-fetch-deps t)
+(setq lsp-enable-file-watchers t)
+(setq lsp-file-watch-threshold 20000)
+(setq vterm-max-scrollback 100000)
 
-(after! vertico
-  (setq completion-styles '(orderless flex basic)
-        completion-category-defaults nil
-        vertico-count 20
-        vertico-cycle t))
+;; LSP
+(setq lsp-enable-file-watchers t)
+(setq lsp-file-watch-threshold 20000)
 
-(after! lsp-mode
-  (setq lsp-completion-provider :capf))
-
+;; Add transparency
 (when (display-graphic-p)
   (set-frame-parameter (selected-frame) 'alpha '(95 . 95))
   (add-to-list 'default-frame-alist '(alpha . (95 . 95))))
-
-(use-package! lsp-mode
-  :config
-  (setq lsp-clients-elixir-server-executable (expand-file-name "~/.local/share/elixir-ls/release/language_server.sh")))
-
-;; Vterm escape key handler - send ESC to terminal with C-c c q
-(after! vterm
-  (define-key vterm-mode-map (kbd "C-c c q") 'vterm-send-escape))
-
-;; Biome.js formatter configuration via Apheleia
-(after! apheleia
-  (setf (alist-get 'biome apheleia-formatters)
-        '("biome" "format" "--stdin-file-path" filepath))
-
-  (setf (alist-get 'js-mode apheleia-mode-alist) 'biome)
-  (setf (alist-get 'js2-mode apheleia-mode-alist) 'biome)
-  (setf (alist-get 'typescript-mode apheleia-mode-alist) 'biome)
-  (setf (alist-get 'typescript-ts-mode apheleia-mode-alist) 'biome)
-  (setf (alist-get 'tsx-ts-mode apheleia-mode-alist) 'biome)
-  (setf (alist-get 'rjsx-mode apheleia-mode-alist) 'biome)
-  (setf (alist-get 'json-mode apheleia-mode-alist) 'biome)
-  (setf (alist-get 'json-ts-mode apheleia-mode-alist) 'biome))
-
-(setq-hook! '(js-mode-hook
-              js2-mode-hook
-              typescript-mode-hook
-              typescript-ts-mode-hook
-              tsx-ts-mode-hook
-              rjsx-mode-hook
-              json-mode-hook
-              json-ts-mode-hook)
-  +format-with-lsp nil)
-
-;; Elixir: use LSP (elixir-ls) for formatting instead of apheleia
-(after! apheleia
-  ;; Remove elixir-mode from apheleia to avoid conflicts with LSP formatting
-  (setf (alist-get 'elixir-mode apheleia-mode-alist) nil)
-  (setf (alist-get 'elixir-ts-mode apheleia-mode-alist) nil))
-
-(setq-hook! 'elixir-mode-hook
-  +format-with-lsp t)
-
-;; Ensure LSP formatting is enabled for Elixir
-(after! lsp-mode
-  (add-hook 'elixir-mode-hook #'lsp-deferred)
-  ;; Format on save using LSP
-  (add-hook 'elixir-mode-hook
-            (lambda ()
-              (add-hook 'before-save-hook #'lsp-format-buffer nil t))))
-
-
-;; Terminal settings (emacs -nw)
-(use-package! evil-terminal-cursor-changer
-  :when (not (display-graphic-p))
-  :hook (tty-setup . evil-terminal-cursor-changer-activate))
-
-(setq evil-motion-state-cursor 'box)   ; █
-(setq evil-visual-state-cursor 'box)   ; █
-(setq evil-normal-state-cursor 'box)   ; █
-(setq evil-insert-state-cursor 'bar)   ; ⎸
-(setq evil-emacs-state-cursor 'hbar)    ; _
-
-(unless (display-graphic-p)
-  (require 'term)
-  (setq xterm-extra-capabilities '(setSelection getSelection))
-  (when (fboundp 'evil-refresh-cursor)
-    (add-hook 'post-command-hook #'evil-refresh-cursor))
-  ;; Clipboard support
-  (when (getenv "DISPLAY")
-    (setq select-enable-clipboard t
-          select-enable-primary t)))
