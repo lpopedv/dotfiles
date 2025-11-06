@@ -3,10 +3,16 @@
 (setq user-full-name "Lucas Pope"
       user-mail-address "lpopedv@proton.me")
 
-(setq doom-font (font-spec :family "CaskaydiaCove Nerd Font Mono" :size 17)
-      doom-variable-pitch-font (font-spec :family "CaskaydiaCove Nerd Font Mono" :size 16))
+(setq doom-font (font-spec :family "CaskaydiaMono Nerd Font Mono" :size 17)
+      doom-variable-pitch-font (font-spec :family "CaskaydiaMono Nerd Font Mono" :size 16))
 
-(setq doom-theme 'doom-ayu-dark)
+(setq doom-theme 'doom-gruvbox)
+
+;; Customize Gruvbox
+(custom-set-faces!
+  '(font-lock-keyword-face :foreground "#fe8019")
+  '(font-lock-string-face :foreground "#fb4934")
+  '(font-lock-function-name-face :foreground "#fe8019"))
 (setq display-line-numbers-type 'relative)
 (setq org-directory "~/org/")
 
@@ -25,8 +31,6 @@
     (kbd "C-j") 'evil-next-line
     (kbd "C-k") 'evil-previous-line
     (kbd "C-l") 'forward-char))
-
-(setq scroll-margin 6)
 
 ;; Completion
 (use-package! orderless
