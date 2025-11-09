@@ -5,19 +5,12 @@
 (setq user-full-name "Lucas Pope"
       user-mail-address "lpopedv@proton.me")
 
-(setq doom-font (font-spec :family "CaskaydiaMono Nerd Font Mono" :size 17)
-      doom-variable-pitch-font (font-spec :family "CaskaydiaMono Nerd Font Mono" :size 16))
+(setq doom-font (font-spec :family "JetBrainsMono Nerd Font" :size 17)
+      doom-variable-pitch-font (font-spec :family "JetBrainsMono Nerd Font" :size 16))
 
 ;;; Theme
 
 (setq doom-theme 'doom-gruvbox)
-
-(custom-set-faces! ;; Custom gruvbox colors
-  '(font-lock-keyword-face :foreground "#fe8019")
-  '(font-lock-string-face :foreground "#fb4934")
-  '(font-lock-function-name-face :foreground "#fe8019"))
-(setq display-line-numbers-type 'relative)
-(setq org-directory "~/org/")
 
 ;;; Custom bidings
 
@@ -28,18 +21,22 @@
     (kbd "C-k") 'evil-previous-line
     (kbd "C-l") 'forward-char))
 
+(after! vterm ;; Vterm escape key handler - send ESC to terminal with C-c c q
+  (define-key vterm-mode-map (kbd "C-c c q") 'vterm-send-escape))
+
+
 ;;; Languages settings
 
 ;; Elixir
 (setq flycheck-elixir-credo-strict t)
 (setq lsp-elixir-fetch-deps t)
-(setq lsp-enable-file-watchers t)
-(setq lsp-file-watch-threshold 20000)
-(setq vterm-max-scrollback 100000)
 
 ;; LSP
 (setq lsp-enable-file-watchers t)
 (setq lsp-file-watch-threshold 20000)
+(setq lsp-enable-file-watchers t)
+(setq lsp-file-watch-threshold 20000)
+(setq vterm-max-scrollback 100000)
 
 ;; Add transparency
 (when (display-graphic-p)
