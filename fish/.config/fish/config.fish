@@ -61,14 +61,3 @@ end
 # bun
 set --export BUN_INSTALL "$HOME/.bun"
 set --export PATH $BUN_INSTALL/bin $PATH
-
-set -x RADV_PERFTEST aco
-set -x AMD_VULKAN_ICD RADV
-set -x VK_ICD_FILENAMES /usr/share/vulkan/icd.d/radeon_icd.x86_64.json
-
-  # AMD gaming optimizations
-  set -gx RADV_PERFTEST gpl,nggc,sam
-  set -gx AMD_VULKAN_ICD RADV
-  set -gx MESA_LOADER_DRIVER_OVERRIDE radeonsi
-  set -gx ENABLE_VKBASALT 1
-  
