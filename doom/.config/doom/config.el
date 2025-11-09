@@ -8,6 +8,8 @@
 (setq doom-font (font-spec :family "JetBrainsMono Nerd Font" :size 17)
       doom-variable-pitch-font (font-spec :family "JetBrainsMono Nerd Font" :size 16))
 
+(setq display-line-numbers-type 'relative)
+
 ;;; Theme
 
 (setq doom-theme 'doom-gruvbox)
@@ -23,7 +25,6 @@
 
 (after! vterm ;; Vterm escape key handler - send ESC to terminal with C-c c q
   (define-key vterm-mode-map (kbd "C-c c q") 'vterm-send-escape))
-
 
 ;;; Languages settings
 
