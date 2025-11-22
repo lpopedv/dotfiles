@@ -1,63 +1,33 @@
 if status is-interactive
-    function fish_greeting
-#        echo "Terminal ready." | cowsay -f dragon | lolcat
- #       date "+%A, %d de %B de %Y" | lolcat
-    end
-
-    # Aliases
+    
+    ## Aliases ##
     alias v nvim
     alias ls "eza --icons"
 
-    # ASDF configuration code
-    if test -z $ASDF_DATA_DIR
-        set _asdf_shims "$HOME/.asdf/shims"
-    else
-        set _asdf_shims "$ASDF_DATA_DIR/shims"
-    end
-
-    if not contains $_asdf_shims $PATH
-        set -gx --prepend PATH $_asdf_shims
-    end
-    set --erase _asdf_shims
-
-    # Starship Theme
+    # Prompt theme
     starship init fish | source
 
-    # Doom emacs
-    set -gx PATH "$HOME/.config/emacs/bin" $PATH
+    ## PATH Configuration ##
+    # Note: Earlier entries take precedence over later ones
+    set -gx PATH "$HOME/.asdf/shims" $PATH        # ASDF-managed tools (Erlang, Elixir, Node.js, etc.)
+    set -gx PATH "$HOME/.local/bin" $PATH         # User-installed binaries
+    set -gx PATH "$HOME/.config/emacs/bin" $PATH  # Doom Emacs binaries
+    set -gx PATH $PATH $HOME/go/bin               # Go-installed packages
 
-    # Elixir Lsp
-    set -gx PATH $PATH $HOME/.lsp/elixir-ls/release
-
-    # Mix escripts
-    set -gx PATH PATH="$HOME/.mix/escripts:$PATH"
-
-    # Go Binaries
-    set -gx PATH $PATH $HOME/go/bin
-
-    # General binaries
-   set -gx PATH $HOME/.local/bin $PATH
-
-    # Direnv configuration
+    ## Environment Configuration ##
+    
+    # Direnv: Automatically load/unload environment variables based on directory
     if command -v direnv >/dev/null
         direnv hook fish | source
     end
 
-    # Pnpm
+    # Pnpm: Node.js package manager
     set -gx PNPM_HOME "$HOME/.local/share/pnpm"
     if not string match -q -- $PNPM_HOME $PATH
         set -gx PATH "$PNPM_HOME" $PATH
     end
 
+    # Terminal color support
     set -gx TERM xterm-256color
     set -gx COLORTERM truecolor
-
-    # Load general variables
-    if test -f ~/.env
-        source ~/.env
-    end
 end
-
-# bun
-set --export BUN_INSTALL "$HOME/.bun"
-set --export PATH $BUN_INSTALL/bin $PATH
