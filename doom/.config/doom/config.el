@@ -28,6 +28,10 @@
 
 ;;; Languages settings
 
+;; JavaScript/TypeScript - Biome formatter
+(use-package! biomejs-format
+  :hook ((js-mode js2-mode typescript-mode typescript-tsx-mode web-mode) . biomejs-format-mode))
+
 ;; Elixir
 (setq flycheck-elixir-credo-strict t)
 (setq lsp-elixir-fetch-deps t)
