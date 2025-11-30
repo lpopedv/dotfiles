@@ -12,7 +12,7 @@
 
 ;;; Theme
 
-(setq doom-theme 'doom-ayu-mirage)
+(setq doom-theme 'doom-gruvbox)
 
 ;;; Custom bidings
 
