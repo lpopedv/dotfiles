@@ -39,8 +39,6 @@
 ;; LSP
 (setq lsp-enable-file-watchers t)
 (setq lsp-file-watch-threshold 20000)
-(setq lsp-enable-file-watchers t)
-(setq lsp-file-watch-threshold 20000)
 (setq vterm-max-scrollback 100000)
 
 ;; Add transparency
