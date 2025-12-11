@@ -1,5 +1,7 @@
 if status is-interactive
-    
+    # Disable welcome message
+    set -U fish_greeting
+
     ## Aliases ##
     alias v nvim
     alias ls "eza --icons"
