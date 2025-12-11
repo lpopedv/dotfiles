@@ -10,6 +10,10 @@
 
 (setq display-line-numbers-type 'relative)
 
+;; Set Fish as default shell
+(setq shell-file-name "/usr/bin/fish"
+      explicit-shell-file-name "/usr/bin/fish")
+
 ;;; Theme
 
 (setq doom-theme 'doom-gruvbox)
