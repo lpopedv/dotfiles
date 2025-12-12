@@ -16,7 +16,7 @@
 
 ;;; Theme
 
-(setq doom-theme 'doom-gruvbox)
+(setq doom-theme 'doom-tomorrow-night)
 
 ;;; Custom bidings
 
