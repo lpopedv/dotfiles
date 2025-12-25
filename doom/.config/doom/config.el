@@ -16,7 +16,7 @@
 
 ;;; Theme
 
-(setq doom-theme 'doom-tomorrow-night)
+(setq doom-theme 'doom-ayu-dark)
 
 ;;; Custom bidings
 
