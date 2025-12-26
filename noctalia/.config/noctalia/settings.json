@@ -28,14 +28,14 @@
         "capsuleOpacity": 0.6,
         "density": "default",
         "exclusive": true,
-        "floating": false,
+        "floating": true,
         "marginHorizontal": 0.25,
         "marginVertical": 0.25,
         "monitors": [
             "HDMI-A-1"
         ],
         "outerCorners": true,
-        "position": "bottom",
+        "position": "top",
         "showCapsule": true,
         "showOutline": false,
         "transparent": false,
@@ -56,7 +56,7 @@
             "left": [
                 {
                     "hideMode": "alwaysExpanded",
-                    "icon": "rocket",
+                    "icon": "alien",
                     "id": "CustomButton",
                     "leftClickExec": "qs -c noctalia-shell ipc call launcher toggle",
                     "leftClickUpdateText": false,
@@ -87,12 +87,12 @@
                     "id": "SystemMonitor",
                     "showCpuTemp": true,
                     "showCpuUsage": true,
-                    "showDiskUsage": false,
+                    "showDiskUsage": true,
                     "showGpuTemp": false,
-                    "showMemoryAsPercent": false,
+                    "showMemoryAsPercent": true,
                     "showMemoryUsage": true,
                     "showNetworkStats": false,
-                    "usePrimaryColor": false
+                    "usePrimaryColor": true
                 },
                 {
                     "colorizeIcons": false,
@@ -324,7 +324,7 @@
     "location": {
         "analogClockInCalendar": false,
         "firstDayOfWeek": -1,
-        "name": "",
+        "name": "Belo Horizonte",
         "showCalendarEvents": true,
         "showCalendarWeather": true,
         "showWeekNumberInCalendar": false,
