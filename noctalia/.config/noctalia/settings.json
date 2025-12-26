@@ -35,7 +35,7 @@
             "HDMI-A-1"
         ],
         "outerCorners": true,
-        "position": "top",
+        "position": "bottom",
         "showCapsule": true,
         "showOutline": false,
         "transparent": false,
