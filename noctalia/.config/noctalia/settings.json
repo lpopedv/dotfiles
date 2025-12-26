@@ -25,7 +25,7 @@
         "volumeStep": 5
     },
     "bar": {
-        "capsuleOpacity": 0.6,
+        "capsuleOpacity": 1,
         "density": "default",
         "exclusive": true,
         "floating": false,
