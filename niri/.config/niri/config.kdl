@@ -109,7 +109,7 @@ binds {
     Mod+Shift+Slash { show-hotkey-overlay; }
 
     Mod+Return hotkey-overlay-title="Open a Terminal: alacritty" { spawn "kitty"; }
-    Mod+Space hotkey-overlay-title="Run an Application: fuzzel" { spawn-sh "rofi -show drun"; }
+    Mod+Space hotkey-overlay-title="Run Launcher" { spawn-sh "qs -c noctalia-shell ipc call launcher toggle"; }
     Mod+E hotkey-overlay-title="Open Emacs" { spawn-sh "emacsclient -c -a 'emacs'"; }
     Mod+B hotkey-overlay-title="Open Zen Browser" { spawn "zen-browser"; }
     Super+Alt+L hotkey-overlay-title="Lock the Screen: swaylock" { spawn "swaylock"; }
