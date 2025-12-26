@@ -12,6 +12,7 @@ GNU Stow is a symlink package management tool that simplifies the installation o
 - **Fish**: Shell
 - **Emacs (Doom)**: Dark Side Text Editor
 - **Noctalia-shell**: Desktop Shell for Wayland
+- **Niri**: Scrollable-tiling Wayland Compositor
 
 ## Installation
 
@@ -36,6 +37,7 @@ To install the configurations, follow these steps:
     stow fish
     stow doom
     stow noctalia
+    stow niri
     ```
 
 ## Uninstallation
@@ -48,4 +50,5 @@ stow -D nvim
 stow -D fish
 stow -D doom
 stow -D noctalia
+stow -D niri
 ```
