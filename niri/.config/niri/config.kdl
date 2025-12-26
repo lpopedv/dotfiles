@@ -26,13 +26,13 @@ input {
 
 output "HDMI-A-1" {
     mode "2560x1080@74.991"
-    scale 1.0
+    scale 1.08
     transform "normal"
     variable-refresh-rate
 }
 
 layout {
-    gaps 12
+    gaps 5
     center-focused-column "never"
     preset-column-widths {
         proportion 0.33333
