@@ -11,6 +11,7 @@ GNU Stow is a symlink package management tool that simplifies the installation o
 - **Neovim (Lazyvim)**: Text Editor
 - **Fish**: Shell
 - **Emacs (Doom)**: Dark Side Text Editor
+- **Noctalia-shell**: Desktop Shell for Wayland
 
 ## Installation
 
@@ -34,6 +35,7 @@ To install the configurations, follow these steps:
     stow nvim
     stow fish
     stow doom
+    stow noctalia
     ```
 
 ## Uninstallation
@@ -45,4 +47,5 @@ cd ~/Dotfiles
 stow -D nvim
 stow -D fish
 stow -D doom
+stow -D noctalia
 ```
