@@ -255,6 +255,10 @@ binds {
     Ctrl+Print { screenshot-screen; }
     Alt+Print { screenshot-window; }
 
+    Mod+S hotkey-overlay-title="Screenshot: Select Area" { screenshot; }
+    Mod+Shift+S hotkey-overlay-title="Screenshot: Full Screen" { screenshot-screen; }
+    Mod+Ctrl+S hotkey-overlay-title="Screenshot: Current Window" { screenshot-window; }
+
     Mod+Escape allow-inhibiting=false { toggle-keyboard-shortcuts-inhibit; }
 
     Mod+Shift+E { quit; }
