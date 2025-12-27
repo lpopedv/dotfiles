@@ -35,7 +35,7 @@
             "HDMI-A-1"
         ],
         "outerCorners": true,
-        "position": "top",
+        "position": "bottom",
         "showCapsule": true,
         "showOutline": false,
         "transparent": false,
@@ -516,7 +516,7 @@
         "hideWallpaperFilenames": false,
         "monitorDirectories": [
         ],
-        "overviewEnabled": false,
+        "overviewEnabled": true,
         "panelPosition": "follow_bar",
         "randomEnabled": false,
         "randomIntervalSec": 300,
