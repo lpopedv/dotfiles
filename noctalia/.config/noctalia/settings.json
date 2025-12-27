@@ -8,7 +8,7 @@
         "pinnedExecs": [
         ],
         "position": "center",
-        "showCategories": false,
+        "showCategories": true,
         "sortByMostUsed": true,
         "terminalCommand": "kitty -e",
         "useApp2Unit": false,
@@ -25,7 +25,7 @@
         "volumeStep": 5
     },
     "bar": {
-        "capsuleOpacity": 1,
+        "capsuleOpacity": 0.86,
         "density": "default",
         "exclusive": true,
         "floating": false,
@@ -35,7 +35,7 @@
             "HDMI-A-1"
         ],
         "outerCorners": true,
-        "position": "bottom",
+        "position": "top",
         "showCapsule": true,
         "showOutline": false,
         "transparent": false,
@@ -161,6 +161,9 @@
                     "usePrimaryColor": true
                 },
                 {
+                    "id": "plugin:privacy-indicator"
+                },
+                {
                     "colorizeDistroLogo": false,
                     "colorizeSystemIcon": "none",
                     "customIconPath": "",
@@ -277,7 +280,7 @@
         "backgroundOpacity": 1,
         "colorizeIcons": false,
         "deadOpacity": 0.6,
-        "displayMode": "exclusive",
+        "displayMode": "always_visible",
         "enabled": false,
         "floatingRatio": 0.7000000000000001,
         "inactiveIndicators": true,
@@ -327,7 +330,7 @@
     "location": {
         "analogClockInCalendar": false,
         "firstDayOfWeek": -1,
-        "name": "Tokyo",
+        "name": "Belo Horizonte",
         "showCalendarEvents": true,
         "showCalendarWeather": true,
         "showWeekNumberInCalendar": false,

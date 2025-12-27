@@ -108,7 +108,7 @@ window-rule {
 binds {
     Mod+Shift+Slash { show-hotkey-overlay; }
 
-    Mod+Return hotkey-overlay-title="Open a Terminal: alacritty" { spawn "kitty"; }
+    Mod+Return hotkey-overlay-title="Open a Terminal: kitty" { spawn "kitty"; }
     Mod+Space hotkey-overlay-title="Run Launcher" { spawn-sh "qs -c noctalia-shell ipc call launcher toggle"; }
     Mod+E hotkey-overlay-title="Open Emacs" { spawn-sh "emacsclient -c -a 'emacs'"; }
     Mod+B hotkey-overlay-title="Open Zen Browser" { spawn "zen-browser"; }
