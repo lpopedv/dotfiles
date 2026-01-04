@@ -25,6 +25,7 @@
         "volumeStep": 5
     },
     "bar": {
+        "backgroundOpacity": 0.93,
         "capsuleOpacity": 0.86,
         "density": "default",
         "exclusive": true,
@@ -38,7 +39,7 @@
         "position": "bottom",
         "showCapsule": true,
         "showOutline": false,
-        "transparent": false,
+        "useSeparateOpacity": false,
         "widgets": {
             "center": [
                 {
@@ -46,11 +47,13 @@
                     "colorizeIcons": false,
                     "enableScrollWheel": true,
                     "followFocusedScreen": false,
+                    "groupedBorderOpacity": 1,
                     "hideUnoccupied": false,
                     "id": "Workspace",
                     "labelMode": "index",
                     "showApplications": false,
-                    "showLabelsOnlyWhenOccupied": true
+                    "showLabelsOnlyWhenOccupied": true,
+                    "unfocusedIconsOpacity": 1
                 }
             ],
             "left": [
@@ -83,6 +86,7 @@
                     "wheelUpdateText": false
                 },
                 {
+                    "compactMode": true,
                     "diskPath": "/",
                     "id": "SystemMonitor",
                     "showCpuTemp": true,
@@ -92,6 +96,7 @@
                     "showMemoryAsPercent": true,
                     "showMemoryUsage": true,
                     "showNetworkStats": false,
+                    "useMonospaceFont": true,
                     "usePrimaryColor": true
                 },
                 {
@@ -116,6 +121,9 @@
                     ]
                 },
                 {
+                    "defaultSettings": {
+                        "refreshInterval": 5000
+                    },
                     "id": "plugin:mini-docker"
                 },
                 {
@@ -157,10 +165,15 @@
                     "formatHorizontal": "HH:mm ddd, MMM dd",
                     "formatVertical": "HH mm - dd MM",
                     "id": "Clock",
+                    "tooltipFormat": "HH:mm ddd, MMM dd",
                     "useCustomFont": false,
                     "usePrimaryColor": true
                 },
                 {
+                    "defaultSettings": {
+                        "hideInactive": false,
+                        "removeMargins": false
+                    },
                     "id": "plugin:privacy-indicator"
                 },
                 {
@@ -280,13 +293,13 @@
         "backgroundOpacity": 1,
         "colorizeIcons": false,
         "deadOpacity": 0.6,
-        "displayMode": "always_visible",
+        "displayMode": "exclusive",
         "enabled": false,
         "floatingRatio": 0.7000000000000001,
         "inactiveIndicators": true,
         "monitors": [
         ],
-        "onlySameOutput": true,
+        "onlySameOutput": false,
         "pinnedApps": [
             "zen",
             "emacs",
@@ -363,6 +376,11 @@
         "normalUrgencyDuration": 8,
         "overlayLayer": true,
         "respectExpireTimeout": false,
+        "saveToHistory": {
+            "critical": true,
+            "low": true,
+            "normal": true
+        },
         "sounds": {
             "criticalSoundFile": "",
             "enabled": false,
@@ -392,6 +410,7 @@
         "audioCodec": "opus",
         "audioSource": "default_output",
         "colorRange": "limited",
+        "copyToClipboard": false,
         "directory": "/home/t0x/Videos",
         "frameRate": 60,
         "quality": "very_high",
@@ -442,15 +461,17 @@
                 "enabled": true
             }
         ],
-        "showHeader": true
+        "showHeader": true,
+        "showNumberLabels": true
     },
-    "settingsVersion": 32,
+    "settingsVersion": 35,
     "systemMonitor": {
         "cpuCriticalThreshold": 90,
         "cpuPollingInterval": 3000,
         "cpuWarningThreshold": 80,
         "criticalColor": "",
         "diskCriticalThreshold": 90,
+        "diskPath": "/",
         "diskPollingInterval": 3000,
         "diskWarningThreshold": 80,
         "enableDgpuMonitoring": false,
@@ -526,6 +547,7 @@
         "transitionEdgeSmoothness": 0.05,
         "transitionType": "random",
         "useWallhaven": false,
+        "wallhavenApiKey": "",
         "wallhavenCategories": "111",
         "wallhavenOrder": "desc",
         "wallhavenPurity": "100",
@@ -534,6 +556,7 @@
         "wallhavenResolutionHeight": "",
         "wallhavenResolutionMode": "atleast",
         "wallhavenResolutionWidth": "",
-        "wallhavenSorting": "relevance"
+        "wallhavenSorting": "relevance",
+        "wallpaperChangeMode": "random"
     }
 }
