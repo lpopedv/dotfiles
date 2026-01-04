@@ -14,11 +14,10 @@
 (setq shell-file-name "/usr/bin/fish"
       explicit-shell-file-name "/usr/bin/fish")
 
-;;; Theme
+;; Theme
+(setq doom-theme 'doom-one)
 
-(setq doom-theme 'doom-gruvbox)
-
-;;; Custom bidings
+;;;; Custom bidings
 
 (after! evil ;; Move with vim keys in insert mode
   (evil-define-key 'insert 'global
@@ -30,7 +29,7 @@
 (after! vterm ;; Vterm escape key handler - send ESC to terminal with C-c c q
   (define-key vterm-mode-map (kbd "C-c c q") 'vterm-send-escape))
 
-;;; Languages settings
+;;;; Languages settings
 
 ;; JavaScript/TypeScript - Biome formatter
 (use-package! biomejs-format
