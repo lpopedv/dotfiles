@@ -6,9 +6,6 @@ if status is-interactive
     alias v nvim
     alias ls "eza --icons"
 
-    # Prompt theme
-    starship init fish | source
-
     ## PATH Configuration ##
     # Note: Earlier entries take precedence over later ones
     set -gx PATH "$HOME/.asdf/shims" $PATH        # ASDF-managed tools (Erlang, Elixir, Node.js, etc.)
