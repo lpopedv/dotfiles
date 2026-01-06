@@ -1,7 +1,6 @@
 ;;; $DOOMDIR/config.el -*- lexical-binding: t; -*-
 
-;; Basic settings
-
+;;;; Basic settings
 (setq user-full-name "Lucas Pope"
       user-mail-address "lpopedv@proton.me")
 
@@ -15,18 +14,26 @@
       explicit-shell-file-name "/usr/bin/fish")
 
 ;; Theme
-(setq doom-theme 'doom-one)
+(setq doom-theme 'doom-gruvbox)
+
+;; Background transparency
+(when (display-graphic-p)
+  (set-frame-parameter (selected-frame) 'alpha '(95 . 95))
+  (add-to-list 'default-frame-alist '(alpha . (95 . 95))))
+
 
 ;;;; Custom bidings
 
-(after! evil ;; Move with vim keys in insert mode
+;; Move with vim keys in insert mode
+(after! evil 
   (evil-define-key 'insert 'global
     (kbd "C-h") 'backward-char
     (kbd "C-j") 'evil-next-line
     (kbd "C-k") 'evil-previous-line
     (kbd "C-l") 'forward-char))
 
-(after! vterm ;; Vterm escape key handler - send ESC to terminal with C-c c q
+;; Vterm escape key handler - send ESC to terminal with C-c c q
+(after! vterm 
   (define-key vterm-mode-map (kbd "C-c c q") 'vterm-send-escape))
 
 ;;;; Languages settings
@@ -44,7 +51,3 @@
 (setq lsp-file-watch-threshold 20000)
 (setq vterm-max-scrollback 100000)
 
-;; Add transparency
-(when (display-graphic-p)
-  (set-frame-parameter (selected-frame) 'alpha '(95 . 95))
-  (add-to-list 'default-frame-alist '(alpha . (95 . 95))))
