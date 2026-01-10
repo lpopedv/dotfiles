@@ -45,11 +45,11 @@ layout {
     focus-ring {
         width 1
 
-        active-color "#ffffff"
-        inactive-color "#505050"
+        active-color "#808080C0"
+        inactive-color "#40404060"
 
-        active-gradient from="#ffffff" to="#c0c0c0" angle=135
-        inactive-gradient from="#3a3a3a" to="#5a5a5a" angle=135
+        active-gradient from="#707070C0" to="#909090A0" angle=135
+        inactive-gradient from="#30303050" to="#50505070" angle=135
     }
 
     border {
