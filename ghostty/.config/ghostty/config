@@ -72,8 +72,8 @@ window-decoration = true
 gtk-titlebar = false
 
 # Background opacity for modern aesthetic
-background-opacity = 0.95
-background-blur-radius = 90
+background-opacity = 0.85
+background-blur-radius = 80
 
 # ───────────────────────────────────────────────────────────────
 # Cursor Settings
