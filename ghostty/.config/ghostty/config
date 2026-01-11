@@ -1,0 +1,126 @@
+# ───────────────────────────────────────────────────────────────
+# Font Configuration
+# ───────────────────────────────────────────────────────────────
+font-family = "JetBrains Mono"
+font-size = 12
+font-style = normal
+font-style-bold = bold
+font-style-italic = italic
+font-style-bold-italic = bold-italic
+
+# Font features for better ligatures
+font-feature = -calt
+font-feature = -liga
+
+# ───────────────────────────────────────────────────────────────
+# Gruvbox Dark Theme Colors
+# ───────────────────────────────────────────────────────────────
+# Background and foreground
+background = #282828
+foreground = #ebdbb2
+
+# Cursor colors
+cursor-color = #ebdbb2
+cursor-text = #282828
+
+# Selection colors
+selection-background = #504945
+selection-foreground = #ebdbb2
+
+# Black
+palette = 0=#282828
+palette = 8=#928374
+
+# Red
+palette = 1=#cc241d
+palette = 9=#fb4934
+
+# Green
+palette = 2=#98971a
+palette = 10=#b8bb26
+
+# Yellow
+palette = 3=#d79921
+palette = 11=#fabd2f
+
+# Blue
+palette = 4=#458588
+palette = 12=#83a598
+
+# Magenta
+palette = 5=#b16286
+palette = 13=#d3869b
+
+# Cyan
+palette = 6=#689d6a
+palette = 14=#8ec07c
+
+# White
+palette = 7=#a89984
+palette = 15=#ebdbb2
+
+# ───────────────────────────────────────────────────────────────
+# Window & Visual Settings
+# ───────────────────────────────────────────────────────────────
+# Window padding for a premium look
+window-padding-x = 8
+window-padding-y = 8
+window-padding-balance = true
+
+# Window decoration
+window-decoration = true
+gtk-titlebar = false
+
+# Background opacity for modern aesthetic
+background-opacity = 0.95
+background-blur-radius = 90
+
+# ───────────────────────────────────────────────────────────────
+# Cursor Settings
+# ───────────────────────────────────────────────────────────────
+cursor-style = block
+cursor-style-blink = true
+cursor-invert-fg-bg = true
+
+# ───────────────────────────────────────────────────────────────
+# Performance & Rendering
+# ───────────────────────────────────────────────────────────────
+# Use GPU rendering for smooth performance
+# resize-overlay = always
+# resize-overlay-position = center
+# resize-overlay-duration = 500ms
+
+# ───────────────────────────────────────────────────────────────
+# Shell & Terminal Settings
+# ───────────────────────────────────────────────────────────────
+shell-integration = detect
+shell-integration-features = cursor,sudo,title
+
+# ───────────────────────────────────────────────────────────────
+# Mouse & Scrolling
+# ───────────────────────────────────────────────────────────────
+mouse-hide-while-typing = true
+copy-on-select = clipboard
+
+# Scrollback
+scrollback-limit = 10000
+
+# ───────────────────────────────────────────────────────────────
+# Advanced Features
+# ───────────────────────────────────────────────────────────────
+# Clipboard
+clipboard-read = allow
+clipboard-write = allow
+clipboard-paste-protection = true
+clipboard-paste-bracketed-safe = true
+
+# Link handling
+link-url = true
+
+# ───────────────────────────────────────────────────────────────
+# Keybindings (Premium shortcuts)
+# ───────────────────────────────────────────────────────────────
+# keybind = ctrl+shift+c=copy_to_clipboard
+# keybind = ctrl+shift+v=paste_from_clipboard
+# keybind = ctrl+shift+n=new_window
+# keybind = ctrl+shift+t=new_tab
