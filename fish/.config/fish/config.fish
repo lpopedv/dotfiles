@@ -5,6 +5,7 @@ if status is-interactive
     ## Aliases ##
     alias v nvim
     alias ls "eza --icons"
+    alias dot "cd ~/Dotfiles"
 
     ## PATH Configuration ##
     # Note: Earlier entries take precedence over later ones
