@@ -97,6 +97,11 @@ vim.keymap.set("v", ">", ">gv", { desc = "Indent right (keep selection)" })
 -- Quick file navigation (oil.nvim overrides <leader>e)
 vim.keymap.set("n", "<leader>ff", ":find ", { desc = "Find file by name" })
 
+-- Dashboard
+vim.keymap.set("n", "<leader>h", function()
+  require("config.dashboard").open()
+end, { desc = "Open dashboard" })
+
 -- Copy file path to clipboard
 vim.keymap.set("n", "<leader>fy", function()
   local path = vim.fn.expand("%:p")
@@ -120,3 +125,50 @@ vim.keymap.set("n", "<leader>sc", ":so<CR>", { desc = "Source current file" })
 
 -- Open terminal in full buffer
 vim.keymap.set("n", "<leader>oT", ":term<CR>", { desc = "Open terminal buffer" })
+
+-- ============================================================================
+-- LSP KEYMAPS
+-- ============================================================================
+
+-- LSP keymaps (auto-configured when LSP attaches to buffer)
+vim.api.nvim_create_autocmd('LspAttach', {
+  callback = function(event)
+    local opts = {buffer = event.buf}
+
+    -- Navigation
+    vim.keymap.set('n', 'gD', vim.lsp.buf.definition, opts)
+    vim.keymap.set('n', 'gs', vim.lsp.buf.declaration, opts)
+    vim.keymap.set('n', 'gr', vim.lsp.buf.references, opts)
+    vim.keymap.set('n', 'gi', vim.lsp.buf.implementation, opts)
+
+    -- Information
+    vim.keymap.set('n', 'K', vim.lsp.buf.hover, opts)
+    vim.keymap.set('n', '<C-k>', vim.lsp.buf.signature_help, opts)
+
+    -- Code actions
+    vim.keymap.set('n', '<leader>ca', vim.lsp.buf.code_action, opts)
+    vim.keymap.set('n', '<leader>rn', vim.lsp.buf.rename, opts)
+
+    -- Diagnostics
+    -- Note: <leader>d overrides the global "delete to black hole" in LSP buffers
+    vim.keymap.set('n', '<leader>nd', vim.diagnostic.goto_next, opts)
+    vim.keymap.set('n', '<leader>pd', vim.diagnostic.goto_prev, opts)
+    vim.keymap.set('n', '<leader>d', function()
+      vim.diagnostic.open_float({ focusable = true, scope = 'cursor', border = 'rounded' })
+    end, opts)
+  end,
+})
+
+-- LSP formatting (available globally, checks if LSP supports formatting)
+vim.keymap.set('n', '<leader>fm', function()
+  local bufnr = vim.api.nvim_get_current_buf()
+  local filetype = vim.bo[bufnr].filetype
+  local clients = vim.lsp.get_clients({ bufnr = bufnr, name = 'biome' })
+
+  if #clients > 0 then
+    vim.lsp.buf.format({ async = false, name = 'biome' })
+    print("Formatted with Biome")
+  else
+    print("No formatter available for " .. filetype)
+  end
+end, { desc = 'Format file' })

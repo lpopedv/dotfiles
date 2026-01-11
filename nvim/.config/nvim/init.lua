@@ -21,3 +21,4 @@ require("config.lazygit")     -- Floating lazygit
 require("config.statusline")  -- Custom statusline
 require("config.lsp")         -- LSP configuration
 require("config.tabs")        -- Tab management
+require("config.dashboard").setup()  -- Dashboard

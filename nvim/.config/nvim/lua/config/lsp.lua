@@ -92,58 +92,6 @@ vim.api.nvim_create_autocmd('FileType', {
   desc = 'Start Biome LSP for JSON'
 })
 
--- Formatting function
-local function format_code()
-  local bufnr = vim.api.nvim_get_current_buf()
-  local filetype = vim.bo[bufnr].filetype
-
-  -- Check if Biome LSP is attached
-  local clients = vim.lsp.get_clients({ bufnr = bufnr, name = 'biome' })
-
-  if #clients > 0 then
-    -- Format with Biome LSP
-    vim.lsp.buf.format({ async = false, name = 'biome' })
-    print("Formatted with Biome")
-    return
-  end
-
-  print("No formatter available for " .. filetype)
-end
-
-vim.api.nvim_create_user_command("FormatCode", format_code, {
-  desc = "Format current file"
-})
-
-vim.keymap.set('n', '<leader>fm', format_code, { desc = 'Format file' })
-
--- LSP keymaps
-vim.api.nvim_create_autocmd('LspAttach', {
-  callback = function(event)
-    local opts = {buffer = event.buf}
-
-    -- Navigation
-    vim.keymap.set('n', 'gD', vim.lsp.buf.definition, opts)
-    vim.keymap.set('n', 'gs', vim.lsp.buf.declaration, opts)
-    vim.keymap.set('n', 'gr', vim.lsp.buf.references, opts)
-    vim.keymap.set('n', 'gi', vim.lsp.buf.implementation, opts)
-
-    -- Information
-    vim.keymap.set('n', 'K', vim.lsp.buf.hover, opts)
-    vim.keymap.set('n', '<C-k>', vim.lsp.buf.signature_help, opts)
-
-    -- Code actions
-    vim.keymap.set('n', '<leader>ca', vim.lsp.buf.code_action, opts)
-    vim.keymap.set('n', '<leader>rn', vim.lsp.buf.rename, opts)
-
-    -- Diagnostics
-    vim.keymap.set('n', '<leader>nd', vim.diagnostic.goto_next, opts)
-    vim.keymap.set('n', '<leader>pd', vim.diagnostic.goto_prev, opts)
-    vim.keymap.set('n', '<leader>d', function()
-      vim.diagnostic.open_float({ focusable = true, scope = 'cursor', border = 'rounded' })
-    end, opts)
-  end,
-})
-
 -- Better LSP UI
 vim.diagnostic.config({
   virtual_text = { prefix = '●' },
