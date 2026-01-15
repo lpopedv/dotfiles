@@ -30,4 +30,8 @@ if status is-interactive
     # Terminal color support
     set -gx TERM xterm-256color
     set -gx COLORTERM truecolor
+
+    # bun
+    set --export BUN_INSTALL "$HOME/.bun"
+    set --export PATH $BUN_INSTALL/bin $PATH
 end
