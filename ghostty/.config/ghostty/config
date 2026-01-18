@@ -2,7 +2,7 @@
 # Font Configuration
 # ───────────────────────────────────────────────────────────────
 font-family = "JetBrains Mono"
-font-size = 12
+font-size = 14
 font-style = normal
 font-style-bold = bold
 font-style-italic = italic
