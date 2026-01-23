@@ -89,7 +89,3 @@ local undodir = vim.fn.expand("~/.vim/undodir")
 if vim.fn.isdirectory(undodir) == 0 then
   vim.fn.mkdir(undodir, "p")
 end
-
--- Set leader keys
-vim.g.mapleader = " "                              -- Set leader key to space
-vim.g.maplocalleader = " "                         -- Set local leader key
