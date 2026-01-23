@@ -12,4 +12,5 @@ require("config.settings")    -- Basic vim settings
 require("config.keymaps")     -- Key mappings
 require("config.terminal")    -- Floating terminal
 require("config.lazygit")     -- Floating lazygit
+require("config.lsp")         -- LSP
 require("config.dashboard").setup()  -- Dashboard
