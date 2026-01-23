@@ -5,6 +5,9 @@
 -- Clear search highlights
 vim.keymap.set("n", "<leader>c", ":nohlsearch<CR>", { desc = "Clear search highlights" })
 
+vim.keymap.set("n", "<leader>l", ":Lazy<CR>", { desc = "Buffer: previous" })
+vim.keymap.set("n", "<leader>m", ":Mason<CR>", { desc = "Buffer: previous" })
+
 -- Center screen when jumping
 vim.keymap.set("n", "n", "nzzzv", { desc = "Next search result (centered)" })
 vim.keymap.set("n", "N", "Nzzzv", { desc = "Previous search result (centered)" })
@@ -24,6 +27,7 @@ vim.keymap.set("n", "J", "mzJ`z", { desc = "Join lines (preserve cursor)" })
 -- Buffer navigation
 vim.keymap.set("n", "<leader>bn", ":bnext<CR>", { desc = "Buffer: next" })
 vim.keymap.set("n", "<leader>bp", ":bprevious<CR>", { desc = "Buffer: previous" })
+
 
 -- Save and reload buffer
 vim.keymap.set({ "n", "i" }, "<C-s>", "<Esc>:w<CR>", { desc = "Save buffer" })
