@@ -1,0 +1,20 @@
+{
+  "autosave": "on_focus_change",
+  "format_on_save": "on",
+  "icon_theme": "Zed (Default)",
+  // UI
+  "ui_font_size": 16,
+  "theme": {
+    "mode": "dark",
+    "light": "One Light",
+    "dark": "One Dark",
+  },
+  // Buffer
+  "buffer_font_size": 15,
+  "buffer_font_family": "JetBrainsMono Nerd Font",
+  // Security
+  "telemetry": {
+    "diagnostics": false,
+    "metrics": false,
+  },
+}
