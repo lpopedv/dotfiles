@@ -1,73 +1,79 @@
 {
-  // Waybar at top layer
   "layer": "top",
-  "reload_on_style_change": true,
-
-  // Waybar position (top|bottom|left|right)
   "position": "top",
-
-  // Waybar height (to be removed for auto height)
-  // "height": 10,
-
   "passthrough": false,
   "reload_style_on_change": true,
+  "spacing": 8,
 
-  // Gaps between modules (4px)
-  "spacing": 10,
-
-  // Gap from the top of the screen
   "margin-top": 0,
   "margin-left": 0,
   "margin-right": 0,
-  "margin-bottom": 1,
+  "margin-bottom": 0,
 
-  // Choose the order of the modules
   "modules-left": ["custom/icon", "hyprland/window"],
   "modules-center": ["hyprland/workspaces"],
-  "modules-right": ["tray", "clock"],
+  "modules-right": ["tray", "pulseaudio", "pulseaudio#microphone", "clock"],
 
   "custom/icon": {
-    "format": "󰣇",
+    "format": "󰣇"
   },
 
   "hyprland/window": {
     "separate-outputs": true,
-    //"max-length": 20,
     "format": "{class}",
     "rewrite": {
-      // if any window is focused display Finder
       "": "Kel'thuzad",
       "kitty": "Kel'thuzad",
       "vesktop": "Discord",
-      "zen": "Browser",
-    },
+      "zen": "Browser"
+    }
   },
 
-  // Per-module config
   "hyprland/workspaces": {
     "disable-scroll": true,
     "on-click": "activate",
-    "format": "{icon}",
+    "format": "{icon}"
   },
 
   "tray": {
-    "icon-size": 16,
-    "spacing": 5,
-    "show-passive-items": true,
+    "icon-size": 15,
+    "spacing": 6,
+    "show-passive-items": true
+  },
+
+  "pulseaudio": {
+    "scroll-step": 2,
+    "format": "{icon}  {volume}%",
+    "format-muted": "󰝟  mute",
+    "format-icons": {
+      "default": ["󰕿", "󰖀", "󰕾"]
+    },
+    "on-click": "pactl set-sink-mute @DEFAULT_SINK@ toggle",
+    "tooltip-format": "{desc} · {volume}%"
+  },
+
+  "pulseaudio#microphone": {
+    "format": "{format_source}",
+    "format-source": "󰍬  {volume}%",
+    "format-source-muted": "󰍭  mute",
+    "on-click": "pactl set-source-mute @DEFAULT_SOURCE@ toggle",
+    "on-scroll-up": "pactl set-source-volume @DEFAULT_SOURCE@ +2%",
+    "on-scroll-down": "pactl set-source-volume @DEFAULT_SOURCE@ -2%",
+    "tooltip-format": "{source_desc} · {source_volume}%"
   },
 
   "clock": {
-    "format": "<span></span>  {:%H:%M}",
+    "format": "  {:%H:%M}",
     "interval": 1,
     "tooltip-format": "<tt>{calendar}</tt>",
     "calendar": {
       "format": {
-        "today": "<span color='#eed49f'><b>{}</b></span>",
-      },
+        "today": "<span color='#c0caf5'><b>{}</b></span>"
+      }
     },
     "actions": {
       "on-click-right": "shift_down",
-      "on-click": "shift_up",
-    },
-  },
+      "on-click": "shift_up"
+    }
+  }
 }

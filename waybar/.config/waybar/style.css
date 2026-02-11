@@ -1,113 +1,113 @@
-@define-color rosewater #f4dbd6;
-@define-color flamingo #f0c6c6;
-@define-color pink #f5bde6;
-@define-color mauve #c6a0f6;
-@define-color red #ed8796;
-@define-color maroon #ee99a0;
-@define-color peach #f5a97f;
-@define-color yellow #eed49f;
-@define-color green #a6da95;
-@define-color teal #8bd5ca;
-@define-color sky #91d7e3;
-@define-color sapphire #7dc4e4;
-@define-color blue #8aadf4;
-@define-color lavender #b7bdf8;
-@define-color text #cad3f5;
-@define-color subtext1 #b8c0e0;
-@define-color subtext0 #a5adcb;
-@define-color overlay2 #939ab7;
-@define-color overlay1 #8087a2;
-@define-color overlay0 #6e738d;
-@define-color surface2 #5b6078;
-@define-color surface1 #494d64;
-@define-color surface0 #363a4f;
-@define-color base #24273a;
-@define-color mantle #1e2030;
-@define-color crust #181926;
+@define-color bg #0e0e0e;
+@define-color bg-alt #161616;
+@define-color fg #c8c8c8;
+@define-color fg-dim #6b6b6b;
+@define-color accent #c0caf5;
+@define-color active #e2e2e2;
+@define-color urgent #f7768e;
+@define-color green #73daca;
+@define-color muted #414141;
 
 * {
-    font-family: "JetBrains Mono Nerd", monospace;
+    font-family: "JetBrainsMono Nerd Font", monospace;
+    font-size: 12px;
     border: none;
     min-height: 0;
 }
 
 window#waybar {
-    /* border: 1px solid alpha(@blue, 0.85); */
-    background-color: alpha(@base, 0.75);
-    /* border-radius: 0 0 0.2rem 0.2rem; */
-    border-radius: 0;
-    color: @sapphire;
-    padding: 2px 12px;
-    /* background-color: transparent; */
-    transition: 0.3s all;
+    background-color: alpha(@bg, 0.9);
+    color: @fg;
+    padding: 2px 10px;
+    transition: 0.2s;
 }
 
 .modules-left,
 .modules-center,
 .modules-right {
-    /* border: 2px solid alpha(@blue, 0.85); */
-    /* background-color: alpha(@base, 0.75); */
-    /* border-radius: 8px;
-  padding: 2px 12px; */
-    padding: 0 1rem;
-    color: @sapphire;
-    border: none;
+    padding: 0;
 }
 
-.modules-center {
-    padding: 2px;
-}
+/* --- Left --- */
 
 #custom-icon {
-    font-size: 15px;
-    padding-right: 5px;
+    color: @accent;
+    font-size: 14px;
+    padding: 0 8px 0 4px;
 }
 
 #window {
+    color: @fg-dim;
     font-weight: bold;
-    color: @sky;
-    transition: all 0.3s ease;
 }
 
+/* --- Center --- */
+
 #workspaces {
-    font-weight: bold;
-    font-size: 12px;
-    border: none;
+    font-size: 11px;
 }
 
 #workspaces button {
-    color: @sapphire;
+    color: @fg-dim;
+    padding: 2px 6px;
     border-radius: 0;
-    transition: 0.2s ease-out;
-    border-bottom: 1px solid transparent;
+    border-bottom: 2px solid transparent;
+    transition: 0.15s ease;
 }
 
-#workspaces button:first-child {
-    /* border-bottom-left-radius: 4px; */
-}
-
-#workspaces button:last-child {
-    /* border-bottom-right-radius: 4px; */
-}
-
-#workspaces button.urgent {
-    border-bottom: 1px solid @blue;
+#workspaces button:hover {
+    background: transparent;
+    color: @fg;
 }
 
 #workspaces button.active {
-    border-bottom: 1px solid @yellow;
-    color: @yellow;
+    color: @active;
+    border-bottom: 2px solid @accent;
 }
 
+#workspaces button.urgent {
+    color: @urgent;
+    border-bottom: 2px solid @urgent;
+}
+
+/* --- Right --- */
+
 #tray {
-    color: @sapphire;
+    color: @fg-dim;
+    padding: 0 4px;
+}
+
+#tray > .passive {
+    -gtk-icon-effect: dim;
+}
+
+#pulseaudio {
+    color: @fg;
+    padding: 0 6px;
+    transition: 0.2s ease;
+}
+
+#pulseaudio.muted {
+    color: @fg-dim;
+}
+
+#pulseaudio.microphone {
+    color: @fg;
+    padding: 0 6px;
+    transition: 0.2s ease;
+}
+
+#pulseaudio.microphone.source-muted {
+    color: @fg-dim;
 }
 
 #clock {
-    transition: all 0.3s ease;
+    color: @fg;
     font-weight: bold;
+    padding: 0 4px 0 6px;
+    transition: 0.2s ease;
 }
 
 #clock:hover {
-    color: @yellow;
+    color: @accent;
 }
