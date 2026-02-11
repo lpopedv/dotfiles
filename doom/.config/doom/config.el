@@ -9,9 +9,9 @@
 
 (setq display-line-numbers-type 'relative)
 
-;; Set Fish as default shell
-(setq shell-file-name "/usr/bin/fish"
-      explicit-shell-file-name "/usr/bin/fish")
+;; Set zsh as default shell
+(setq shell-file-name "/usr/bin/zsh"
+      explicit-shell-file-name "/usr/bin/zsh")
 
 ;; Theme
 (setq doom-theme 'doom-gruvbox)
