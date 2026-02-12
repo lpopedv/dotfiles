@@ -9,6 +9,7 @@ bindkey "^[[1;5C" forward-word
 
 # Exports
 export PATH=$HOME/.local/bin:$PATH
+export PATH=$HOME/.config/emacs/bin:$PATH
 
 # Fzf
 source <(fzf --zsh)
@@ -17,8 +18,14 @@ source <(fzf --zsh)
 source /usr/share/zsh/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh
 source /usr/share/zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 
+# Evals
+eval "$(direnv hook zsh)"
+
 # Aliases
 alias ls="eza --icons"
 
 # Starship
 eval "$(starship init zsh)"
+
+# opencode
+export PATH=$HOME/.opencode/bin:$PATH
