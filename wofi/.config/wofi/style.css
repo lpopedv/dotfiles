@@ -1,0 +1,77 @@
+@define-color bg #0e0e0e;
+@define-color bg-alt #161616;
+@define-color fg #c8c8c8;
+@define-color fg-dim #6b6b6b;
+@define-color accent #c0caf5;
+@define-color active #e2e2e2;
+@define-color urgent #f7768e;
+@define-color green #73daca;
+@define-color muted #414141;
+
+* {
+    font-family: "JetBrainsMono Nerd Font", monospace;
+    font-size: 12px;
+}
+
+window {
+    background-color: alpha(@bg, 0.9);
+    color: @fg;
+    border: 1px solid @muted;
+    border-radius: 0;
+}
+
+#input {
+    background-color: @bg-alt;
+    color: @fg;
+    border: none;
+    border-bottom: 2px solid @accent;
+    padding: 8px 12px;
+    margin: 8px;
+    border-radius: 0;
+}
+
+#input:focus {
+    border-bottom: 2px solid @active;
+}
+
+#inner-box {
+    background-color: transparent;
+    margin: 4px 8px 8px 8px;
+}
+
+#outer-box {
+    background-color: transparent;
+    padding: 0;
+}
+
+#scroll {
+    background-color: transparent;
+}
+
+#text {
+    color: @fg;
+    padding: 4px 8px;
+}
+
+#entry {
+    background-color: transparent;
+    color: @fg;
+    padding: 6px 12px;
+    border-radius: 0;
+    transition: 0.15s ease;
+}
+
+#entry:hover {
+    background-color: @bg-alt;
+}
+
+#entry:selected {
+    background-color: @bg-alt;
+    color: @active;
+    border-left: 2px solid @accent;
+}
+
+#entry:selected #text {
+    color: @active;
+    font-weight: bold;
+}
