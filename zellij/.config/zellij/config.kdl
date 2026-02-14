@@ -266,18 +266,18 @@ keybinds clear-defaults=true {
 
 // Theme configuration
 themes {
-    gruvbox-dark {
-        fg "#ebdbb2"
-        bg "#282828"
-        black "#282828"
-        red "#cc241d"
-        green "#98971a"
-        yellow "#d79921"
-        blue "#458588"
-        magenta "#b16286"
-        cyan "#689d6a"
-        white "#a89984"
-        orange "#d65d0e"
+    dark {
+        fg "#ffffff"
+        bg "#1c1916"
+        black "#1c1916"
+        red "#c57463"
+        green "#a2ba7d"
+        yellow "#c3c97d"
+        blue "#9ba1bb"
+        magenta "#bda8bd"
+        cyan "#aac0cb"
+        white "#e7dfd7"
+        orange "#e1aea3"
     }
 }
 
@@ -316,7 +316,7 @@ load_plugins {
 // Choose the theme that is specified in the themes section.
 // Default: default
 //
-theme "gruvbox-dark"
+theme "dark"
  
 // Choose the base input mode of zellij.
 // Default: normal
