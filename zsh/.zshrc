@@ -23,7 +23,8 @@ source /usr/share/zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zs
 eval "$(direnv hook zsh)"
 
 # Aliases
-alias ls="eza --icons"
+alias ls="eza --icons --git --links --long"
+alias l="eza --icons --git --links --long"
 
 # Starship
 eval "$(starship init zsh)"
