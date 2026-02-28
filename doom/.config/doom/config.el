@@ -14,7 +14,7 @@
       explicit-shell-file-name "/usr/bin/zsh")
 
 ;; Theme
-(setq doom-theme 'doom-gruvbox)
+(setq doom-theme 'doom-one)
 
 ;; Background transparency
 (when (display-graphic-p)
