@@ -10,11 +10,13 @@
 (setq display-line-numbers-type 'relative)
 
 ;; Set zsh as default shell
-(setq shell-file-name "/usr/bin/zsh"
-      explicit-shell-file-name "/usr/bin/zsh")
+(setq shell-file-name (executable-find "zsh")
+      explicit-shell-file-name (executable-find "zsh"))
 
 ;; Theme
-(setq doom-theme 'doom-one)
+(setq doom-theme 'doom-ayu-dark)
+
+(setq emojify-display-style 'unicode)
 
 ;; Background transparency
 (when (display-graphic-p)
@@ -47,7 +49,7 @@
 
 ;; Elixir
 (setq flycheck-elixir-credo-strict t)
-(setq lsp-elixir-fetch-deps t)
+(setq lsp-elixir-fetch-deps nil)
 
 ;; LSP
 (setq lsp-enable-file-watchers t)
