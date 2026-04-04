@@ -1,0 +1,10 @@
+font-family = JetBrainsMono Nerd Font
+
+background = #000000
+background-opacity = 0.85
+background-blur = true
+font-size = 13
+font-style = Regular
+font-style-bold = Bold
+font-style-italic = Italic
+font-style-bold-italic = Bold Italic
