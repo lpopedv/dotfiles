@@ -1,7 +1,7 @@
 @define-color bg     rgba(14, 14, 14, 0.92);
 @define-color fg     #c8c8c8;
 @define-color dim    #6b6b6b;
-@define-color orange #ff8800;
+@define-color orange #b0b0b0;
 @define-color violet #cc44ff;
 @define-color green  #00ff99;
 @define-color urgent #f7768e;
@@ -51,7 +51,8 @@ window#waybar {
 
 #workspaces button.active {
     color: @orange;
-    background: rgba(255, 136, 0, 0.12);
+    background: rgba(176, 176, 176, 0.15);
+    border-radius: 30%;
     font-weight: bold;
 }
 
