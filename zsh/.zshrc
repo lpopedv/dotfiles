@@ -28,6 +28,3 @@ alias l="eza --icons --git --links --long"
 
 # Starship
 eval "$(starship init zsh)"
-
-# opencode
-export PATH=$HOME/.opencode/bin:$PATH
