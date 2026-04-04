@@ -25,6 +25,7 @@ eval "$(direnv hook zsh)"
 # Aliases
 alias ls="eza --icons --git --links --long"
 alias l="eza --icons --git --links --long"
+alias ai="claude"
 
 # Starship
 eval "$(starship init zsh)"
