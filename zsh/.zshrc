@@ -10,7 +10,7 @@ bindkey "^[[1;5C" forward-word
 # Exports
 export PATH=$HOME/.local/bin:$PATH
 export PATH=$HOME/.config/emacs/bin:$PATH
-export PATH="${ASDF_DATA_DIR:-$HOME/.asdf}/shims:$PATH"
+eval "$(mise activate zsh)"
 
 # Fzf
 source <(fzf --zsh)
