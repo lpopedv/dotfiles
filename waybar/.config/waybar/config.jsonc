@@ -10,7 +10,7 @@
 
     "modules-left": ["hyprland/workspaces"],
     "modules-center": ["clock"],
-    "modules-right": ["custom/audio", "custom/htop"],
+    "modules-right": ["tray", "custom/audio", "custom/htop"],
 
     "hyprland/workspaces": {
         "format": "{id}",
@@ -26,6 +26,12 @@
         "format-alt": "{:%A, %d de %B de %Y}",
         "tooltip-format": "<tt><small>{calendar}</small></tt>",
         "interval": 1
+    },
+
+    "tray": {
+        "icon-size": 18,
+        "spacing": 8,
+        "show-passive-items": true
     },
 
     "custom/audio": {
