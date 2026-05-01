@@ -56,3 +56,9 @@
 (setq lsp-file-watch-threshold 20000)
 (setq vterm-max-scrollback 100000)
 
+;; Mermaid
+(use-package! mermaid-mode
+  :config
+  (setq mermaid-mmdc-location (string-trim (shell-command-to-string "which mmdc")))
+  (setq mermaid-output-format ".png")
+  (setq mermaid-flags "-s 3 -b white"))

@@ -52,3 +52,5 @@
 (package! evil-terminal-cursor-changer)
 
 (package! biomejs-format :recipe (:host github :repo "yadex205/emacs-biomejs-format"))
+
+(package! mermaid-mode)
