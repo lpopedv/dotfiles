@@ -36,13 +36,13 @@
 
     "custom/audio": {
         "format": "󰕾",
-        "on-click": "ghostty -e wiremix",
+        "on-click": "kitty -e wiremix",
         "tooltip": "Controle de Áudio (wiremix)"
     },
 
     "custom/htop": {
         "format": "󰍛",
-        "on-click": "ghostty -e htop",
+        "on-click": "kitty -e htop",
         "tooltip": "Monitor do Sistema (htop)"
     }
 }

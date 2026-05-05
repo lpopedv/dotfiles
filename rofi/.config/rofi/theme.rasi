@@ -1,0 +1,101 @@
+* {
+    bg:          #0e0e0ee8;
+    bg-alt:      #ffffff0a;
+    fg:          #dcdce8ff;
+    fg-dim:      #dcdce859;
+    accent:      #ff8844ff;
+    selected-bg: #ff880028;
+    selected-bd: #ff880055;
+    border-col:  #ff880033;
+    urgent:      #ff505040;
+    active:      #cc44ff28;
+
+    background-color: transparent;
+    text-color:       @fg;
+    margin:  0;
+    padding: 0;
+    spacing: 0;
+}
+
+window {
+    width:            520px;
+    border-radius:    14px;
+    border:           1px;
+    border-color:     @border-col;
+    background-color: @bg;
+    padding:          10px;
+}
+
+mainbox {
+    background-color: transparent;
+    children:         [inputbar, listview];
+    spacing:          8px;
+}
+
+inputbar {
+    background-color: @bg-alt;
+    border-radius:    8px;
+    border:           1px;
+    border-color:     #ffffff10;
+    padding:          10px 14px;
+    spacing:          8px;
+    children:         [prompt, entry];
+}
+
+prompt {
+    background-color: transparent;
+    text-color:       @accent;
+}
+
+entry {
+    background-color: transparent;
+    text-color:       @fg;
+    placeholder:      "Buscar...";
+    placeholder-color: @fg-dim;
+}
+
+listview {
+    background-color: transparent;
+    lines:            8;
+    columns:          1;
+    fixed-height:     false;
+    scrollbar:        false;
+    spacing:          2px;
+}
+
+element {
+    background-color: transparent;
+    border-radius:    7px;
+    padding:          8px 12px;
+    spacing:          10px;
+    children:         [element-icon, element-text];
+}
+
+element-icon {
+    background-color: transparent;
+    size:             20px;
+    vertical-align:   0.5;
+}
+
+element-text {
+    background-color: transparent;
+    text-color:       @fg;
+    vertical-align:   0.5;
+}
+
+element.normal.normal    { background-color: transparent;   text-color: @fg; }
+element.normal.urgent    { background-color: @urgent;       text-color: @fg; }
+element.normal.active    { background-color: @active;       text-color: @fg; }
+
+element.alternate.normal { background-color: @bg-alt;       text-color: @fg; }
+element.alternate.urgent { background-color: @urgent;       text-color: @fg; }
+element.alternate.active { background-color: @active;       text-color: @fg; }
+
+element.selected.normal  {
+    background-color: @selected-bg;
+    border:           1px;
+    border-color:     @selected-bd;
+    text-color:       @fg;
+}
+element.selected.urgent  { background-color: @urgent;  text-color: @fg; }
+element.selected.active  { background-color: @active;  text-color: @fg; }
