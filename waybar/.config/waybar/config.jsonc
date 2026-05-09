@@ -10,7 +10,7 @@
 
     "modules-left": ["hyprland/workspaces"],
     "modules-center": ["clock"],
-    "modules-right": ["tray", "custom/audio", "custom/htop"],
+    "modules-right": ["tray", "custom/audio", "custom/htop", "custom/wlogout"],
 
     "hyprland/workspaces": {
         "format": "{id}",
@@ -44,5 +44,11 @@
         "format": "󰍛",
         "on-click": "kitty -e htop",
         "tooltip": "Monitor do Sistema (htop)"
+    },
+
+    "custom/wlogout": {
+        "format": "󰐥",
+        "on-click": "wlogout -b 3 -c 16 -r 16",
+        "tooltip": "Sessão"
     }
 }

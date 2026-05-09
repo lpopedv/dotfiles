@@ -76,7 +76,8 @@ window#waybar {
 /* --- Right icons --- */
 
 #custom-audio,
-#custom-htop {
+#custom-htop,
+#custom-wlogout {
     color: @fg;
     font-size: 16px;
     padding: 0 8px;
@@ -89,4 +90,8 @@ window#waybar {
 
 #custom-htop:hover {
     color: @green;
+}
+
+#custom-wlogout:hover {
+    color: @urgent;
 }
