@@ -1,50 +1,50 @@
 * {
-    bg:          #0e0e0ee8;
-    bg-alt:      #ffffff0a;
-    fg:          #dcdce8ff;
-    fg-dim:      #dcdce859;
-    accent:      #ff8844ff;
-    selected-bg: #ff880028;
-    selected-bd: #ff880055;
-    border-col:  #ff880033;
-    urgent:      #ff505040;
-    active:      #cc44ff28;
+    bg:          #0d0d0dc8;
+    bg-alt:      #ffffff08;
+    bg-hover:    #ffffff0e;
+    fg:          #c8c8c8ff;
+    fg-dim:      #6b6b6b99;
+    selected-bg: #ffffff12;
+    selected-bd: #ffffff22;
+    border-col:  #ffffff14;
 
     background-color: transparent;
     text-color:       @fg;
+    font:             "JetBrainsMono Nerd Font 13";
     margin:  0;
     padding: 0;
     spacing: 0;
 }
 
 window {
-    width:            520px;
-    border-radius:    14px;
+    width:            560px;
+    border-radius:    16px;
     border:           1px;
     border-color:     @border-col;
     background-color: @bg;
-    padding:          10px;
+    padding:          12px;
 }
 
 mainbox {
     background-color: transparent;
     children:         [inputbar, listview];
-    spacing:          8px;
+    spacing:          10px;
 }
 
 inputbar {
     background-color: @bg-alt;
-    border-radius:    8px;
+    border-radius:    10px;
     border:           1px;
-    border-color:     #ffffff10;
-    padding:          10px 14px;
-    spacing:          8px;
+    border-color:     #ffffff0e;
+    padding:          11px 16px;
+    spacing:          10px;
     children:         [prompt, entry];
 }
 
 prompt {
     background-color: transparent;
-    text-color:       @accent;
+    text-color:       @fg-dim;
+    font:             "JetBrainsMono Nerd Font Bold 13";
 }
 
 entry {
@@ -65,37 +65,36 @@ listview {
 
 element {
     background-color: transparent;
-    border-radius:    7px;
-    padding:          8px 12px;
-    spacing:          10px;
+    border-radius:    10px;
+    padding:          9px 14px;
+    spacing:          12px;
     children:         [element-icon, element-text];
+    cursor:           pointer;
 }
 
 element-icon {
     background-color: transparent;
-    size:             20px;
+    size:             22px;
     vertical-align:   0.5;
 }
 
 element-text {
     background-color: transparent;
-    text-color:       @fg;
+    text-color:       inherit;
     vertical-align:   0.5;
 }
 
-element.normal.normal    { background-color: transparent;   text-color: @fg; }
-element.normal.urgent    { background-color: @urgent;       text-color: @fg; }
-element.normal.active    { background-color: @active;       text-color: @fg; }
+element.normal.normal    { background-color: transparent;  text-color: @fg; }
+element.alternate.normal { background-color: transparent;  text-color: @fg; }
 
-element.alternate.normal { background-color: @bg-alt;       text-color: @fg; }
-element.alternate.urgent { background-color: @urgent;       text-color: @fg; }
-element.alternate.active { background-color: @active;       text-color: @fg; }
-
-element.selected.normal  {
+element.selected.normal {
     background-color: @selected-bg;
     border:           1px;
     border-color:     @selected-bd;
-    text-color:       @fg;
+    text-color:       #e8e8e8ff;
 }
-element.selected.urgent  { background-color: @urgent;  text-color: @fg; }
-element.selected.active  { background-color: @active;  text-color: @fg; }
+
+element.normal.urgent    { background-color: transparent;  text-color: #f7768eff; }
+element.selected.urgent  { background-color: transparent;  text-color: #f7768eff; }
+element.normal.active    { background-color: transparent;  text-color: @fg; }
+element.selected.active  { background-color: @selected-bg; text-color: #e8e8e8ff; }
