@@ -1,5 +1,10 @@
 ;;; $DOOMDIR/config.el -*- lexical-binding: t; -*-
 
+;;;; mise shims — make Emacs find Node, Elixir, Erlang etc.
+(let ((mise-shims (expand-file-name "~/.local/share/mise/shims")))
+  (add-to-list 'exec-path mise-shims)
+  (setenv "PATH" (concat mise-shims ":" (getenv "PATH"))))
+
 ;;;; Basic settings
 (setq user-full-name "Lucas Pope"
       user-mail-address "lpopedv@proton.me")
@@ -14,7 +19,7 @@
       explicit-shell-file-name (executable-find "zsh"))
 
 ;; Theme
-(setq doom-theme 'doom-ayu-dark)
+(setq doom-theme 'doom-ayu-mirage)
 
 (setq emojify-display-style 'unicode)
 
