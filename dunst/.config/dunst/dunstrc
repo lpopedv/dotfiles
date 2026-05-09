@@ -11,7 +11,7 @@
     gap_size     = 8
 
     ### Text ###
-    font            = Noto Sans 11
+    font            = JetBrainsMono Nerd Font 11
     line_height     = 2
     markup          = full
     format          = "<b>%s</b>\n%b"
@@ -59,22 +59,22 @@
     browser = /usr/bin/xdg-open
 
 [urgency_low]
-    background  = "#0e0e0ee8"
-    foreground  = "#9090a8ff"
-    frame_color = "#ffffff18"
+    background  = "#0d0d0dc8"
+    foreground  = "#6b6b6bff"
+    frame_color = "#ffffff10"
     timeout     = 4
-    highlight   = "#ff8844ff"
+    highlight   = "#6b6b6bff"
 
 [urgency_normal]
-    background  = "#0e0e0ee8"
-    foreground  = "#dcdce8ff"
-    frame_color = "#ff880040"
+    background  = "#0d0d0dc8"
+    foreground  = "#c8c8c8ff"
+    frame_color = "#ffffff18"
     timeout     = 5
-    highlight   = "#ff8844ff"
+    highlight   = "#e8e8e8ff"
 
 [urgency_critical]
-    background  = "#160608e8"
-    foreground  = "#dcdce8ff"
-    frame_color = "#ff4455aa"
+    background  = "#0d0d0dc8"
+    foreground  = "#c8c8c8ff"
+    frame_color = "#f7768e55"
     timeout     = 0
-    highlight   = "#ff4455ff"
+    highlight   = "#f7768eff"
