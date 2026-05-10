@@ -10,7 +10,12 @@ bindkey "^[[1;5C" forward-word
 # Exports
 export PATH=$HOME/.local/bin:$PATH
 export PATH=$HOME/.config/emacs/bin:$PATH
+export PATH=$HOME/.opencode/bin:$PATH
+
+# Evals
+eval "$(direnv hook zsh)"
 eval "$(mise activate zsh)"
+eval "$(starship init zsh)"
 
 # Fzf
 source <(fzf --zsh)
@@ -19,8 +24,6 @@ source <(fzf --zsh)
 source /usr/share/zsh/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh
 source /usr/share/zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 
-# Evals
-eval "$(direnv hook zsh)"
 
 # Aliases
 alias ls="eza --icons --git --links --long"
@@ -36,5 +39,18 @@ setopt HIST_IGNORE_SPACE
 setopt SHARE_HISTORY
 setopt APPEND_HISTORY
 
-# Starship
-eval "$(starship init zsh)"
+
+# pnpm
+export PNPM_HOME="/home/lucaspope/.local/share/pnpm"
+case ":$PATH:" in
+  *":$PNPM_HOME/bin:"*) ;;
+  *) export PATH="$PNPM_HOME/bin:$PATH" ;;
+esac
+# pnpm end
+
+# bun completions
+[ -s "/home/lucaspope/.bun/_bun" ] && source "/home/lucaspope/.bun/_bun"
+
+# bun
+export BUN_INSTALL="$HOME/.bun"
+export PATH="$BUN_INSTALL/bin:$PATH"
