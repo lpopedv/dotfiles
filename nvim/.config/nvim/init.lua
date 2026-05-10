@@ -7,6 +7,7 @@ vim.pack.add({
   'https://github.com/neovim/nvim-lspconfig',
   'https://github.com/stevearc/oil.nvim',
   'https://github.com/Shatur/neovim-ayu',
+  'https://github.com/nvim-tree/nvim-web-devicons',
 })
 
 require('plugins.theme')
