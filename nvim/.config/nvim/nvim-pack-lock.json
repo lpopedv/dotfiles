@@ -4,6 +4,10 @@
       "rev": "8969c8c2b668502d54478e46745d6647ff346e15",
       "src": "https://github.com/ibhagwan/fzf-lua"
     },
+    "neovim-ayu": {
+      "rev": "e5a9f0fa2918d6b5f57c21b3ac014314ee5e41c8",
+      "src": "https://github.com/Shatur/neovim-ayu"
+    },
     "nvim-lspconfig": {
       "rev": "4b7fbaa239c5db6b36f424a4521ca9f1a401be33",
       "src": "https://github.com/neovim/nvim-lspconfig"

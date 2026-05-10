@@ -6,8 +6,10 @@ vim.pack.add({
   'https://github.com/nvim-treesitter/nvim-treesitter',
   'https://github.com/neovim/nvim-lspconfig',
   'https://github.com/stevearc/oil.nvim',
+  'https://github.com/Shatur/neovim-ayu',
 })
 
+require('plugins.theme')
 require('plugins.fzf')
 require('plugins.treesitter')
 require('plugins.lsp')
