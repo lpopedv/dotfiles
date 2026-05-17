@@ -1,3 +1,8 @@
+# Auto-start tmux (only inside a graphical Wayland/X11 session)
+if [[ -z "$TMUX" ]] && [[ -n "$WAYLAND_DISPLAY" || -n "$DISPLAY" ]] && [[ $- == *i* ]] && command -v tmux &>/dev/null; then
+  exec tmux new-session -A -s main
+fi
+
 # Binds
 bindkey "^[[H" beginning-of-line
 bindkey "^[[F" end-of-line
