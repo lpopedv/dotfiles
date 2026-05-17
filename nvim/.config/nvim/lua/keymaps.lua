@@ -13,6 +13,11 @@ vim.keymap.set('n', '<leader>q', '<cmd>q<cr>', { desc = 'Close window' })
 
 -- Buffers
 vim.keymap.set({ 'n', 'i' }, '<C-s>', '<cmd>w<cr>', { desc = 'Save buffer' })
+vim.keymap.set('n', '<leader>fY', function()
+  local path = vim.fn.fnamemodify(vim.api.nvim_buf_get_name(0), ':.')
+  vim.fn.setreg('+', path)
+  vim.notify('Copied: ' .. path)
+end, { desc = 'Copy relative file path' })
 
 -- Search
 vim.keymap.set('n', '<Esc>', '<cmd>nohlsearch<cr>', { desc = 'Clear search highlights' })

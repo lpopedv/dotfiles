@@ -16,6 +16,9 @@ vim.o.signcolumn = 'yes'
 
 vim.schedule(function() vim.o.clipboard = 'unnamedplus' end)
 
+vim.o.autocomplete = true
+vim.o.completeopt = 'menu,menuone,noselect,popup'
+
 vim.diagnostic.config({
   severity_sort = true,
   update_in_insert = false,
