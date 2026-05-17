@@ -1,4 +1,5 @@
 require('snacks').setup({
+  notifier = { enabled = true },
   explorer = {
     tree = true,
     git_status = true,
