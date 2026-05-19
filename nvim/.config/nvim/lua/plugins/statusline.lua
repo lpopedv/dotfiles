@@ -16,7 +16,7 @@ require('lualine').setup({
     component_separators  = { left = '', right = '' },
     disabled_filetypes = {
       statusline = { 'snacks_dashboard' },
-      winbar     = { 'snacks_explorer', 'snacks_picker_list', 'snacks_terminal' },
+      winbar     = { 'oil', 'snacks_picker_list', 'snacks_terminal' },
     },
   },
   sections = {

@@ -9,6 +9,7 @@ vim.pack.add({
   'https://github.com/nvim-lualine/lualine.nvim',
   'https://github.com/nvim-tree/nvim-web-devicons',
   'https://github.com/folke/snacks.nvim',
+  'https://github.com/stevearc/oil.nvim',
 })
 
 require('plugins.theme')
@@ -17,3 +18,4 @@ require('plugins.fzf')
 require('plugins.treesitter')
 require('plugins.lsp')
 require('plugins.snacks')
+require('plugins.oil')
