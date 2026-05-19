@@ -19,6 +19,9 @@ vim.keymap.set('n', '<leader>fY', function()
   vim.notify('Copied: ' .. path)
 end, { desc = 'Copy relative file path' })
 
+-- JSON Formatting
+vim.keymap.set('n', '<leader>fj', ':%!python3 -m json.tool<CR>', { desc = 'Format JSON' })
+
 -- Search
 vim.keymap.set('n', '<Esc>', '<cmd>nohlsearch<cr>', { desc = 'Clear search highlights' })
 
