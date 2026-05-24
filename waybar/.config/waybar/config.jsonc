@@ -10,7 +10,7 @@
 
     "modules-left": ["hyprland/workspaces"],
     "modules-center": ["clock"],
-    "modules-right": ["tray", "custom/audio", "custom/htop", "custom/wlogout"],
+    "modules-right": ["tray", "custom/audio", "custom/htop", "custom/hyprpicker", "custom/wlogout"],
 
     "hyprland/workspaces": {
         "format": "{id}",
@@ -44,6 +44,12 @@
         "format": "󰍛",
         "on-click": "ghostty -e btop",
         "tooltip": "Monitor do Sistema (htop)"
+    },
+
+    "custom/hyprpicker": {
+        "format": "󰈋",
+        "on-click": "hyprpicker -a",
+        "tooltip": "Color Picker"
     },
 
     "custom/wlogout": {
