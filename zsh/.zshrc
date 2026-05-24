@@ -1,8 +1,3 @@
-# Auto-start tmux (only inside a graphical Wayland/X11 session)
-if [[ -z "$TMUX" ]] && [[ -n "$WAYLAND_DISPLAY" || -n "$DISPLAY" ]] && [[ $- == *i* ]] && command -v tmux &>/dev/null; then
-  exec tmux new-session -A -s main
-fi
-
 # Binds
 bindkey "^[[H" beginning-of-line
 bindkey "^[[F" end-of-line
@@ -18,7 +13,6 @@ export PATH=$HOME/.config/emacs/bin:$PATH
 export PATH=$HOME/.opencode/bin:$PATH
 
 # Evals
-eval "$(direnv hook zsh)"
 eval "$(mise activate zsh)"
 eval "$(starship init zsh)"
 
