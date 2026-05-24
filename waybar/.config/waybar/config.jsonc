@@ -42,7 +42,7 @@
 
     "custom/htop": {
         "format": "󰍛",
-        "on-click": "ghostty -e htop",
+        "on-click": "ghostty -e btop",
         "tooltip": "Monitor do Sistema (htop)"
     },
 
