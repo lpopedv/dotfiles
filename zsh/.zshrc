@@ -1,5 +1,3 @@
-# Binds
-bindkey "^[[H" beginning-of-line
 bindkey "^[[F" end-of-line
 bindkey "^[[3~" delete-char
 bindkey "^H" backward-kill-word
@@ -11,6 +9,7 @@ bindkey "^[[1;5C" forward-word
 export PATH=$HOME/.local/bin:$PATH
 export PATH=$HOME/.config/emacs/bin:$PATH
 export PATH=$HOME/.opencode/bin:$PATH
+export CLAUDE_CODE_DISABLE_ALTERNATE_SCREEN=1
 
 # Evals
 eval "$(mise activate zsh)"
