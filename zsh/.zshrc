@@ -27,6 +27,8 @@ source /usr/share/zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zs
 alias ls="eza --icons --git --links --long"
 alias l="eza --icons --git --links --long"
 alias ai="claude"
+alias v="nvim ."
+alias lg="lazygit"
 
 # History
 HISTFILE=~/.zsh_history
