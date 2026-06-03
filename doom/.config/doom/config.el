@@ -19,7 +19,12 @@
       explicit-shell-file-name (executable-find "zsh"))
 
 ;; Theme
-(setq doom-theme 'doom-ayu-dark)
+(setq doom-theme 'doom-gruvbox)
+
+;; Show the evil state as text (<N>, <I>, <V>...) instead of a small
+;; icon, which is hard to read on themes like gruvbox.
+(after! doom-modeline
+  (setq doom-modeline-modal-icon nil))
 
 (setq emojify-display-style 'unicode)
 
