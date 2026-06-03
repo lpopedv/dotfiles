@@ -30,8 +30,8 @@
 
 ;; Background transparency
 (when (display-graphic-p)
-  (set-frame-parameter (selected-frame) 'alpha-background 86)
-  (add-to-list 'default-frame-alist '(alpha-background . 86)))
+  (set-frame-parameter (selected-frame) 'alpha-background 95)
+  (add-to-list 'default-frame-alist '(alpha-background . 95)))
 
 ;; Remove title bar (window decorations)
 (add-to-list 'default-frame-alist '(undecorated . t))
