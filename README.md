@@ -6,6 +6,7 @@ Personal dotfiles for a Wayland-based Linux development environment, managed wit
 
 | Package | Tool | Description |
 |---------|------|-------------|
+| `claude` | [Claude Code](https://claude.com/claude-code) | User-level CLAUDE.md, slash commands, agents, settings, and MCP setup script |
 | `doom` | [Doom Emacs](https://github.com/doomemacs/doomemacs) | Feature-rich Emacs with Evil (VI) keybindings, LSP, and multi-language support |
 | `fuzzel` | [Fuzzel](https://codeberg.org/dnkl/fuzzel) | Lightweight Wayland application launcher |
 | `ghostty` | [Ghostty](https://ghostty.org) | GPU-accelerated terminal emulator |

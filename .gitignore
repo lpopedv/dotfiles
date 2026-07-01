@@ -1,2 +1,7 @@
 .tmp*
 fish/.config/fish/fish_variables
+
+claude/.claude/settings.local.json
+claude/.claude/**/agent-memory/
+claude/.claude/**/agent-memory-local/
+claude/.claude/.credentials.json
