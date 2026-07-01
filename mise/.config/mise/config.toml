@@ -1,0 +1,6 @@
+[tools]
+node = "24.18.0"
+lua-language-server = "latest"
+elixir-ls = "latest"
+erlang = "29.0.2"
+elixir = "1.20.2-otp-29"
