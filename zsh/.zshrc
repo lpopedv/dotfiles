@@ -9,7 +9,6 @@ bindkey "^[[1;5C" forward-word
 export PATH=$HOME/.local/bin:$PATH
 export PATH=$HOME/.config/emacs/bin:$PATH
 export PATH=$HOME/.opencode/bin:$PATH
-export CLAUDE_CODE_DISABLE_ALTERNATE_SCREEN=1
 
 # Evals
 eval "$(mise activate zsh)"
