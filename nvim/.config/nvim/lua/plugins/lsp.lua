@@ -44,6 +44,5 @@ vim.api.nvim_create_autocmd('LspAttach', {
 vim.opt.complete:append('o')
 
 vim.opt.completeopt = {'menuone', 'noselect'}
+vim.o.pumheight = 6
 
-vim.o.pumheight = 5
-vim.o.pumborder = 'rounded'
