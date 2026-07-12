@@ -11,7 +11,7 @@ shell-integration-features = cursor,sudo,title
 theme = Ayu
 
 # ─── Window ─────────────────────────────────────────────────────────────────
-background-opacity = 0.75
+background-opacity = 1
 window-padding-x = 10
 window-padding-y = 10
 window-padding-balance = true
