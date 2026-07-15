@@ -136,7 +136,7 @@ end
 
 local function lsp_clients()
   local names = vim.tbl_map(function(c) return c.name end, vim.lsp.get_clients({ bufnr = 0 }))
-  return #names > 0 and (' %#Comment# ' .. table.concat(names, ',') .. '%*') or ''
+  return #names > 0 and ('│ %#Comment# ' .. table.concat(names, ',') .. '%*') or ''
 end
 
 -- FILETYPE (via nvim-web-devicons, already installed)
@@ -164,7 +164,7 @@ function M.render()
     git_branch(),
     '%=',
     diagnostics(),
-    '│', lsp_clients(),
+    lsp_clients(),
     ' │', filetype(),
     ' │ %-14.(%l,%c%V%) %P ',
   })
