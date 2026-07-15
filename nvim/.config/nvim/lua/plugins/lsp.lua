@@ -31,7 +31,13 @@ vim.lsp.config('ts_ls', {
   root_markers = { 'tsconfig.json', 'jsconfig.json', 'package.json', '.git' },
 })
 
-vim.lsp.enable({ 'elixir_ls', 'lua_ls', 'ts_ls' })
+vim.lsp.config('marksman', {
+  cmd = { 'marksman', 'server' },
+  filetypes = { 'markdown', 'markdown.mdx' },
+  root_markers = { '.marksman.toml', '.git' },
+})
+
+vim.lsp.enable({ 'elixir_ls', 'lua_ls', 'ts_ls', 'marksman' })
 
 
 -- AUTOCOMPLETE
