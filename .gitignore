@@ -1,5 +1,4 @@
 .tmp*
-fish/.config/fish/fish_variables
 
 claude/.claude/settings.local.json
 claude/.claude/**/agent-memory/

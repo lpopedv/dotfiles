@@ -12,7 +12,20 @@ export PATH=$HOME/.opencode/bin:$PATH
 
 # Evals
 eval "$(mise activate zsh)"
-eval "$(starship init zsh)"
+
+# Prompt (native zsh, no external tools needed)
+autoload -Uz vcs_info
+autoload -Uz colors && colors
+setopt PROMPT_SUBST
+
+zstyle ':vcs_info:git:*' check-for-changes true
+zstyle ':vcs_info:git:*' unstagedstr ' %F{yellow}*%f'
+zstyle ':vcs_info:git:*' stagedstr ' %F{yellow}*%f'
+zstyle ':vcs_info:git:*' formats ' %F{8}on%f %F{magenta}%b%f%c%u'
+precmd() { vcs_info }
+
+PROMPT='%F{cyan}%~%f${vcs_info_msg_0_}
+%(?.%F{green}.%F{red})❯%f '
 
 # Fzf
 source <(fzf --zsh)

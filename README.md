@@ -1,18 +1,18 @@
 # Dotfiles
 
-Personal dotfiles for a Wayland-based Linux development environment, managed with [GNU Stow](https://www.gnu.org/software/stow/).
+Personal dotfiles for a Linux development environment, managed with [GNU Stow](https://www.gnu.org/software/stow/).
 
 ## Overview
 
 | Package | Tool | Description |
 |---------|------|-------------|
-| `claude` | [Claude Code](https://claude.com/claude-code) | User-level CLAUDE.md, slash commands, agents, settings, and MCP setup script |
 | `doom` | [Doom Emacs](https://github.com/doomemacs/doomemacs) | Feature-rich Emacs with Evil (VI) keybindings, LSP, and multi-language support |
-| `fuzzel` | [Fuzzel](https://codeberg.org/dnkl/fuzzel) | Lightweight Wayland application launcher |
 | `ghostty` | [Ghostty](https://ghostty.org) | GPU-accelerated terminal emulator |
-| `hypr` | [Hyprland](https://hyprland.org) | Dynamic tiling Wayland compositor |
-| `waybar` | [Waybar](https://github.com/Alexays/Waybar) | Status bar with workspaces, clock, and system info |
-| `zsh` | [Zsh](https://www.zsh.org) | Shell with Starship prompt, fzf, autosuggestions, and syntax highlighting |
+| `mise` | [mise](https://mise.jdx.dev) | Runtime/tool version manager |
+| `nvim` | [Neovim](https://neovim.io) | Editor config (Lua) |
+| `scripts` | — | Standalone helper scripts (not stowed) |
+| `tmux` | [tmux](https://github.com/tmux/tmux) | Terminal multiplexer config |
+| `zsh` | [Zsh](https://www.zsh.org) | Shell with a native minimal prompt (git-aware, no Starship/extra installs needed), fzf, autosuggestions, and syntax highlighting |
 
 ## Installation
 
@@ -26,7 +26,7 @@ cd ~/Dotfiles
 Stow one or more packages:
 
 ```sh
-stow doom fuzzel ghostty hypr waybar zsh
+stow doom ghostty mise nvim tmux zsh
 ```
 
 To stow a single package:
