@@ -4,6 +4,9 @@ require('oil').setup({
   view_options = {
     show_hidden = true,
   },
+  keymaps = {
+    ['<2-LeftMouse>'] = 'actions.select',
+  },
   -- Auto-reload the listing when files are created/removed on disk
   -- outside of nvim (e.g. by an external tool or AI agent).
   watch_for_changes = true,
