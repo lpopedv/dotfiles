@@ -15,6 +15,15 @@ vim.keymap.set('n', '<leader>q', '<cmd>q<cr>', { desc = 'Close window' })
 vim.keymap.set({ 'n', 'i' }, '<C-s>', '<cmd>w<cr>', { desc = 'Save buffer' })
 vim.keymap.set('n', '<leader>bn', '<cmd>enew<cr>', { desc = 'New buffer' })
 vim.keymap.set('n', '<leader>bd', '<cmd>bdelete<cr>', { desc = 'Delete buffer' })
+vim.keymap.set('n', '<leader>r', function()
+  -- Reload every loaded buffer that changed on disk (e.g. edited by
+  -- an external tool/AI). If we're inside Oil, also refresh its listing.
+  vim.cmd('checktime')
+  if vim.bo.filetype == 'oil' then
+    require('oil.actions').refresh.callback({ force = true })
+  end
+  vim.notify('Buffers refreshed')
+end, { desc = 'Refresh buffers from disk' })
 vim.keymap.set('n', '<leader>fY', function()
   local path = vim.fn.fnamemodify(vim.api.nvim_buf_get_name(0), ':.')
   vim.fn.setreg('+', path)

@@ -4,6 +4,9 @@ require('oil').setup({
   view_options = {
     show_hidden = true,
   },
+  -- Auto-reload the listing when files are created/removed on disk
+  -- outside of nvim (e.g. by an external tool or AI agent).
+  watch_for_changes = true,
 })
 
 vim.keymap.set('n', '<leader>e', '<cmd>Oil<cr>', { desc = 'File explorer' })
