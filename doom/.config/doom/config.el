@@ -19,7 +19,7 @@
       explicit-shell-file-name (executable-find "zsh"))
 
 ;; Theme
-(setq doom-theme 'doom-gruvbox)
+(setq doom-theme 'doom-ayu-dark)
 
 ;; Show the evil state as text (<N>, <I>, <V>...) instead of a small
 ;; icon, which is hard to read on themes like gruvbox.
@@ -29,9 +29,9 @@
 (setq emojify-display-style 'unicode)
 
 ;; Background transparency
-(when (display-graphic-p)
-  (set-frame-parameter (selected-frame) 'alpha-background 95)
-  (add-to-list 'default-frame-alist '(alpha-background . 95)))
+;; (when (display-graphic-p)
+;; (set-frame-parameter (selected-frame) 'alpha-background 95)
+;;  (add-to-list 'default-frame-alist '(alpha-background . 95)))
 
 ;; Remove title bar (window decorations)
 (add-to-list 'default-frame-alist '(undecorated . t))
