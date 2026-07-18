@@ -6,6 +6,7 @@ Personal dotfiles for a Linux development environment, managed with [GNU Stow](h
 
 | Package | Tool | Description |
 |---------|------|-------------|
+| `claude` | [Claude Code](https://claude.com/claude-code) | Global slash commands — `/en` (English tutor that corrects, suggests, and logs) and `/en-review` (weekly progress review) |
 | `doom` | [Doom Emacs](https://github.com/doomemacs/doomemacs) | Feature-rich Emacs with Evil (VI) keybindings, LSP, and multi-language support |
 | `ghostty` | [Ghostty](https://ghostty.org) | GPU-accelerated terminal emulator |
 | `mise` | [mise](https://mise.jdx.dev) | Runtime/tool version manager |

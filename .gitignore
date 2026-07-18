@@ -4,3 +4,7 @@ claude/.claude/settings.local.json
 claude/.claude/**/agent-memory/
 claude/.claude/**/agent-memory-local/
 claude/.claude/.credentials.json
+
+# English learning data (personal progress — kept local, not versioned)
+claude/.claude/english/log.jsonl
+claude/.claude/english/reviews/
