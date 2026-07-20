@@ -1,0 +1,6 @@
+[user]
+	name = Lucas Pope
+	email = lpopedv@proton.me
+
+[core]
+	editor = nvim
