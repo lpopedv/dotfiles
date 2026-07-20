@@ -6,6 +6,8 @@ bindkey "^[[1;5D" backward-word
 bindkey "^[[1;5C" forward-word
 
 # Exports
+export EDITOR=nvim
+export VISUAL=nvim
 export PATH=$HOME/.local/bin:$PATH
 export PATH=$HOME/.config/emacs/bin:$PATH
 export PATH=$HOME/.opencode/bin:$PATH
