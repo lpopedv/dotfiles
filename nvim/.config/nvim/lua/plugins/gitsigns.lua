@@ -26,7 +26,11 @@ require('gitsigns').setup({
     end, { desc = 'Prev git hunk' })
 
     -- Actions
+    map('n', '<leader>s', gitsigns.stage_buffer, { desc = 'Stage buffer' })
     map('n', '<leader>gs', gitsigns.stage_hunk, { desc = 'Stage hunk' })
+    map('v', '<leader>gs', function()
+      gitsigns.stage_hunk({ vim.fn.line('.'), vim.fn.line('v') })
+    end, { desc = 'Stage selected lines' })
     map('n', '<leader>gr', gitsigns.reset_hunk, { desc = 'Reset hunk' })
     map('n', '<leader>gp', gitsigns.preview_hunk, { desc = 'Preview hunk diff' })
     map('n', '<leader>gb', function() gitsigns.blame_line({ full = true }) end, { desc = 'Blame line' })

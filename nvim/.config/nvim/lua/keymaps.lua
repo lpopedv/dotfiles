@@ -12,7 +12,7 @@ vim.keymap.set('n', '<leader>wL', '<C-w>L', { desc = 'Move window far right' })
 vim.keymap.set('n', '<leader>q', '<cmd>q<cr>', { desc = 'Close window' })
 
 -- Buffers
-vim.keymap.set({ 'n', 'i' }, '<C-s>', '<cmd>w<cr>', { desc = 'Save buffer' })
+vim.keymap.set({ 'n', 'i', 'v' }, '<C-s>', '<Esc><cmd>w<cr>', { desc = 'Save buffer' })
 vim.keymap.set('n', '<leader>bn', '<cmd>enew<cr>', { desc = 'New buffer' })
 vim.keymap.set('n', '<leader>bd', '<cmd>bdelete<cr>', { desc = 'Delete buffer' })
 vim.keymap.set('n', '<leader>r', function()
