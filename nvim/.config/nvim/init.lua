@@ -9,6 +9,10 @@ vim.pack.add({
   'https://github.com/stevearc/oil.nvim',
   'https://github.com/MeanderingProgrammer/render-markdown.nvim',
   'https://github.com/lewis6991/gitsigns.nvim',
+  'https://github.com/nvim-neotest/nvim-nio',
+  'https://github.com/nvim-lua/plenary.nvim',
+  'https://github.com/nvim-neotest/neotest',
+  'https://github.com/jfpedroza/neotest-elixir',
 })
 
 require('plugins.theme')
@@ -19,3 +23,4 @@ require('plugins.oil')
 require('plugins.statusline')
 require('plugins.markdown')
 require('plugins.gitsigns')
+require('plugins.neotest')
