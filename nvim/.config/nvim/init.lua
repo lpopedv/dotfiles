@@ -13,6 +13,7 @@ vim.pack.add({
   'https://github.com/nvim-lua/plenary.nvim',
   'https://github.com/nvim-neotest/neotest',
   'https://github.com/jfpedroza/neotest-elixir',
+  'https://github.com/folke/which-key.nvim',
 })
 
 require('plugins.theme')
@@ -23,4 +24,5 @@ require('plugins.oil')
 require('plugins.statusline')
 require('plugins.markdown')
 require('plugins.gitsigns')
+require('plugins.whichkey')
 require('plugins.neotest')
