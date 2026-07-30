@@ -8,6 +8,9 @@ require('ayu').setup({
     CursorLineNr  = { bg = 'NONE', fg = '#e5e1cf' },
     StatusLine    = { bg = 'NONE' },
     StatusLineNC  = { bg = 'NONE' },
+    TabLine       = { bg = 'NONE' },
+    TabLineFill   = { bg = 'NONE' },
+    TabLineSel    = { bg = 'NONE' },
   },
 })
 

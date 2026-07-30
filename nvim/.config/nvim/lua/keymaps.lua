@@ -54,22 +54,21 @@ vim.keymap.set('i', '<C-l>', '<Right>', { desc = 'Move cursor right' })
 
 -- Lazygit
 vim.keymap.set('n', '<leader>gg', function()
-  local buf = vim.api.nvim_create_buf(false, true)
-  local width  = math.floor(vim.o.columns * 0.9)
-  local height = math.floor(vim.o.lines * 0.9)
-  vim.api.nvim_open_win(buf, true, {
-    relative = 'editor',
-    width    = width,
-    height   = height,
-    col      = math.floor((vim.o.columns - width) / 2),
-    row      = math.floor((vim.o.lines - height) / 2),
-    style    = 'minimal',
-    border   = 'rounded',
-  })
+  vim.cmd.tabnew()
+  vim.bo.bufhidden = 'wipe'
+  vim.api.nvim_buf_set_name(0, 'lazygit')
   vim.fn.termopen('lazygit', {
-    on_exit = function() vim.api.nvim_buf_delete(buf, { force = true }) end,
+    on_exit = function()
+      vim.schedule(function()
+        if vim.fn.tabpagenr('$') > 1 then
+          vim.cmd.tabclose()
+        else
+          vim.cmd.enew()
+        end
+      end)
+    end,
   })
-  vim.cmd('startinsert')
+  vim.cmd.startinsert()
 end, { desc = 'Open lazygit' })
 
 -- Highlight yanks
