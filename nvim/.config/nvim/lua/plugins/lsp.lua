@@ -25,10 +25,31 @@ vim.lsp.config('lua_ls', {
   },
 })
 
-vim.lsp.config('ts_ls', {
-  cmd = { 'typescript-language-server', '--stdio' },
+vim.lsp.config('tsc', {
+  cmd = function(dispatchers, config)
+    local cmd = 'tsc'
+    if config.root_dir then
+      local local_cmd = vim.fs.joinpath(config.root_dir, 'node_modules/.bin/tsc')
+      if vim.fn.executable(local_cmd) == 1 then
+        cmd = local_cmd
+      end
+    end
+    return vim.lsp.rpc.start({ cmd, '--lsp', '--stdio' }, dispatchers)
+  end,
   filetypes = { 'javascript', 'javascriptreact', 'javascript.jsx', 'typescript', 'typescriptreact', 'typescript.tsx' },
   root_markers = { 'tsconfig.json', 'jsconfig.json', 'package.json', '.git' },
+  settings = {
+    typescript = {
+      inlayHints = {
+        parameterNames = { enabled = 'literals', suppressWhenArgumentMatchesName = true },
+        parameterTypes = { enabled = true },
+        variableTypes = { enabled = true },
+        propertyDeclarationTypes = { enabled = true },
+        functionLikeReturnTypes = { enabled = true },
+        enumMemberValues = { enabled = true },
+      },
+    },
+  },
 })
 
 vim.lsp.config('marksman', {
@@ -58,7 +79,7 @@ vim.lsp.config('biome', {
   root_markers = { 'biome.json', 'biome.jsonc' },
 })
 
-vim.lsp.enable({ 'elixir_ls', 'lua_ls', 'ts_ls', 'marksman', 'biome' })
+vim.lsp.enable({ 'elixir_ls', 'lua_ls', 'tsc', 'marksman', 'biome' })
 
 
 -- AUTOCOMPLETE
@@ -69,14 +90,14 @@ vim.api.nvim_create_autocmd('LspAttach', {
   callback = function(ev)
     local client = assert(vim.lsp.get_client_by_id(ev.data.client_id))
     if client:supports_method('textDocument/completion') then
-      vim.lsp.completion.enable(true, client.id, ev.buf, {autotrigger = true})
+      vim.lsp.completion.enable(true, client.id, ev.buf, { autotrigger = true })
     end
     if client:supports_method('textDocument/definition') then
       vim.keymap.set('n', 'gd', vim.lsp.buf.definition, { buffer = ev.buf, desc = 'Go to definition' })
     end
     if client:supports_method('textDocument/formatting') then
       -- re-creating the group (keyed by buffer) on every LspAttach dedupes it:
-      -- when biome and ts_ls both attach to the same buffer, only the last
+      -- when biome and tsc both attach to the same buffer, only the last
       -- registration survives, so we never format twice on save.
       vim.api.nvim_create_autocmd('BufWritePre', {
         group = vim.api.nvim_create_augroup('my.lsp.format.' .. ev.buf, { clear = true }),
@@ -86,7 +107,7 @@ vim.api.nvim_create_autocmd('LspAttach', {
             bufnr = ev.buf,
             async = false,
             filter = function(c)
-              -- prefer biome over ts_ls when both are attached to the same buffer
+              -- prefer biome over tsc when both are attached to the same buffer
               local has_biome = #vim.lsp.get_clients({ bufnr = ev.buf, name = 'biome' }) > 0
               if has_biome then
                 return c.name == 'biome'
@@ -102,6 +123,5 @@ vim.api.nvim_create_autocmd('LspAttach', {
 
 vim.opt.complete:append('o')
 
-vim.opt.completeopt = {'menuone', 'noselect'}
+vim.opt.completeopt = { 'menuone', 'noselect' }
 vim.o.pumheight = 6
-
