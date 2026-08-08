@@ -1,102 +1,102 @@
-@define-color bg     rgba(14, 14, 14, 0.65);
-@define-color fg     #c8c8c8;
-@define-color dim    #6b6b6b;
-@define-color orange #b0b0b0;
-@define-color violet #cc44ff;
-@define-color green  #00ff99;
-@define-color urgent #f7768e;
+@define-color bg      #000000;
+@define-color fg      #888888;
+@define-color fg-act  #ffffff;
+@define-color border  #333333;
+@define-color urgent  #900000;
 
 * {
     font-family: "JetBrainsMono Nerd Font";
     font-size: 13px;
     border: none;
+    border-radius: 0;
     min-height: 0;
     padding: 0;
     margin: 0;
+    box-shadow: none;
+    text-shadow: none;
 }
 
 window#waybar {
-    background-color: transparent;
-    color: @fg;
-}
-
-.modules-left,
-.modules-center,
-.modules-right {
     background-color: @bg;
-    border-radius: 12px;
-    padding: 0 12px;
-    margin: 4px 0;
+    color: @fg;
+    padding: 0 6px;
 }
 
 /* --- Workspaces --- */
 
 #workspaces {
-    padding: 0 4px;
+    margin-left: 2px;
 }
 
 #workspaces button {
     color: @fg;
-    padding: 0 10px;
-    border-radius: 8px;
-    transition: all 0.15s ease;
-    background: transparent;
-    min-width: 0;
+    background: @bg;
+    padding: 0 13px;
+    margin: 4px 3px;
+    border: 1px solid transparent;
 }
 
 #workspaces button:hover {
-    color: @fg;
-    background: rgba(255, 255, 255, 0.05);
+    color: @fg-act;
+    background: @bg;
+    border: 1px solid @border;
 }
 
 #workspaces button.active {
-    color: @orange;
-    background: rgba(176, 176, 176, 0.15);
-    border-radius: 30%;
-    font-weight: bold;
+    color: @fg-act;
+    background: @bg;
+    border: 1px solid @border;
 }
 
 #workspaces button.empty {
-    color: @dim;
+    color: @fg;
 }
 
 #workspaces button.urgent {
-    color: @urgent;
+    color: @fg-act;
+    background: @urgent;
+    border: 1px solid @urgent;
 }
 
-/* --- Clock --- */
+/* --- Right side --- */
 
+#tray,
+#custom-audio,
+#custom-htop,
+#custom-hyprpicker,
+#custom-wlogout,
 #clock {
     color: @fg;
-    font-weight: bold;
-    font-size: 14px;
-    padding: 0 4px;
+    background: @bg;
+    padding: 0 11px;
 }
-
-/* --- Right icons --- */
 
 #custom-audio,
 #custom-htop,
 #custom-hyprpicker,
 #custom-wlogout {
-    color: @fg;
-    font-size: 16px;
-    padding: 0 8px;
-    transition: color 0.15s ease;
+    font-size: 15px;
 }
 
-#custom-audio:hover {
-    color: @orange;
+#tray {
+    padding-right: 6px;
 }
 
-#custom-htop:hover {
-    color: @green;
+#clock {
+    color: @fg-act;
+    padding-left: 14px;
+    padding-right: 12px;
 }
 
-#custom-hyprpicker:hover {
-    color: @violet;
-}
-
+#custom-audio:hover,
+#custom-htop:hover,
+#custom-hyprpicker:hover,
 #custom-wlogout:hover {
-    color: @urgent;
+    color: @fg-act;
+}
+
+#tray menu {
+    background: @bg;
+    color: @fg;
+    border: 1px solid @border;
 }
