@@ -6,16 +6,20 @@ font-thicken = true
 # ─── Shell ──────────────────────────────────────────────────────────────────
 shell-integration = zsh
 shell-integration-features = cursor,sudo,title
+confirm-close-surface = false
 
-# ─── Colors — Ayu ───────────────────────────────────────────────────────────
-theme = Ayu
+# ─── Colors — phosphor ──────────────────────────────────────────────────────
+theme = phosphor
+minimum-contrast = 1.1
 
 # ─── Window ─────────────────────────────────────────────────────────────────
 background-opacity = 1
-window-padding-x = 10
-window-padding-y = 10
+window-padding-x = 14
+window-padding-y = 14
 window-padding-balance = true
 gtk-titlebar = false
+unfocused-split-opacity = 0.92
+split-divider-color = #262a26
 
 # ─── Cursor ─────────────────────────────────────────────────────────────────
 cursor-style = block
