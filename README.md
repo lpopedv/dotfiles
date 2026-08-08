@@ -17,7 +17,8 @@ Personal dotfiles for a Linux development environment, managed with [GNU Stow](h
 | `rofi` | [rofi](https://github.com/davatorium/rofi) | App launcher / dmenu — vim-motion keybinds and a custom dark theme |
 | `scripts` | — | Standalone helper scripts (not stowed) |
 | `tmux` | [tmux](https://github.com/tmux/tmux) | Terminal multiplexer config |
-| `waybar` | [Waybar](https://github.com/Alexays/Waybar) | Status bar — floating pill modules, workspaces, clock, tray and custom launchers |
+| `waybar` | [Waybar](https://github.com/Alexays/Waybar) | Status bar — minimal i3bar-style black bottom bar, workspaces, clock, tray and custom launchers |
+| `wlogout` | [wlogout](https://github.com/ArtsyMacaw/wlogout) | Session menu — `phosphor` theme, square buttons |
 | `zsh` | [Zsh](https://www.zsh.org) | Shell with a native minimal prompt (git-aware, no Starship/extra installs needed), fzf, autosuggestions, and syntax highlighting |
 
 ## Installation
@@ -32,7 +33,7 @@ cd ~/Dotfiles
 Stow one or more packages:
 
 ```sh
-stow claude doom dunst flameshot ghostty hypr mise nvim rofi tmux waybar zsh
+stow claude doom dunst flameshot ghostty hypr mise nvim rofi tmux waybar wlogout zsh
 ```
 
 ### Desktop dependencies

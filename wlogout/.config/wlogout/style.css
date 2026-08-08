@@ -1,0 +1,78 @@
+@define-color bg      #0a0b0a;
+@define-color bg-btn  #121412;
+@define-color bg-hi   #1a1d1a;
+@define-color fg      #c6c9c5;
+@define-color fg-hi   #e6e9e5;
+@define-color border  #333833;
+@define-color accent  #a3b89a;
+
+* {
+    font-family: "JetBrainsMono Nerd Font";
+    font-size: 13px;
+    background-image: none;
+    box-shadow: none;
+    text-shadow: none;
+}
+
+window {
+    background-color: rgba(10, 11, 10, 0.92);
+}
+
+/* --- Buttons --- */
+
+button {
+    color: @fg;
+    background-color: @bg-btn;
+    border: 1px solid @border;
+    border-radius: 0;
+    margin: 6px;
+    opacity: 0.62;
+    background-repeat: no-repeat;
+    background-position: center 38%;
+    background-size: 22%;
+    transition: opacity 0.15s ease,
+                background-color 0.15s ease,
+                border-color 0.15s ease;
+}
+
+button:focus,
+button:active,
+button:hover {
+    color: @fg-hi;
+    background-color: @bg-hi;
+    border: 1px solid @accent;
+    outline-style: none;
+    opacity: 1;
+}
+
+/* --- Icons --- */
+
+#lock {
+    background-image: image(url("/usr/share/wlogout/icons/lock.png"),
+                            url("/usr/local/share/wlogout/icons/lock.png"));
+}
+
+#logout {
+    background-image: image(url("/usr/share/wlogout/icons/logout.png"),
+                            url("/usr/local/share/wlogout/icons/logout.png"));
+}
+
+#suspend {
+    background-image: image(url("/usr/share/wlogout/icons/suspend.png"),
+                            url("/usr/local/share/wlogout/icons/suspend.png"));
+}
+
+#hibernate {
+    background-image: image(url("/usr/share/wlogout/icons/hibernate.png"),
+                            url("/usr/local/share/wlogout/icons/hibernate.png"));
+}
+
+#shutdown {
+    background-image: image(url("/usr/share/wlogout/icons/shutdown.png"),
+                            url("/usr/local/share/wlogout/icons/shutdown.png"));
+}
+
+#reboot {
+    background-image: image(url("/usr/share/wlogout/icons/reboot.png"),
+                            url("/usr/local/share/wlogout/icons/reboot.png"));
+}
