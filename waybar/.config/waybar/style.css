@@ -1,11 +1,8 @@
 @define-color bg      #000000;
-@define-color fg      #888888;
+@define-color fg      #999999;
 @define-color fg-act  #ffffff;
 @define-color border  #333333;
-@define-color urgent  #900000;
-@define-color accent  #6fae7f;
-@define-color warn    #b8974f;
-@define-color danger  #b85c5c;
+@define-color warn    #cccccc;
 
 * {
     font-family: "JetBrainsMono Nerd Font";
@@ -42,15 +39,15 @@ window#waybar {
 }
 
 #workspaces button:hover {
-    color: @accent;
+    color: @fg-act;
     background: rgba(255, 255, 255, 0.04);
     border: 1px solid @border;
 }
 
 #workspaces button.active {
-    color: @accent;
-    background: rgba(111, 174, 127, 0.08);
-    border: 1px solid rgba(111, 174, 127, 0.35);
+    color: @fg-act;
+    background: rgba(255, 255, 255, 0.10);
+    border: 1px solid rgba(255, 255, 255, 0.35);
 }
 
 #workspaces button.empty {
@@ -58,9 +55,9 @@ window#waybar {
 }
 
 #workspaces button.urgent {
-    color: @fg-act;
-    background: @urgent;
-    border: 1px solid @urgent;
+    color: @bg;
+    background: @fg-act;
+    border: 1px solid @fg-act;
 }
 
 /* --- Right side ---
@@ -93,7 +90,7 @@ window#waybar {
 #custom-htop:hover,
 #custom-hyprpicker:hover,
 #battery:hover {
-    color: @accent;
+    color: @fg-act;
     background: rgba(255, 255, 255, 0.04);
     border: 1px solid @border;
 }
@@ -105,15 +102,19 @@ window#waybar {
 }
 
 #battery.charging {
-    color: @accent;
+    color: @fg-act;
+    font-weight: 600;
 }
 
 #battery.warning:not(.charging) {
     color: @warn;
+    font-weight: 600;
 }
 
 #battery.critical:not(.charging) {
-    color: @danger;
+    color: @bg;
+    background: @fg-act;
+    font-weight: 600;
 }
 
 #clock {
@@ -122,8 +123,8 @@ window#waybar {
 }
 
 #clock:hover {
-    background: rgba(111, 174, 127, 0.08);
-    border: 1px solid rgba(111, 174, 127, 0.35);
+    background: rgba(255, 255, 255, 0.10);
+    border: 1px solid rgba(255, 255, 255, 0.35);
 }
 
 /* power/session sits alone in the corner, separated from status group */
@@ -133,9 +134,9 @@ window#waybar {
 }
 
 #custom-wlogout:hover {
-    color: @danger;
-    background: rgba(184, 92, 92, 0.08);
-    border: 1px solid rgba(184, 92, 92, 0.4);
+    color: @bg;
+    background: @fg-act;
+    border: 1px solid @fg-act;
 }
 
 #tray {

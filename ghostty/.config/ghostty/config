@@ -8,18 +8,18 @@ shell-integration = zsh
 shell-integration-features = cursor,sudo,title
 confirm-close-surface = false
 
-# ─── Colors — phosphor ──────────────────────────────────────────────────────
-theme = phosphor
+# ─── Colors — mono ──────────────────────────────────────────────────────────
+theme = mono
 minimum-contrast = 1.1
 
 # ─── Window ─────────────────────────────────────────────────────────────────
-background-opacity = 1
+background-opacity = 0.85
 window-padding-x = 14
 window-padding-y = 14
 window-padding-balance = true
 gtk-titlebar = false
 unfocused-split-opacity = 0.92
-split-divider-color = #262a26
+split-divider-color = #333333
 
 # ─── Cursor ─────────────────────────────────────────────────────────────────
 cursor-style = block

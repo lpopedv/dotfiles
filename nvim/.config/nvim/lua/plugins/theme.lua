@@ -1,1 +1,1 @@
-vim.cmd('colorscheme phosphor')
+vim.cmd('colorscheme mono')
