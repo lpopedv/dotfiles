@@ -51,7 +51,7 @@ was written on. Check three things before reusing it elsewhere:
 
 | Key | Change it when |
 |---|---|
-| `profile_config.gfx_driver` | The machine has an NVIDIA GPU. Open-source is correct for Intel and AMD. |
+| `profile_config.gfx_driver` | The machine has an NVIDIA GPU — use `Nvidia (open kernel module for newer GPUs, Turing+)`. archinstall rejects `Nvidia (proprietary)` outright now, since nvidia-dkms left the Arch repos. Open-source is correct for Intel and AMD. |
 | `locale_config.kb_layout` | The keyboard is not ABNT2 — use `us` for a US layout. |
 | `hostname` | Always, if both machines share a network. `hostnamectl set-hostname` also works after the fact. |
 

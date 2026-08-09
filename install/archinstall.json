@@ -1,6 +1,8 @@
 {
-  "archinstall-language": "English",
-  "audio_config": { "audio": "pipewire" },
+  "archinstall_language": "English",
+  "app_config": {
+    "audio_config": { "audio": "pipewire" }
+  },
   "bootloader_config": {
     "bootloader": "Systemd-boot",
     "uki": false,
@@ -18,11 +20,10 @@
   "packages": ["git"],
   "pacman_config": { "color": true, "parallel_downloads": 20 },
   "profile_config": {
-    "gfx_driver": "All open-source (default)",
+    "gfx_driver": "All open-source",
     "profile": { "main": "Minimal" }
   },
   "script": "guided",
-  "silent": false,
   "swap": { "enabled": true, "algorithm": "zstd" },
   "timezone": "America/Sao_Paulo"
 }
