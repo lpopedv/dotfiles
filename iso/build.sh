@@ -49,16 +49,28 @@ git -C "$DOTFILES" archive HEAD | tar -x -C "$profile/airootfs/root/Dotfiles"
 printf '%s\n' "$(git -C "$DOTFILES" rev-parse --short HEAD)" \
     > "$profile/airootfs/root/Dotfiles/.iso-revision"
 
-# mkarchiso rebuilds every file's mode from the file_permissions array in
-# profiledef.sh, so a chmod here would be discarded. Declaring it there is the
-# only thing that survives into the image - without this install.sh ships 644
-# and .zlogin cannot execute it.
-cat >> "$profile/profiledef.sh" <<'PERMS'
-
-file_permissions+=(
-  ["/root/install.sh"]="0:0:755"
-)
-PERMS
+# mkarchiso copies the profile with `cp -af --no-preserve=ownership,mode`, so
+# every file lands 644 no matter what mode it had here. Only paths named in
+# file_permissions get a mode back. Naming install.sh by hand was enough to
+# boot the installer, but it left every script inside the embedded repo
+# unexecutable - bootstrap.sh included, which is the one command the installer
+# tells you to run next.
+#
+# Derive the list from git instead: whatever the index calls 755 ships 755,
+# and adding an executable to the repo never needs a matching edit here.
+{
+    printf '\nfile_permissions+=(\n'
+    git -C "$DOTFILES" ls-files -s | sed -n 's/^100755 [0-9a-f]* 0\t//p' |
+        while IFS= read -r f; do
+            # The overlay is both a path in the repo and a path in the image.
+            case "$f" in
+                iso/overlay/airootfs/*)
+                    printf '  ["%s"]="0:0:755"\n' "${f#iso/overlay/airootfs}" ;;
+            esac
+            printf '  ["/root/Dotfiles/%s"]="0:0:755"\n' "$f"
+        done
+    printf ')\n'
+} >> "$profile/profiledef.sh"
 
 log "Building"
 mkdir -p "$OUT"
