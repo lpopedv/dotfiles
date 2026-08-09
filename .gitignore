@@ -8,3 +8,8 @@ claude/.claude/.credentials.json
 # English learning data (personal progress — kept local, not versioned)
 claude/.claude/english/log.jsonl
 claude/.claude/english/reviews/
+
+# archinstall drops these in the working directory when it cannot write
+# to /var/log/archinstall, which is what happens on a --dry-run as non-root
+install.log
+cmd_history.txt
