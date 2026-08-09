@@ -49,7 +49,16 @@ git -C "$DOTFILES" archive HEAD | tar -x -C "$profile/airootfs/root/Dotfiles"
 printf '%s\n' "$(git -C "$DOTFILES" rev-parse --short HEAD)" \
     > "$profile/airootfs/root/Dotfiles/.iso-revision"
 
-chmod +x "$profile/airootfs/root/install.sh"
+# mkarchiso rebuilds every file's mode from the file_permissions array in
+# profiledef.sh, so a chmod here would be discarded. Declaring it there is the
+# only thing that survives into the image - without this install.sh ships 644
+# and .zlogin cannot execute it.
+cat >> "$profile/profiledef.sh" <<'PERMS'
+
+file_permissions+=(
+  ["/root/install.sh"]="0:0:755"
+)
+PERMS
 
 log "Building"
 mkdir -p "$OUT"
