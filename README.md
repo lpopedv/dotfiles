@@ -24,7 +24,28 @@ Personal dotfiles for a Linux development environment, managed with [GNU Stow](h
 
 ## Installation
 
-### From bare metal
+### From the custom ISO
+
+```sh
+sudo pacman -S archiso
+sudo ./iso/build.sh
+```
+
+The ISO lands in `iso/out/`. Write it to a stick with `dd`, boot it, and the
+installer starts on its own with every answer from `install/archinstall.json`
+already filled in. The TUI still asks for the three things a file should not
+decide: the disk, the user, and the passwords.
+
+It carries the repository at the commit it was built from, so after the
+install the dotfiles are already in your home directory and `bootstrap.sh`
+runs without a clone.
+
+The profile is not vendored — `build.sh` copies `releng` from the installed
+archiso package and lays `iso/overlay/` on top, so archiso updates arrive on
+their own. Rebuild the ISO whenever this repo changes; it is a snapshot, not
+a link.
+
+### From the official ISO
 
 Boot the official Arch ISO, then:
 

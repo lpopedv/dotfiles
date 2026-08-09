@@ -13,3 +13,6 @@ claude/.claude/english/reviews/
 # to /var/log/archinstall, which is what happens on a --dry-run as non-root
 install.log
 cmd_history.txt
+
+# Built ISOs - multi-GB artifacts, rebuilt from iso/build.sh
+iso/out/
