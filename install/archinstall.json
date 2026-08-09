@@ -13,7 +13,7 @@
   "locale_config": {
     "kb_layout": "br",
     "sys_enc": "UTF-8",
-    "sys_lang": "pt_BR"
+    "sys_lang": "en_US"
   },
   "network_config": { "type": "nm" },
   "ntp": true,
