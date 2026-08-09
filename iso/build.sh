@@ -62,6 +62,10 @@ PERMS
 
 log "Building"
 mkdir -p "$OUT"
+# mkarchiso records finished stages in its work directory and skips them on a
+# rerun, so reusing one silently republishes the previous image no matter what
+# changed in the profile. Always start from nothing.
+rm -rf "${WORK:?}/mkarchiso"
 mkarchiso -v -w "$WORK/mkarchiso" -o "$OUT" "$profile"
 
 log "Done"
