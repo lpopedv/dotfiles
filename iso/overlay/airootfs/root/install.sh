@@ -23,12 +23,27 @@ EOF
 
 read -rp '  Press enter to start, or Ctrl-C for a shell: ' _
 
-# pacstrap needs a working network; the ISO may still be bringing it up.
-printf '\n  waiting for the network...\n'
-systemctl is-system-running --wait >/dev/null 2>&1
-if ! systemd-run --pty --quiet -p Wants=network-online.target \
-    -p After=network-online.target true >/dev/null 2>&1; then
-    printf '  network is not up. Connect it, then run: %s\n' "$0"
+# pacstrap needs a working network. Test reachability directly rather than
+# waiting on network-online.target: nothing pulls that target in on the live
+# ISO when the connection was made by hand with iwctl, so waiting on it hangs
+# forever on exactly the machines that need wifi.
+printf '\n  checking the network...\n'
+if ! curl -sf --max-time 8 -o /dev/null https://archlinux.org; then
+    cat <<'EOF'
+
+  No network. For wifi:
+
+      iwctl
+      device wlan0 set-property Powered on     (if it is off)
+      station wlan0 scan
+      station wlan0 get-networks
+      station wlan0 connect YOUR_NETWORK
+      exit
+
+  If the device is missing entirely, try: rfkill unblock wifi
+  Then run ~/install.sh again.
+
+EOF
     exit 1
 fi
 
