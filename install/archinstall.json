@@ -15,7 +15,7 @@
     "sys_enc": "UTF-8",
     "sys_lang": "en_US"
   },
-  "network_config": { "type": "nm" },
+  "network_config": { "type": "nm_iwd" },
   "ntp": true,
   "packages": ["git"],
   "pacman_config": { "color": true, "parallel_downloads": 20 },
