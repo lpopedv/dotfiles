@@ -11,7 +11,7 @@ Personal dotfiles for a Linux development environment, managed with [GNU Stow](h
 | `dunst` | [dunst](https://dunst-project.org) | Notification daemon — dark translucent theme matching Waybar/rofi |
 | `flameshot` | [Flameshot](https://flameshot.org) | Screenshot tool (Wayland/grim adapter, no tray icon) |
 | `ghostty` | [Ghostty](https://ghostty.org) | GPU-accelerated terminal emulator |
-| `hypr` | [Hyprland](https://hypr.land) | Wayland compositor — split config (monitors, environment, autostart, look-and-feel, input, keybinds, rules) plus `hyprpaper` |
+| `hypr` | [Hyprland](https://hypr.land) | Wayland compositor — Lua config (0.55+) split into monitors, environment, autostart, look-and-feel, input, keybinds, rules, plus `hyprpaper` |
 | `mise` | [mise](https://mise.jdx.dev) | Runtime/tool version manager |
 | `nvim` | [Neovim](https://neovim.io) | Editor config (Lua) |
 | `rofi` | [rofi](https://github.com/davatorium/rofi) | App launcher / dmenu — vim-motion keybinds and a custom dark theme |
