@@ -127,7 +127,10 @@ for net in /etc/systemd/network/*.network; do
         "${net}.d/10-no-dhcp-dns.conf"
 done
 
-run sudo systemctl enable --now systemd-timesyncd.service systemd-resolved.service
+run sudo systemctl enable systemd-timesyncd.service systemd-resolved.service
+# restart, not enable --now: on a machine where these already run, --now is a
+# no-op and the drop-ins above would never be read
+run sudo systemctl restart systemd-timesyncd.service
 run sudo systemctl reload-or-restart systemd-resolved.service
 if systemctl is-active --quiet systemd-networkd; then
     run sudo networkctl reload
