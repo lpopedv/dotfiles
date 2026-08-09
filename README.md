@@ -24,52 +24,46 @@ Personal dotfiles for a Linux development environment, managed with [GNU Stow](h
 
 ## Installation
 
-Clone the repository to your home directory:
+On a machine that already runs Arch:
 
 ```sh
 git clone https://github.com/yourusername/dotfiles.git ~/Dotfiles
-cd ~/Dotfiles
+~/Dotfiles/install/bootstrap.sh
 ```
 
-Stow one or more packages:
+`bootstrap.sh` installs everything listed in `install/packages.txt` and
+`install/aur.txt`, builds `paru` if it is missing, stows every package,
+resolves the toolchain from `mise.lock`, and enables sddm and docker. Every
+step checks its own state first, so it is safe to re-run on a machine that is
+already set up.
+
+Those two lists are the single source of truth for what this configuration
+needs — do not repeat them here. `install/packages.txt` is grouped by purpose
+and commented.
+
+### By hand
 
 ```sh
-stow claude doom dunst flameshot ghostty hypr mise nvim rofi systemd tmux waybar wlogout zsh
-```
-
-Install the toolchain. `mise.lock` is committed, so this resolves to the exact
-versions and checksums recorded here rather than whatever is newest:
-
-```sh
+stow claude doom dunst flameshot ghostty git hypr mise nvim rofi systemd tmux waybar wlogout zsh
 mise install --locked
 ```
 
-To bump the tools deliberately, run `mise up` — it re-resolves the `latest`
-entries and rewrites `mise.lock`, so the diff shows exactly what moved.
+`mise install --locked` resolves to the exact versions and checksums in
+`mise.lock` rather than whatever is newest. To bump the tools deliberately, run
+`mise up` — it re-resolves the `latest` entries and rewrites the lockfile, so
+the diff shows exactly what moved.
 
-### Desktop dependencies
+### Notes
 
-The Hyprland desktop packages (`hypr`, `waybar`, `rofi`, `dunst`, `flameshot`) expect:
-
-```sh
-sudo pacman -S --needed waybar rofi hyprpaper hyprpicker cliphist wl-clipboard \
-  rofimoji wtype btop wiremix playerctl brightnessctl qt6ct dunst flameshot \
-  polkit-kde-agent kservice ttf-jetbrains-mono-nerd adwaita-icon-theme
-
-paru -S --needed wlogout zen-browser-bin
-```
-
-`hyprpaper` reads `~/Wallpapers/01.jpg`; `SHIFT+F12` saves screenshots to `~/Pictures/Screenshots/`.
-`wtype` is what lets `rofimoji` insert the emoji instead of only opening the picker.
+`hyprpaper` reads `~/Wallpapers/01.jpg`; `SHIFT+Print` saves screenshots to
+`~/Pictures/Screenshots/`. `wtype` is what lets `rofimoji` insert the emoji
+instead of only opening the picker.
 
 ### Session
 
-Log in through **SDDM**. The Hyprland wiki lists GDM as crashing Hyprland on
-first launch, while SDDM and greetd work without caveats:
-
-```sh
-sudo pacman -S --needed sddm && sudo systemctl enable sddm
-```
+Log in through **SDDM** — `bootstrap.sh` enables it. The Hyprland wiki lists GDM
+as crashing Hyprland on first launch, while SDDM and greetd work without
+caveats.
 
 **Do not install `uwsm`.** The `hyprland` package ships a second session entry,
 `hyprland-uwsm.desktop`, guarded by `TryExec=uwsm` — without the binary the

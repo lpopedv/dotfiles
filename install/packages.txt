@@ -1,0 +1,69 @@
+# Official repository packages, one per line. Comments and blank lines ignored.
+# Installed by install/bootstrap.sh with `pacman -S --needed`.
+
+# Base and build
+base-devel
+git
+stow
+cmake
+libtool
+unzip
+inotify-tools
+
+# CLI tools
+ripgrep
+fd
+fzf
+eza
+btop
+lazygit
+tmux
+mpv
+
+# Shell
+zsh
+zsh-autosuggestions
+zsh-syntax-highlighting
+
+# Runtimes and containers
+mise
+docker
+docker-compose
+
+# Editors
+neovim
+emacs
+
+# Hyprland session
+# uwsm is deliberately absent - see README, it only adds a duplicate session entry
+hyprland
+sddm
+xdg-desktop-portal-hyprland
+polkit-kde-agent
+
+# Desktop
+waybar
+rofi
+rofimoji
+dunst
+hyprpaper
+hyprpicker
+cliphist
+wl-clipboard
+wtype
+flameshot
+obs-studio
+dolphin
+kservice
+wiremix
+playerctl
+brightnessctl
+qt6ct
+
+# Terminal
+ghostty
+
+# Fonts and icons
+ttf-jetbrains-mono-nerd
+noto-fonts-emoji
+adwaita-icon-theme
