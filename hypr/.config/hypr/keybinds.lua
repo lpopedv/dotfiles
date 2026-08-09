@@ -65,8 +65,8 @@ hl.bind(mainMod .. " + SHIFT + period", hl.dsp.exec_cmd("rofimoji --action type 
 
 hl.bind(mainMod .. " + SHIFT + C", hl.dsp.exec_cmd("hyprpicker -a"), { description = "Color picker" })
 
-hl.bind("F12", hl.dsp.exec_cmd("flameshot gui"), { description = "Screenshot (region)" })
-hl.bind("SHIFT + F12", hl.dsp.exec_cmd("flameshot full -p ~/Pictures/Screenshots/"),
+hl.bind("Print", hl.dsp.exec_cmd("flameshot gui"), { description = "Screenshot (region)" })
+hl.bind("SHIFT + Print", hl.dsp.exec_cmd("flameshot full -p ~/Pictures/Screenshots/"),
     { description = "Screenshot (full screen)" })
 
 hl.bind("XF86AudioRaiseVolume", hl.dsp.exec_cmd("wpctl set-volume -l 1 @DEFAULT_AUDIO_SINK@ 5%+"),

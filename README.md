@@ -9,7 +9,7 @@ Personal dotfiles for a Linux development environment, managed with [GNU Stow](h
 | `claude` | [Claude Code](https://claude.com/claude-code) | Global slash commands — `/en` (English tutor that corrects, suggests, and logs) and `/en-review` (weekly progress review) |
 | `doom` | [Doom Emacs](https://github.com/doomemacs/doomemacs) | Feature-rich Emacs with Evil (VI) keybindings, LSP, and multi-language support |
 | `dunst` | [dunst](https://dunst-project.org) | Notification daemon — dark translucent theme matching Waybar/rofi |
-| `flameshot` | [Flameshot](https://flameshot.org) | Screenshot tool (Wayland/grim adapter, no tray icon) |
+| `flameshot` | [Flameshot](https://flameshot.org) | Screenshot tool — native Wayland capture, no tray icon |
 | `ghostty` | [Ghostty](https://ghostty.org) | GPU-accelerated terminal emulator |
 | `hypr` | [Hyprland](https://hypr.land) | Wayland compositor — Lua config (0.55+) split into monitors, environment, autostart, look-and-feel, input, keybinds, rules, plus `hyprpaper` |
 | `mise` | [mise](https://mise.jdx.dev) | Runtime/tool version manager |
