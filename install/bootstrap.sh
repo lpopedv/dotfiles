@@ -53,6 +53,38 @@ log "Toolchain"
 # mise.lock pins exact versions and checksums; --locked refuses to drift from it
 mise install --locked
 
+log "Pacman"
+# ParallelDownloads and ILoveCandy live in [options]; pacman.conf has no
+# drop-in directory, so these are edited in place. Both edits are no-ops when
+# the values are already set.
+sudo sed -i -E 's/^#?[[:space:]]*ParallelDownloads[[:space:]]*=.*/ParallelDownloads = 20/' /etc/pacman.conf
+sudo sed -i -E 's/^#[[:space:]]*Color[[:space:]]*$/Color/' /etc/pacman.conf
+if grep -qE '^ILoveCandy' /etc/pacman.conf; then
+    ok "ILoveCandy"
+else
+    sudo sed -i '/^ParallelDownloads/a ILoveCandy' /etc/pacman.conf
+    ok "ILoveCandy added"
+fi
+
+log "Time and DNS"
+sudo install -Dm644 "$DOTFILES/install/etc/systemd/timesyncd.conf.d/10-cloudflare.conf" \
+    /etc/systemd/timesyncd.conf.d/10-cloudflare.conf
+sudo install -Dm644 "$DOTFILES/install/etc/systemd/resolved.conf.d/10-cloudflare-dot.conf" \
+    /etc/systemd/resolved.conf.d/10-cloudflare-dot.conf
+
+# Domains=~. already makes the Cloudflare servers authoritative, but a DHCP
+# lease that registers its own DNS on the link is one less thing to reason
+# about if it never happens.
+for net in /etc/systemd/network/*.network; do
+    [[ -e "$net" ]] || continue
+    sudo install -Dm644 "$DOTFILES/install/etc/systemd/network/no-dhcp-dns.conf" \
+        "${net}.d/10-no-dhcp-dns.conf"
+done
+
+sudo systemctl enable --now systemd-timesyncd.service systemd-resolved.service
+sudo systemctl reload-or-restart systemd-resolved.service
+systemctl is-active --quiet systemd-networkd && sudo networkctl reload
+
 log "Services"
 if [[ "$(readlink -f /etc/systemd/system/display-manager.service 2>/dev/null)" == *sddm* ]]; then
     ok "sddm is the display manager"

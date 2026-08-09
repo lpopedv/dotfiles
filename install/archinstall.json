@@ -16,7 +16,7 @@
   "network_config": { "type": "nm" },
   "ntp": true,
   "packages": ["git"],
-  "pacman_config": { "color": true, "parallel_downloads": 5 },
+  "pacman_config": { "color": true, "parallel_downloads": 20 },
   "profile_config": {
     "gfx_driver": "All open-source (default)",
     "profile": { "main": "Minimal" }
