@@ -7,7 +7,7 @@
 
     "modules-left": ["hyprland/workspaces"],
     "modules-center": [],
-    "modules-right": ["tray", "custom/audio", "custom/htop", "custom/hyprpicker", "custom/wlogout", "clock"],
+    "modules-right": ["tray", "custom/audio", "custom/htop", "custom/hyprpicker", "battery", "clock", "custom/wlogout"],
 
     "hyprland/workspaces": {
         "format": "{id}",
@@ -19,7 +19,7 @@
     },
 
     "clock": {
-        "format": "{:%H:%M}",
+        "format": "󰥔 {:%H:%M}",
         "format-alt": "{:%A, %d de %B de %Y}",
         "tooltip-format": "<tt><small>{calendar}</small></tt>",
         "interval": 1
@@ -53,5 +53,16 @@
         "format": "󰐥",
         "on-click": "wlogout -b 3 -c 16 -r 16",
         "tooltip": "Sessão"
+    },
+
+    "battery": {
+        "states": {
+            "warning": 30,
+            "critical": 15
+        },
+        "format": "{icon} {capacity}%",
+        "format-charging": "󰂄 {capacity}%",
+        "format-icons": ["󰁺", "󰁻", "󰁼", "󰁽", "󰁾", "󰁿", "󰂀", "󰂁", "󰂂", "󰁹"],
+        "tooltip-format": "{timeTo}"
     }
 }

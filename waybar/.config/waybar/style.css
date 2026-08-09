@@ -3,6 +3,9 @@
 @define-color fg-act  #ffffff;
 @define-color border  #333333;
 @define-color urgent  #900000;
+@define-color accent  #6fae7f;
+@define-color warn    #b8974f;
+@define-color danger  #b85c5c;
 
 * {
     font-family: "JetBrainsMono Nerd Font";
@@ -34,18 +37,20 @@ window#waybar {
     padding: 0 13px;
     margin: 4px 3px;
     border: 1px solid transparent;
+    border-radius: 6px;
+    transition: 150ms ease;
 }
 
 #workspaces button:hover {
-    color: @fg-act;
-    background: @bg;
+    color: @accent;
+    background: rgba(255, 255, 255, 0.04);
     border: 1px solid @border;
 }
 
 #workspaces button.active {
-    color: @fg-act;
-    background: @bg;
-    border: 1px solid @border;
+    color: @accent;
+    background: rgba(111, 174, 127, 0.08);
+    border: 1px solid rgba(111, 174, 127, 0.35);
 }
 
 #workspaces button.empty {
@@ -58,17 +63,23 @@ window#waybar {
     border: 1px solid @urgent;
 }
 
-/* --- Right side --- */
+/* --- Right side ---
+   groups, left to right: tray | audio/htop/hyprpicker (utility) | battery+clock (status) | wlogout (corner, alone)
+*/
 
-#tray,
 #custom-audio,
 #custom-htop,
 #custom-hyprpicker,
 #custom-wlogout,
+#battery,
 #clock {
     color: @fg;
-    background: @bg;
+    background: transparent;
     padding: 0 11px;
+    margin: 5px 2px;
+    border: 1px solid transparent;
+    border-radius: 6px;
+    transition: 150ms ease;
 }
 
 #custom-audio,
@@ -78,25 +89,62 @@ window#waybar {
     font-size: 15px;
 }
 
-#tray {
-    padding-right: 6px;
-}
-
-#clock {
-    color: @fg-act;
-    padding-left: 14px;
-    padding-right: 12px;
-}
-
 #custom-audio:hover,
 #custom-htop:hover,
 #custom-hyprpicker:hover,
+#battery:hover {
+    color: @accent;
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid @border;
+}
+
+/* status group starts here — extra gap sets it apart from the utility icons */
+#battery {
+    margin-left: 12px;
+    font-size: 13px;
+}
+
+#battery.charging {
+    color: @accent;
+}
+
+#battery.warning:not(.charging) {
+    color: @warn;
+}
+
+#battery.critical:not(.charging) {
+    color: @danger;
+}
+
+#clock {
+    font-weight: 600;
+    padding: 0 12px;
+}
+
+#clock:hover {
+    background: rgba(111, 174, 127, 0.08);
+    border: 1px solid rgba(111, 174, 127, 0.35);
+}
+
+/* power/session sits alone in the corner, separated from status group */
+#custom-wlogout {
+    margin-left: 2px;
+    margin-right: 2px;
+}
+
 #custom-wlogout:hover {
-    color: @fg-act;
+    color: @danger;
+    background: rgba(184, 92, 92, 0.08);
+    border: 1px solid rgba(184, 92, 92, 0.4);
+}
+
+#tray {
+    padding: 0 10px 0 4px;
 }
 
 #tray menu {
     background: @bg;
     color: @fg;
     border: 1px solid @border;
+    border-radius: 6px;
 }
