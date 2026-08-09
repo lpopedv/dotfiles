@@ -4,6 +4,9 @@
 #   sudo ./iso/build.sh            build into iso/out/
 #   sudo ./iso/build.sh /mnt/big   build with the work directory elsewhere
 #
+# The work directory defaults to /var/tmp, not /tmp: a build needs well over
+# 10 GB, and /tmp is a tmpfs on most Arch systems, which means RAM.
+#
 # The releng profile is copied from the installed archiso package at build
 # time rather than vendored here, so archiso updates arrive on their own and
 # this repo only carries the difference.
@@ -11,7 +14,7 @@ set -euo pipefail
 
 DOTFILES="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 RELENG=/usr/share/archiso/configs/releng
-WORK="${1:-/tmp/archiso-work}"
+WORK="${1:-/var/tmp/archiso-work}"
 OUT="$DOTFILES/iso/out"
 
 log() { printf '\n\033[1m==> %s\033[0m\n' "$*"; }
