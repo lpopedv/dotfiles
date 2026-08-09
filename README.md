@@ -36,6 +36,16 @@ Stow one or more packages:
 stow claude doom dunst flameshot ghostty hypr mise nvim rofi tmux waybar wlogout zsh
 ```
 
+Install the toolchain. `mise.lock` is committed, so this resolves to the exact
+versions and checksums recorded here rather than whatever is newest:
+
+```sh
+mise install --locked
+```
+
+To bump the tools deliberately, run `mise up` — it re-resolves the `latest`
+entries and rewrites `mise.lock`, so the diff shows exactly what moved.
+
 ### Desktop dependencies
 
 The Hyprland desktop packages (`hypr`, `waybar`, `rofi`, `dunst`, `flameshot`) expect:
