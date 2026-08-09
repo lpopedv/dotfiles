@@ -34,14 +34,29 @@ archinstall --config https://raw.githubusercontent.com/yourusername/dotfiles/mai
 
 `install/archinstall.json` answers everything that is not disk-related:
 systemd-boot on UEFI, pt_BR locale with a `br` keymap, America/Sao_Paulo,
-pipewire, NetworkManager, zstd swap, open-source AMD graphics, `amd-ucode`, and
-a Minimal profile — the desktop comes from `bootstrap.sh`, not from an
-archinstall profile. `git` is included so the next step can run.
+pipewire, NetworkManager, zstd swap, open-source graphics, and a Minimal
+profile — the desktop comes from `bootstrap.sh`, not from an archinstall
+profile. `git` is included so the next step can run.
 
 **`disk_config` is deliberately absent**, so archinstall still asks for the two
 choices that wipe data — which device, and the filesystem — with real device
 names and sizes on screen. Pick **btrfs** to match the machine this was written
 on. Everything else is already filled in.
+
+#### Other machines
+
+The file carries no CPU model: archinstall detects the vendor and installs
+`intel-ucode` or `amd-ucode` on its own, so it is not pinned to the desktop it
+was written on. Check three things before reusing it elsewhere:
+
+| Key | Change it when |
+|---|---|
+| `profile_config.gfx_driver` | The machine has an NVIDIA GPU. Open-source is correct for Intel and AMD. |
+| `locale_config.kb_layout` | The keyboard is not ABNT2 — use `us` for a US layout. |
+| `hostname` | Always, if both machines share a network. `hostnamectl set-hostname` also works after the fact. |
+
+`packages.txt`, `aur.txt` and `bootstrap.sh` carry no hardware assumptions and
+need no per-machine changes.
 
 Validate the file without touching any disk first:
 

@@ -15,7 +15,7 @@
   },
   "network_config": { "type": "nm" },
   "ntp": true,
-  "packages": ["git", "amd-ucode"],
+  "packages": ["git"],
   "pacman_config": { "color": true, "parallel_downloads": 5 },
   "profile_config": {
     "gfx_driver": "All open-source (default)",
