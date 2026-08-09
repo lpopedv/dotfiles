@@ -24,7 +24,34 @@ Personal dotfiles for a Linux development environment, managed with [GNU Stow](h
 
 ## Installation
 
-On a machine that already runs Arch:
+### From bare metal
+
+Boot the official Arch ISO, then:
+
+```sh
+archinstall --config https://raw.githubusercontent.com/yourusername/dotfiles/main/install/archinstall.json
+```
+
+`install/archinstall.json` answers everything that is not disk-related:
+systemd-boot on UEFI, pt_BR locale with a `br` keymap, America/Sao_Paulo,
+pipewire, NetworkManager, zstd swap, open-source AMD graphics, `amd-ucode`, and
+a Minimal profile — the desktop comes from `bootstrap.sh`, not from an
+archinstall profile. `git` is included so the next step can run.
+
+**`disk_config` is deliberately absent**, so archinstall still asks for the two
+choices that wipe data — which device, and the filesystem — with real device
+names and sizes on screen. Pick **btrfs** to match the machine this was written
+on. Everything else is already filled in.
+
+Validate the file without touching any disk first:
+
+```sh
+archinstall --dry-run --config install/archinstall.json
+```
+
+Then reboot and continue below.
+
+### On a machine that already runs Arch
 
 ```sh
 git clone https://github.com/yourusername/dotfiles.git ~/Dotfiles
