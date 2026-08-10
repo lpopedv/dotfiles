@@ -1,4 +1,5 @@
 ---
+name: en
 description: Chat in English — I correct your English, suggest natural phrasing, log it, then do the task
 argument-hint: <your message written in English>
 allowed-tools: Bash, Read, Write, Edit, Glob, Grep

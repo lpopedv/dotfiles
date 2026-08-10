@@ -6,7 +6,7 @@ Personal dotfiles for a Linux development environment, managed with [GNU Stow](h
 
 | Package | Tool | Description |
 |---------|------|-------------|
-| `claude` | [Claude Code](https://claude.com/claude-code) | Global slash commands — `/en` (English tutor that corrects, suggests, and logs) and `/en-review` (weekly progress review) |
+| `claude` | [Claude Code](https://claude.com/claude-code) | Global skills — `/en` (English tutor that corrects, suggests, and logs) and `/en-review` (weekly progress review) — plus the `mono` custom theme matching nvim/ghostty |
 | `doom` | [Doom Emacs](https://github.com/doomemacs/doomemacs) | Feature-rich Emacs with Evil (VI) keybindings, LSP, and multi-language support |
 | `dunst` | [dunst](https://dunst-project.org) | Notification daemon — dark translucent theme matching Waybar/rofi |
 | `flameshot` | [Flameshot](https://flameshot.org) | Screenshot tool — native Wayland capture, no tray icon |

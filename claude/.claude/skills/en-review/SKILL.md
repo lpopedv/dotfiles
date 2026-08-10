@@ -1,4 +1,5 @@
 ---
+name: en-review
 description: Weekly English progress review built from my /en history — top mistakes, trends, study plan
 argument-hint: "[optional: last N days to review, e.g. 7 — default: all history]"
 allowed-tools: Bash, Read, Write
