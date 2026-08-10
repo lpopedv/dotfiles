@@ -25,20 +25,20 @@ local p = {
   white   = '#ffffff',
   black   = '#0d0d0d',
 
-  -- muted hues — colorful enough to tell syntax apart at a glance, still grounded in grey
-  clay    = '#a47d72',
-  sage    = '#889781',
-  sand    = '#a79a7d',
-  slate   = '#78899d',
-  mauve   = '#988599',
-  teal    = '#7f9b97',
+  -- saturated hues — same hue wheel as before, pushed for clear syntax differentiation
+  clay    = '#c56b51',
+  sage    = '#7abc5c',
+  sand    = '#c4a560',
+  slate   = '#5586c0',
+  mauve   = '#b762bc',
+  teal    = '#5bbfb1',
 
-  clay_b  = '#c29c8f',
-  sage_b  = '#a5b79d',
-  sand_b  = '#c6ba9a',
-  slate_b = '#96a8bd',
-  mauve_b = '#b7a4b8',
-  teal_b  = '#9eb9b4',
+  clay_b  = '#d89179',
+  sage_b  = '#9bd183',
+  sand_b  = '#d8c288',
+  slate_b = '#7fa6d4',
+  mauve_b = '#ce8ad2',
+  teal_b  = '#83d4c5',
 }
 
 local role = {

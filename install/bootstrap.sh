@@ -12,7 +12,7 @@ DRY=0
 [[ "${1:-}" == "--dry-run" ]] && DRY=1
 
 STOW_PACKAGES=(
-    claude doom dunst flameshot ghostty git hypr mise
+    claude doom dunst flameshot ghostty git hypr lazygit mise
     nvim rofi systemd tmux waybar wlogout zsh
 )
 

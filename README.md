@@ -12,6 +12,7 @@ Personal dotfiles for a Linux development environment, managed with [GNU Stow](h
 | `flameshot` | [Flameshot](https://flameshot.org) | Screenshot tool — native Wayland capture, no tray icon |
 | `ghostty` | [Ghostty](https://ghostty.org) | GPU-accelerated terminal emulator |
 | `hypr` | [Hyprland](https://hypr.land) | Wayland compositor — Lua config (0.55+) split into monitors, environment, autostart, look-and-feel, input, keybinds, rules, plus `hyprpaper` |
+| `lazygit` | [lazygit](https://github.com/jesseduffield/lazygit) | Git TUI — theme colors mirror the `mono` nvim/ghostty palette |
 | `mise` | [mise](https://mise.jdx.dev) | Runtime/tool version manager |
 | `nvim` | [Neovim](https://neovim.io) | Editor config (Lua) |
 | `rofi` | [rofi](https://github.com/davatorium/rofi) | App launcher / dmenu — vim-motion keybinds and a custom dark theme |
@@ -107,7 +108,7 @@ and commented.
 ### By hand
 
 ```sh
-stow claude doom dunst flameshot ghostty git hypr mise nvim rofi systemd tmux waybar wlogout zsh
+stow claude doom dunst flameshot ghostty git hypr lazygit mise nvim rofi systemd tmux waybar wlogout zsh
 mise install --locked
 ```
 
