@@ -58,6 +58,17 @@ vim.lsp.config('marksman', {
   root_markers = { '.marksman.toml', '.git' },
 })
 
+vim.lsp.config('prismals', {
+  cmd = { 'prisma-language-server', '--stdio' },
+  filetypes = { 'prisma' },
+  root_markers = { '.git', 'package.json' },
+  settings = {
+    prisma = {
+      prismaFmtBinPath = '',
+    },
+  },
+})
+
 vim.lsp.config('biome', {
   cmd = function(dispatchers, config)
     local cmd = 'biome'
@@ -79,7 +90,7 @@ vim.lsp.config('biome', {
   root_markers = { 'biome.json', 'biome.jsonc' },
 })
 
-vim.lsp.enable({ 'elixir_ls', 'lua_ls', 'tsc', 'marksman', 'biome' })
+vim.lsp.enable({ 'elixir_ls', 'lua_ls', 'tsc', 'marksman', 'biome', 'prismals' })
 
 
 -- AUTOCOMPLETE

@@ -13,6 +13,7 @@ vim.pack.add({
   'https://github.com/nvim-neotest/neotest',
   'https://github.com/jfpedroza/neotest-elixir',
   'https://github.com/folke/which-key.nvim',
+  'https://github.com/windwp/nvim-autopairs',
 })
 
 require('plugins.theme')
@@ -25,3 +26,4 @@ require('plugins.markdown')
 require('plugins.gitsigns')
 require('plugins.whichkey')
 require('plugins.neotest')
+require('plugins.autopairs')
