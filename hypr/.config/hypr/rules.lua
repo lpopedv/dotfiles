@@ -52,3 +52,11 @@ hl.window_rule({
     move  = { "20", "monitor_h-120" },
     float = true,
 })
+
+hl.layer_rule({
+    name         = "waybar-blur",
+    match        = { namespace = "^waybar$" },
+
+    blur         = true,
+    ignore_alpha = 0.2,
+})

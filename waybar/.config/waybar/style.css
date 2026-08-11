@@ -17,7 +17,7 @@
 }
 
 window#waybar {
-    background-color: @bg;
+    background-color: rgba(0, 0, 0, 0.55);
     color: @fg;
     padding: 0 6px;
 }
