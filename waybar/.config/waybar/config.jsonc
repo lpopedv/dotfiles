@@ -10,7 +10,10 @@
     "modules-right": ["tray", "custom/audio", "custom/htop", "custom/hyprpicker", "battery", "clock", "custom/wlogout"],
 
     "hyprland/workspaces": {
-        "format": "{id}",
+        "format": "{icon}",
+        "format-icons": {
+            "active": "●"
+        },
         "on-click": "activate",
         "sort-by": "id",
         "persistent-workspaces": {
