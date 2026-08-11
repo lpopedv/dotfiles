@@ -18,7 +18,7 @@
 
 window {
     width:            560px;
-    border-radius:    16px;
+    border-radius:    0px;
     border:           1px;
     border-color:     @border-col;
     background-color: @bg;
@@ -33,7 +33,7 @@ mainbox {
 
 inputbar {
     background-color: @bg-alt;
-    border-radius:    10px;
+    border-radius:    0px;
     border:           1px;
     border-color:     #ffffff0e;
     padding:          11px 16px;
@@ -65,7 +65,7 @@ listview {
 
 element {
     background-color: transparent;
-    border-radius:    10px;
+    border-radius:    0px;
     padding:          9px 14px;
     spacing:          12px;
     children:         [element-icon, element-text];
