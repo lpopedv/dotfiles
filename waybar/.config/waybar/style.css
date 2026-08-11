@@ -30,24 +30,23 @@ window#waybar {
 
 #workspaces button {
     color: @fg;
-    background: @bg;
+    background: transparent;
     padding: 0 13px;
     margin: 4px 3px;
-    border: 1px solid transparent;
-    border-radius: 6px;
+    border-bottom: 2px solid transparent;
     transition: 150ms ease;
 }
 
 #workspaces button:hover {
     color: @fg-act;
-    background: rgba(255, 255, 255, 0.04);
-    border: 1px solid @border;
+    background: transparent;
+    border-bottom: 2px solid @border;
 }
 
 #workspaces button.active {
     color: @fg-act;
-    background: rgba(255, 255, 255, 0.10);
-    border: 1px solid rgba(255, 255, 255, 0.35);
+    background: transparent;
+    border-bottom: 2px solid rgba(255, 255, 255, 0.35);
 }
 
 #workspaces button.empty {
