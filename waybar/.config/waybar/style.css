@@ -55,6 +55,11 @@ window#waybar {
     color: @fg;
 }
 
+#workspaces button:not(.empty):not(.active) {
+    color: @fg-act;
+    font-weight: 600;
+}
+
 #workspaces button.urgent {
     color: @bg;
     background: @fg-act;
