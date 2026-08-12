@@ -1,3 +1,4 @@
 {
-  "theme": "custom:mono"
+  "theme": "custom:mono",
+  "effortLevel": "high"
 }
