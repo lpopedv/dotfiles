@@ -61,7 +61,7 @@
         "tooltip-format-wifi": "{essid} ({signalStrength}%)",
         "tooltip-format-ethernet": "Conectado via cabo",
         "tooltip-format-disconnected": "Desconectado",
-        "on-click": "ghostty --gtk-single-instance=false --class=org.dotfiles.impala --title=Impala -e impala",
+        "on-click": "~/.config/waybar/scripts/network-click.sh",
         "interval": 3
     },
 
