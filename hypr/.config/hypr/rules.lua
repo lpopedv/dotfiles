@@ -29,6 +29,16 @@ hl.window_rule({
 })
 
 hl.window_rule({
+    name      = "impala-float",
+    match     = { class = "^(org.dotfiles.impala)$" },
+
+    float     = true,
+    center    = true,
+    size      = { "875", "600" },
+    animation = "popin 78%",
+})
+
+hl.window_rule({
     name    = "emacs-blur",
     match   = { class = "Emacs" },
 

@@ -7,7 +7,7 @@
 
     "modules-left": ["hyprland/workspaces"],
     "modules-center": [],
-    "modules-right": ["tray", "custom/audio", "custom/htop", "custom/hyprpicker", "battery", "clock", "custom/wlogout"],
+    "modules-right": ["tray", "custom/audio", "custom/htop", "custom/hyprpicker", "network", "battery", "clock", "custom/wlogout"],
 
     "hyprland/workspaces": {
         "format": "{icon}",
@@ -50,6 +50,19 @@
         "format": "󰈋",
         "on-click": "hyprpicker -a",
         "tooltip": "Color Picker"
+    },
+
+    "network": {
+        "format-icons": ["󰤯", "󰤟", "󰤢", "󰤥", "󰤨"],
+        "format": "{icon}",
+        "format-wifi": "{icon}",
+        "format-ethernet": "󰀂",
+        "format-disconnected": "󰤮",
+        "tooltip-format-wifi": "{essid} ({signalStrength}%)",
+        "tooltip-format-ethernet": "Conectado via cabo",
+        "tooltip-format-disconnected": "Desconectado",
+        "on-click": "ghostty --gtk-single-instance=false --class=org.dotfiles.impala --title=Impala -e impala",
+        "interval": 3
     },
 
     "custom/wlogout": {

@@ -73,6 +73,7 @@ window#waybar {
 #custom-audio,
 #custom-htop,
 #custom-hyprpicker,
+#network,
 #custom-wlogout,
 #battery,
 #clock {
@@ -88,6 +89,7 @@ window#waybar {
 #custom-audio,
 #custom-htop,
 #custom-hyprpicker,
+#network,
 #custom-wlogout {
     font-size: 15px;
 }
@@ -95,6 +97,7 @@ window#waybar {
 #custom-audio:hover,
 #custom-htop:hover,
 #custom-hyprpicker:hover,
+#network:hover,
 #battery:hover {
     color: @fg-act;
     background: rgba(255, 255, 255, 0.04);
