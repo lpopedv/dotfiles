@@ -11,6 +11,7 @@ hl.bind(mainMod .. " + SHIFT + Q",
     hl.dsp.exec_cmd("command -v hyprshutdown >/dev/null 2>&1 && hyprshutdown || hyprctl dispatch 'hl.dsp.exit()'"),
     { description = "Exit Hyprland" })
 hl.bind(mainMod .. " + D", hl.dsp.exec_cmd(fileManager), { description = "Open file manager" })
+hl.bind(mainMod .. " + CTRL + L", hl.dsp.exec_cmd("loginctl lock-session"), { description = "Lock screen" })
 hl.bind(mainMod .. " + T", hl.dsp.window.float(), { description = "Toggle floating" })
 hl.bind(mainMod .. " + SPACE", hl.dsp.exec_cmd(menu), { description = "App launcher" })
 hl.bind(mainMod .. " + F", hl.dsp.window.fullscreen({ mode = "maximized" }), { description = "Maximize window" })

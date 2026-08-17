@@ -73,6 +73,8 @@ window#waybar {
 #custom-audio,
 #custom-htop,
 #custom-hyprpicker,
+#custom-caffeine,
+#custom-nightlight,
 #network,
 #custom-wlogout,
 #battery,
@@ -89,6 +91,8 @@ window#waybar {
 #custom-audio,
 #custom-htop,
 #custom-hyprpicker,
+#custom-caffeine,
+#custom-nightlight,
 #network,
 #custom-wlogout {
     font-size: 15px;
@@ -97,11 +101,20 @@ window#waybar {
 #custom-audio:hover,
 #custom-htop:hover,
 #custom-hyprpicker:hover,
+#custom-caffeine:hover,
+#custom-nightlight:hover,
 #network:hover,
 #battery:hover {
     color: @fg-act;
     background: rgba(255, 255, 255, 0.04);
     border: 1px solid @border;
+}
+
+#custom-caffeine.active,
+#custom-nightlight.active {
+    color: @bg;
+    background: @fg-act;
+    border: 1px solid @fg-act;
 }
 
 /* status group starts here — extra gap sets it apart from the utility icons */

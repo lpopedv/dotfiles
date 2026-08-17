@@ -11,7 +11,7 @@ Personal dotfiles for a Linux development environment, managed with [GNU Stow](h
 | `dunst` | [dunst](https://dunst-project.org) | Notification daemon — dark translucent theme matching Waybar/rofi |
 | `flameshot` | [Flameshot](https://flameshot.org) | Screenshot tool — native Wayland capture, no tray icon |
 | `ghostty` | [Ghostty](https://ghostty.org) | GPU-accelerated terminal emulator |
-| `hypr` | [Hyprland](https://hypr.land) | Wayland compositor — Lua config (0.55+) split into monitors, environment, autostart, look-and-feel, input, keybinds, rules, plus `hyprpaper` |
+| `hypr` | [Hyprland](https://hypr.land) | Wayland compositor — Lua config (0.55+) split into monitors, environment, autostart, look-and-feel, input, keybinds, rules, plus `hyprpaper`, `hypridle`/`hyprlock` (idle lock/DPMS-off/suspend chain, monochrome lock screen matching Waybar/wlogout) and `hyprsunset` (blue-light filter, toggled from Waybar) |
 | `lazygit` | [lazygit](https://github.com/jesseduffield/lazygit) | Git TUI — theme colors mirror the `mono` nvim/ghostty palette |
 | `mise` | [mise](https://mise.jdx.dev) | Runtime/tool version manager |
 | `nvim` | [Neovim](https://neovim.io) | Editor config (Lua) |
@@ -19,7 +19,7 @@ Personal dotfiles for a Linux development environment, managed with [GNU Stow](h
 | `scripts` | — | Standalone helper scripts (not stowed) |
 | `systemd` | [systemd](https://systemd.io) | `hyprland-session.target` — binds the Hyprland session to `graphical-session.target` |
 | `tmux` | [tmux](https://github.com/tmux/tmux) | Terminal multiplexer config |
-| `waybar` | [Waybar](https://github.com/Alexays/Waybar) | Status bar — minimal i3bar-style black bottom bar, workspaces, clock, tray and custom launchers |
+| `waybar` | [Waybar](https://github.com/Alexays/Waybar) | Status bar — minimal i3bar-style black bottom bar, workspaces, clock, tray, custom launchers, and toggles for caffeine (idle inhibitor) and night light (`hyprsunset`) |
 | `wlogout` | [wlogout](https://github.com/ArtsyMacaw/wlogout) | Session menu — `phosphor` theme, square buttons |
 | `zsh` | [Zsh](https://www.zsh.org) | Shell with a native minimal prompt (git-aware, no Starship/extra installs needed), fzf, autosuggestions, and syntax highlighting |
 

@@ -48,6 +48,9 @@ rofimoji
 dunst
 hyprpaper
 hyprpicker
+hypridle
+hyprlock
+hyprsunset
 cliphist
 wl-clipboard
 wtype

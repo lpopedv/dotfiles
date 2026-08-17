@@ -7,7 +7,7 @@
 
     "modules-left": ["hyprland/workspaces"],
     "modules-center": [],
-    "modules-right": ["tray", "custom/audio", "custom/htop", "custom/hyprpicker", "network", "battery", "clock", "custom/wlogout"],
+    "modules-right": ["tray", "custom/audio", "custom/htop", "custom/hyprpicker", "custom/caffeine", "custom/nightlight", "network", "battery", "clock", "custom/wlogout"],
 
     "hyprland/workspaces": {
         "format": "{icon}",
@@ -50,6 +50,20 @@
         "format": "󰈋",
         "on-click": "hyprpicker -a",
         "tooltip": "Color Picker"
+    },
+
+    "custom/caffeine": {
+        "exec": "~/.config/waybar/scripts/caffeine.sh",
+        "on-click": "~/.config/waybar/scripts/caffeine.sh toggle",
+        "return-type": "json",
+        "interval": 2
+    },
+
+    "custom/nightlight": {
+        "exec": "~/.config/waybar/scripts/nightlight.sh",
+        "on-click": "~/.config/waybar/scripts/nightlight.sh toggle",
+        "return-type": "json",
+        "interval": 2
     },
 
     "network": {
