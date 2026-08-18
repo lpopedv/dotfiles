@@ -10,6 +10,13 @@ hl.on("hyprland.start", function()
     hl.exec_cmd("wl-paste --type text --watch cliphist store")
     hl.exec_cmd("wl-paste --type image --watch cliphist store")
     hl.exec_cmd("flameshot")
+
+    -- Launched explicitly here, not via Mullvad's own "launch on start-up"
+    -- (disable that in the app's settings) - that path fires through
+    -- systemd's xdg-desktop-autostart with no ordering against waybar, so
+    -- it wins the tray-registration race often enough to matter. Waiting
+    -- for the tray watcher first fixes it; see scripts/wait-for-tray.sh.
+    hl.exec_cmd("$HOME/Dotfiles/scripts/wait-for-tray.sh && \"/opt/Mullvad VPN/mullvad-vpn\"")
 end)
 
 hl.on("hyprland.shutdown", function()
