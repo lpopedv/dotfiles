@@ -17,7 +17,7 @@ Personal dotfiles for a Linux development environment, managed with [GNU Stow](h
 | `nvim` | [Neovim](https://neovim.io) | Editor config (Lua) |
 | `rofi` | [rofi](https://github.com/davatorium/rofi) | App launcher / dmenu — vim-motion keybinds and a custom dark theme |
 | `scripts` | — | Standalone helper scripts (not stowed) — `setup-cloudflare-dns.sh`, `wait-for-tray.sh` (blocks until Waybar's tray watcher is up, used by `hypr`'s autostart) |
-| `systemd` | [systemd](https://systemd.io) | `hyprland-session.target` — binds the Hyprland session to `graphical-session.target`; `trash-cleanup.timer` — daily, purges trash items older than 30 days |
+| `systemd` | [systemd](https://systemd.io) | `hyprland-session.target` — binds the Hyprland session to `graphical-session.target` |
 | `tmux` | [tmux](https://github.com/tmux/tmux) | Terminal multiplexer config |
 | `waybar` | [Waybar](https://github.com/Alexays/Waybar) | Status bar — minimal i3bar-style black bottom bar, workspaces, clock, tray, custom launchers, and toggles for caffeine (idle inhibitor) and night light (`hyprsunset`) |
 | `wlogout` | [wlogout](https://github.com/ArtsyMacaw/wlogout) | Session menu — `phosphor` theme, square buttons |
@@ -131,20 +131,15 @@ the diff shows exactly what moved.
 
 ### Maintenance
 
-Three daily timers keep the disk from accumulating cruft, none of them
-requiring GNOME's Files/Settings equivalents:
+Two daily timers keep the disk from accumulating cruft:
 
 | Timer | Scope | What it does |
 |---|---|---|
 | `systemd-tmpfiles-clean.timer` | system, built into systemd | Ages out `/tmp` (10 days) and `/var/tmp` (30 days) per the stock `tmp.conf` — no override shipped here, just enabled |
 | `paccache.timer` | system, from `pacman-contrib` | Keeps the last 3 versions of each cached package in `/var/cache/pacman/pkg`; overridden here from its default weekly to daily (`install/etc/systemd/system/paccache.timer.d/override.conf`) |
-| `trash-cleanup.timer` | user, from `trash-cli` | Runs `trash-empty 30`, purging anything that has sat in `~/.local/share/Trash` for 30+ days |
 
-`rm` is aliased to `trash-put` in `.zshrc` so interactive deletes land in the
-trash instead of being removed outright — scripts calling `rm` directly are
-unaffected, since aliases don't expand there. `bootstrap.sh` installs the
-`paccache.timer` drop-in and enables all three timers; re-running it is safe
-if any of them ever get disabled.
+`bootstrap.sh` installs the `paccache.timer` drop-in and enables both
+timers; re-running it is safe if either ever gets disabled.
 
 ### Notes
 

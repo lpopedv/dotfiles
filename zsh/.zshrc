@@ -42,9 +42,6 @@ alias l="eza --icons --git --links --long"
 alias ai="claude"
 alias v="nvim ."
 alias lg="lazygit"
-# Interactive-only (aliases don't reach scripts) - route deletes through the
-# trash so they're recoverable. trash-cleanup.timer purges anything >30 days.
-alias rm="trash-put"
 
 # Pull the latest dotfiles and re-apply them. bootstrap.sh is idempotent, so
 # this is the only command needed to pick up config/package changes, here or

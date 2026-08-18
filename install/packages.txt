@@ -20,10 +20,8 @@ lazygit
 tmux
 mpv
 
-# Maintenance - trash-cli backs the rm alias below; pacman-contrib's paccache
-# prunes old package versions from /var/cache/pacman/pkg. Both run daily via
-# systemd timers, see bootstrap.sh.
-trash-cli
+# Maintenance - paccache (from pacman-contrib) prunes old package versions
+# from /var/cache/pacman/pkg. Runs daily via a systemd timer, see bootstrap.sh.
 pacman-contrib
 
 # Shell

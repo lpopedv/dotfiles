@@ -141,7 +141,6 @@ run sudo install -Dm644 "$DOTFILES/install/etc/systemd/system/paccache.timer.d/o
     /etc/systemd/system/paccache.timer.d/override.conf
 run sudo systemctl daemon-reload
 run sudo systemctl enable --now systemd-tmpfiles-clean.timer paccache.timer
-run systemctl --user enable --now trash-cleanup.timer
 
 log "Services"
 if [[ "$(readlink -f /etc/systemd/system/display-manager.service 2>/dev/null)" == *sddm* ]]; then
