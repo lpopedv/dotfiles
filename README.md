@@ -142,10 +142,45 @@ stick around short in general:
 | `zsh-history-wipe.timer` | user | Truncates `~/.zsh_history` every 2 days; `HISTSIZE`/`SAVEHIST` are also capped at 1000 |
 
 `journald` is capped to 1 day / 100M via `/etc/systemd/journald.conf.d/10-retention.conf`
-instead of growing unbounded.
+instead of growing unbounded, and coredumps (full memory snapshots of
+whatever crashed) are capped to 200M and aged out after 2 days the same way
+`/tmp` is (`install/etc/systemd/coredump.conf.d/`, `install/etc/tmpfiles.d/coredump.conf`).
 
 `bootstrap.sh` installs all the drop-ins above and enables every timer;
 re-running it is safe if any of them ever get disabled.
+
+### Firewall
+
+`nftables` ships with the desktop group but isn't enabled by anything else,
+so `bootstrap.sh` installs `install/etc/nftables.conf` and enables
+`nftables.service`. Unsolicited inbound traffic is dropped silently (no
+reject, no ping reply — a probe sees nothing rather than "closed"); ICMPv6
+keeps the specific types IPv6 needs to function (neighbor discovery, path
+MTU), since those aren't an entry point.
+
+The `forward` chain explicitly accepts `docker0`/`br-*` traffic. A published
+docker-compose port arrives via `forward` after Docker's own DNAT, not
+`input` — a default-drop `forward` chain with no exception there silently
+breaks every published container port. Docker keeps managing its own
+`iptables-nft` tables independently; this only adds a separate `inet filter`
+table alongside them.
+
+### Kernel hardening
+
+`install/etc/sysctl.d/99-hardening.conf` sets three sysctls that cost
+nothing in normal use: `kernel.dmesg_restrict=1` (only root can read the
+kernel log - it can leak memory addresses), `kernel.kptr_restrict=2` (hides
+kernel pointers from `/proc`, which make exploits easier to build), and
+`kernel.sysrq=0` (disables the Alt+SysRq key combos - anyone with physical
+keyboard access could otherwise reboot or kill processes with no
+authentication). Named `99-` because `/etc/sysctl.d/50-default.conf` also
+sets `kernel.sysrq` and later filenames win.
+
+`cliphist-wipe.service` and `zsh-history-wipe.service` (see Maintenance
+above) also run sandboxed - `ProtectSystem=strict` plus a single
+`ReadWritePaths=` exception each, `NoNewPrivileges`, no kernel/device/namespace
+access, syscalls filtered to `@system-service`. Neither needs more than
+write access to the one file or directory it touches.
 
 ### Notes
 
