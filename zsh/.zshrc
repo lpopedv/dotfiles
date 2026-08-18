@@ -42,6 +42,16 @@ alias l="eza --icons --git --links --long"
 alias ai="claude"
 alias v="nvim ."
 alias lg="lazygit"
+# Interactive-only (aliases don't reach scripts) - route deletes through the
+# trash so they're recoverable. trash-cleanup.timer purges anything >30 days.
+alias rm="trash-put"
+
+# Pull the latest dotfiles and re-apply them. bootstrap.sh is idempotent, so
+# this is the only command needed to pick up config/package changes, here or
+# from another machine. Args pass through, e.g. `dotup --dry-run`.
+dotup() {
+  git -C ~/Dotfiles pull --ff-only && ~/Dotfiles/install/bootstrap.sh "$@"
+}
 
 # History
 HISTFILE=~/.zsh_history
@@ -51,18 +61,6 @@ setopt HIST_IGNORE_DUPS
 setopt HIST_IGNORE_SPACE
 setopt SHARE_HISTORY
 setopt APPEND_HISTORY
-
-
-# pnpm
-export PNPM_HOME="/home/lucaspope/.local/share/pnpm"
-case ":$PATH:" in
-  *":$PNPM_HOME/bin:"*) ;;
-  *) export PATH="$PNPM_HOME/bin:$PATH" ;;
-esac
-# pnpm end
-
-# bun completions
-[ -s "/home/lucaspope/.bun/_bun" ] && source "/home/lucaspope/.bun/_bun"
 
 # bun
 export BUN_INSTALL="$HOME/.bun"

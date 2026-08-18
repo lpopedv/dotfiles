@@ -136,6 +136,13 @@ if systemctl is-active --quiet systemd-networkd; then
     run sudo networkctl reload
 fi
 
+log "Maintenance timers"
+run sudo install -Dm644 "$DOTFILES/install/etc/systemd/system/paccache.timer.d/override.conf" \
+    /etc/systemd/system/paccache.timer.d/override.conf
+run sudo systemctl daemon-reload
+run sudo systemctl enable --now systemd-tmpfiles-clean.timer paccache.timer
+run systemctl --user enable --now trash-cleanup.timer
+
 log "Services"
 if [[ "$(readlink -f /etc/systemd/system/display-manager.service 2>/dev/null)" == *sddm* ]]; then
     ok "sddm is the display manager"
