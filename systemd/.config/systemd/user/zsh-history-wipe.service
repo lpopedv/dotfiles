@@ -8,3 +8,27 @@ Type=oneshot
 # guarantees the file is empty at wipe time, not that it stays that way
 # through a long-lived session.
 ExecStart=/usr/bin/truncate -s 0 %h/.zsh_history
+
+# Sandboxing - this unit only ever needs to write one file, so it gets
+# nothing else: whole filesystem read-only bar that file, no new
+# capabilities, no kernel/namespace/device access.
+NoNewPrivileges=yes
+ProtectSystem=strict
+ProtectHome=read-only
+ReadWritePaths=%h/.zsh_history
+PrivateTmp=yes
+PrivateDevices=yes
+ProtectKernelTunables=yes
+ProtectKernelModules=yes
+ProtectKernelLogs=yes
+ProtectControlGroups=yes
+ProtectClock=yes
+ProtectHostname=yes
+RestrictSUIDSGID=yes
+RestrictRealtime=yes
+RestrictNamespaces=yes
+LockPersonality=yes
+MemoryDenyWriteExecute=yes
+CapabilityBoundingSet=
+SystemCallFilter=@system-service
+SystemCallErrorNumber=EPERM

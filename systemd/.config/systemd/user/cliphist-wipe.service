@@ -4,3 +4,27 @@ Description=Wipe clipboard history periodically
 [Service]
 Type=oneshot
 ExecStart=/usr/bin/cliphist wipe
+
+# Sandboxing - this unit only ever needs to touch cliphist's own db
+# directory, so it gets nothing else: whole filesystem read-only bar that
+# one path, no new capabilities, no kernel/namespace/device access.
+NoNewPrivileges=yes
+ProtectSystem=strict
+ProtectHome=read-only
+ReadWritePaths=%h/.cache/cliphist
+PrivateTmp=yes
+PrivateDevices=yes
+ProtectKernelTunables=yes
+ProtectKernelModules=yes
+ProtectKernelLogs=yes
+ProtectControlGroups=yes
+ProtectClock=yes
+ProtectHostname=yes
+RestrictSUIDSGID=yes
+RestrictRealtime=yes
+RestrictNamespaces=yes
+LockPersonality=yes
+MemoryDenyWriteExecute=yes
+CapabilityBoundingSet=
+SystemCallFilter=@system-service
+SystemCallErrorNumber=EPERM

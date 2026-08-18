@@ -141,6 +141,7 @@ run sudo install -Dm644 "$DOTFILES/install/etc/systemd/system/paccache.timer.d/o
     /etc/systemd/system/paccache.timer.d/override.conf
 run sudo systemctl daemon-reload
 run sudo systemctl enable --now systemd-tmpfiles-clean.timer paccache.timer
+run systemctl --user daemon-reload
 run systemctl --user enable --now cliphist-wipe.timer zsh-history-wipe.timer
 
 log "Trace retention"
@@ -156,6 +157,11 @@ run sudo systemd-tmpfiles --clean /etc/tmpfiles.d/coredump.conf
 log "Firewall"
 run sudo install -Dm644 "$DOTFILES/install/etc/nftables.conf" /etc/nftables.conf
 run sudo systemctl enable --now nftables.service
+
+log "Kernel hardening"
+run sudo install -Dm644 "$DOTFILES/install/etc/sysctl.d/99-hardening.conf" /etc/sysctl.d/99-hardening.conf
+run sudo rm -f /etc/sysctl.d/10-hardening.conf
+run sudo sysctl --system
 
 log "Services"
 if [[ "$(readlink -f /etc/systemd/system/display-manager.service 2>/dev/null)" == *sddm* ]]; then
