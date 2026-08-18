@@ -167,7 +167,7 @@ table alongside them.
 
 ### Kernel hardening
 
-`install/etc/sysctl.d/99-hardening.conf` sets three sysctls that cost
+`install/etc/sysctl.d/99-hardening.conf` sets four sysctls. Three cost
 nothing in normal use: `kernel.dmesg_restrict=1` (only root can read the
 kernel log - it can leak memory addresses), `kernel.kptr_restrict=2` (hides
 kernel pointers from `/proc`, which make exploits easier to build), and
@@ -175,6 +175,14 @@ kernel pointers from `/proc`, which make exploits easier to build), and
 keyboard access could otherwise reboot or kill processes with no
 authentication). Named `99-` because `/etc/sysctl.d/50-default.conf` also
 sets `kernel.sysrq` and later filenames win.
+
+The fourth, `kernel.yama.ptrace_scope=2`, has a real trade-off: only root
+can `ptrace` at all (Arch's default of `1` already limits it to a
+process's own children, which blocks the realistic threat of one process
+reading another's memory - `2` closes the gap further). The cost is
+needing `sudo` for `gdb`/`strace`/`ltrace` on a process you didn't spawn
+as that debugger's own child. Doesn't affect BEAM/Elixir tooling (`iex`,
+`:observer`, `:dbg`) - that's VM-level introspection, not OS ptrace.
 
 `cliphist-wipe.service` and `zsh-history-wipe.service` (see Maintenance
 above) also run sandboxed - `ProtectSystem=strict` plus a single
