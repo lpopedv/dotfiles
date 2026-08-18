@@ -84,8 +84,8 @@ window#waybar {
     padding: 0 11px;
     margin: 5px 2px;
     border: 1px solid transparent;
-    border-radius: 6px;
-    transition: 150ms ease;
+    border-radius: 0;
+    transition: 180ms ease;
 }
 
 #custom-audio,
@@ -106,15 +106,16 @@ window#waybar {
 #network:hover,
 #battery:hover {
     color: @fg-act;
-    background: rgba(255, 255, 255, 0.04);
-    border: 1px solid @border;
+    background: rgba(255, 255, 255, 0.08);
 }
 
+/* toggled-on state - a translucent fill instead of a hard invert, same
+   rgba(255,255,255,0.35) accent #workspaces button.active already uses */
 #custom-caffeine.active,
 #custom-nightlight.active {
-    color: @bg;
-    background: @fg-act;
-    border: 1px solid @fg-act;
+    color: @fg-act;
+    background: rgba(255, 255, 255, 0.14);
+    border: 1px solid rgba(255, 255, 255, 0.35);
 }
 
 /* status group starts here — extra gap sets it apart from the utility icons */
@@ -145,8 +146,8 @@ window#waybar {
 }
 
 #clock:hover {
-    background: rgba(255, 255, 255, 0.10);
-    border: 1px solid rgba(255, 255, 255, 0.35);
+    color: @fg-act;
+    background: rgba(255, 255, 255, 0.08);
 }
 
 /* power/session sits alone in the corner, separated from status group */
@@ -156,9 +157,9 @@ window#waybar {
 }
 
 #custom-wlogout:hover {
-    color: @bg;
-    background: @fg-act;
-    border: 1px solid @fg-act;
+    color: @fg-act;
+    background: rgba(255, 255, 255, 0.14);
+    border: 1px solid rgba(255, 255, 255, 0.35);
 }
 
 #tray {
@@ -169,5 +170,5 @@ window#waybar {
     background: @bg;
     color: @fg;
     border: 1px solid @border;
-    border-radius: 6px;
+    border-radius: 0;
 }

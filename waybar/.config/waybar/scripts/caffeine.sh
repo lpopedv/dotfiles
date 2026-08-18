@@ -6,7 +6,7 @@
 # button) still works while caffeine is on.
 
 pidfile="${XDG_RUNTIME_DIR:-/tmp}/waybar-caffeine.pid"
-icon=$''  # nf-fa-mug_saucer
+icon=$'\U000f06ca'  # nf-md-coffee_outline - matches nightlight's thin-line nf-fa-moon_o
 
 is_active() {
     [[ -f "$pidfile" ]] && kill -0 "$(cat "$pidfile" 2>/dev/null)" 2>/dev/null
