@@ -131,15 +131,21 @@ the diff shows exactly what moved.
 
 ### Maintenance
 
-Two daily timers keep the disk from accumulating cruft:
+Four timers keep the disk from accumulating cruft, and keep how long things
+stick around short in general:
 
 | Timer | Scope | What it does |
 |---|---|---|
-| `systemd-tmpfiles-clean.timer` | system, built into systemd | Ages out `/tmp` (10 days) and `/var/tmp` (30 days) per the stock `tmp.conf` — no override shipped here, just enabled |
+| `systemd-tmpfiles-clean.timer` | system, built into systemd | Ages out `/tmp` and `/var/tmp`, daily — overridden from the stock 10/30 days down to 2 (`install/etc/tmpfiles.d/tmp.conf`) |
 | `paccache.timer` | system, from `pacman-contrib` | Keeps the last 3 versions of each cached package in `/var/cache/pacman/pkg`; overridden here from its default weekly to daily (`install/etc/systemd/system/paccache.timer.d/override.conf`) |
+| `cliphist-wipe.timer` | user | Clears clipboard history every 2 days; day-to-day it's also capped to 50 items and ignores anything under 5 characters (`hypr`'s `autostart.lua`) |
+| `zsh-history-wipe.timer` | user | Truncates `~/.zsh_history` every 2 days; `HISTSIZE`/`SAVEHIST` are also capped at 1000 |
 
-`bootstrap.sh` installs the `paccache.timer` drop-in and enables both
-timers; re-running it is safe if either ever gets disabled.
+`journald` is capped to 1 day / 100M via `/etc/systemd/journald.conf.d/10-retention.conf`
+instead of growing unbounded.
+
+`bootstrap.sh` installs all the drop-ins above and enables every timer;
+re-running it is safe if any of them ever get disabled.
 
 ### Notes
 
