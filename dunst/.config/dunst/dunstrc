@@ -29,7 +29,7 @@
     max_icon_size   = 48
 
     ### Appearance ###
-    corner_radius       = 12
+    corner_radius       = 0
     frame_width         = 1
     padding             = 12
     horizontal_padding  = 14
@@ -41,7 +41,7 @@
     progress_bar_frame_width    = 0
     progress_bar_min_width      = 150
     progress_bar_max_width      = 340
-    progress_bar_corner_radius  = 2
+    progress_bar_corner_radius  = 0
 
     ### Behavior ###
     show_indicators     = no
