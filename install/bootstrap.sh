@@ -141,6 +141,13 @@ run sudo install -Dm644 "$DOTFILES/install/etc/systemd/system/paccache.timer.d/o
     /etc/systemd/system/paccache.timer.d/override.conf
 run sudo systemctl daemon-reload
 run sudo systemctl enable --now systemd-tmpfiles-clean.timer paccache.timer
+run systemctl --user enable --now cliphist-wipe.timer zsh-history-wipe.timer
+
+log "Trace retention"
+run sudo install -Dm644 "$DOTFILES/install/etc/tmpfiles.d/tmp.conf" /etc/tmpfiles.d/tmp.conf
+run sudo install -Dm644 "$DOTFILES/install/etc/systemd/journald.conf.d/10-retention.conf" \
+    /etc/systemd/journald.conf.d/10-retention.conf
+run sudo systemctl reload-or-restart systemd-journald
 
 log "Services"
 if [[ "$(readlink -f /etc/systemd/system/display-manager.service 2>/dev/null)" == *sddm* ]]; then

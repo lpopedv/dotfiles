@@ -50,10 +50,11 @@ dotup() {
   git -C ~/Dotfiles pull --ff-only && ~/Dotfiles/install/bootstrap.sh "$@"
 }
 
-# History
+# History - kept short on purpose; zsh-history-wipe.timer clears the file
+# outright every 2 days on top of this
 HISTFILE=~/.zsh_history
-HISTSIZE=10000
-SAVEHIST=10000
+HISTSIZE=1000
+SAVEHIST=1000
 setopt HIST_IGNORE_DUPS
 setopt HIST_IGNORE_SPACE
 setopt SHARE_HISTORY

@@ -7,8 +7,10 @@ hl.on("hyprland.start", function()
     hl.exec_cmd("waybar")
     hl.exec_cmd("kbuildsycoca6")
     hl.exec_cmd("/usr/lib/polkit-kde-authentication-agent-1")
-    hl.exec_cmd("wl-paste --type text --watch cliphist store")
-    hl.exec_cmd("wl-paste --type image --watch cliphist store")
+    -- Capped at 50 items (default 750) and ignores anything under 5 chars;
+    -- cliphist-wipe.timer clears it out entirely every 2 days on top
+    hl.exec_cmd("wl-paste --type text --watch cliphist store -max-items 50 -min-store-length 5")
+    hl.exec_cmd("wl-paste --type image --watch cliphist store -max-items 50 -min-store-length 5")
     hl.exec_cmd("flameshot")
 
     -- Launched explicitly here, not via Mullvad's own "launch on start-up"

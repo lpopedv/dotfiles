@@ -1,0 +1,10 @@
+[Unit]
+Description=Wipe zsh history periodically
+
+[Service]
+Type=oneshot
+# SHARE_HISTORY means a shell already open when this fires still holds its
+# own history in memory and can write it straight back on exit - this only
+# guarantees the file is empty at wipe time, not that it stays that way
+# through a long-lived session.
+ExecStart=/usr/bin/truncate -s 0 %h/.zsh_history

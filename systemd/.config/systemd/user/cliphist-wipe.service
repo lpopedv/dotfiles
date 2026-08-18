@@ -1,0 +1,6 @@
+[Unit]
+Description=Wipe clipboard history periodically
+
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/cliphist wipe
