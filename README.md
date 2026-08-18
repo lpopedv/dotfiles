@@ -11,13 +11,13 @@ Personal dotfiles for a Linux development environment, managed with [GNU Stow](h
 | `dunst` | [dunst](https://dunst-project.org) | Notification daemon — dark translucent theme matching Waybar/rofi |
 | `flameshot` | [Flameshot](https://flameshot.org) | Screenshot tool — native Wayland capture, no tray icon |
 | `ghostty` | [Ghostty](https://ghostty.org) | GPU-accelerated terminal emulator |
-| `hypr` | [Hyprland](https://hypr.land) | Wayland compositor — Lua config (0.55+) split into monitors, environment, autostart, look-and-feel, input, keybinds, rules, plus `hyprpaper`, `hypridle`/`hyprlock` (idle lock/DPMS-off/suspend chain, monochrome lock screen matching Waybar/wlogout) and `hyprsunset` (blue-light filter, toggled from Waybar) |
+| `hypr` | [Hyprland](https://hypr.land) | Wayland compositor — Lua config (0.55+) split into monitors, environment, autostart, look-and-feel, input, keybinds, rules, plus `hyprpaper`, `hypridle`/`hyprlock` (idle lock/DPMS-off/suspend chain, monochrome lock screen matching Waybar/wlogout) and `hyprsunset` (blue-light filter, toggled from Waybar). `autostart.lua` launches Mullvad VPN's GUI itself, gated on `scripts/wait-for-tray.sh`, instead of letting the app's own "launch on start-up" race Waybar for the tray |
 | `lazygit` | [lazygit](https://github.com/jesseduffield/lazygit) | Git TUI — theme colors mirror the `mono` nvim/ghostty palette |
 | `mise` | [mise](https://mise.jdx.dev) | Runtime/tool version manager |
 | `nvim` | [Neovim](https://neovim.io) | Editor config (Lua) |
 | `rofi` | [rofi](https://github.com/davatorium/rofi) | App launcher / dmenu — vim-motion keybinds and a custom dark theme |
-| `scripts` | — | Standalone helper scripts (not stowed) |
-| `systemd` | [systemd](https://systemd.io) | `hyprland-session.target` — binds the Hyprland session to `graphical-session.target` |
+| `scripts` | — | Standalone helper scripts (not stowed) — `setup-cloudflare-dns.sh`, `wait-for-tray.sh` (blocks until Waybar's tray watcher is up, used by `hypr`'s autostart) |
+| `systemd` | [systemd](https://systemd.io) | `hyprland-session.target` — binds the Hyprland session to `graphical-session.target`; `trash-cleanup.timer` — daily, purges trash items older than 30 days |
 | `tmux` | [tmux](https://github.com/tmux/tmux) | Terminal multiplexer config |
 | `waybar` | [Waybar](https://github.com/Alexays/Waybar) | Status bar — minimal i3bar-style black bottom bar, workspaces, clock, tray, custom launchers, and toggles for caffeine (idle inhibitor) and night light (`hyprsunset`) |
 | `wlogout` | [wlogout](https://github.com/ArtsyMacaw/wlogout) | Session menu — `phosphor` theme, square buttons |
@@ -105,6 +105,18 @@ Those two lists are the single source of truth for what this configuration
 needs — do not repeat them here. `install/packages.txt` is grouped by purpose
 and commented.
 
+Once set up, `dotup` (a `.zshrc` function) is the everyday way to pick up
+changes — `git pull` then re-run `bootstrap.sh`:
+
+```sh
+dotup             # pull + apply
+dotup --dry-run   # pull + preview only
+```
+
+The rule of thumb: edit files in `~/Dotfiles`, never system config directly,
+then `dotup`. `bootstrap.sh`'s idempotency is what makes that safe to run
+after every change instead of tracking by hand what needs re-applying.
+
 ### By hand
 
 ```sh
@@ -116,6 +128,23 @@ mise install --locked
 `mise.lock` rather than whatever is newest. To bump the tools deliberately, run
 `mise up` — it re-resolves the `latest` entries and rewrites the lockfile, so
 the diff shows exactly what moved.
+
+### Maintenance
+
+Three daily timers keep the disk from accumulating cruft, none of them
+requiring GNOME's Files/Settings equivalents:
+
+| Timer | Scope | What it does |
+|---|---|---|
+| `systemd-tmpfiles-clean.timer` | system, built into systemd | Ages out `/tmp` (10 days) and `/var/tmp` (30 days) per the stock `tmp.conf` — no override shipped here, just enabled |
+| `paccache.timer` | system, from `pacman-contrib` | Keeps the last 3 versions of each cached package in `/var/cache/pacman/pkg`; overridden here from its default weekly to daily (`install/etc/systemd/system/paccache.timer.d/override.conf`) |
+| `trash-cleanup.timer` | user, from `trash-cli` | Runs `trash-empty 30`, purging anything that has sat in `~/.local/share/Trash` for 30+ days |
+
+`rm` is aliased to `trash-put` in `.zshrc` so interactive deletes land in the
+trash instead of being removed outright — scripts calling `rm` directly are
+unaffected, since aliases don't expand there. `bootstrap.sh` installs the
+`paccache.timer` drop-in and enables all three timers; re-running it is safe
+if any of them ever get disabled.
 
 ### Notes
 
