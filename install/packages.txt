@@ -66,6 +66,7 @@ wl-clipboard
 wtype
 flameshot
 obs-studio
+swayimg
 thunar
 gvfs
 tumbler
