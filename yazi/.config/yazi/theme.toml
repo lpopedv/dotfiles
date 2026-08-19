@@ -92,8 +92,11 @@ unset_alt  = { fg = "#d89179", bg = "#0d0d0d" }
 # : Indicator of hovered file {{{
 
 [indicator]
-parent  = { reversed = true }
-current = { reversed = true }
+# bg highlight, not reversed - reversed swaps fg/bg per-cell, which made the
+# hovered row's icon (its own explicit fg) invisible against its own reversed
+# bg. bg_sel matches nvim CursorLine/lazygit selectedLineBgColor (#262626).
+parent  = { bg = "#262626" }
+current = { bg = "#262626" }
 preview = { underline = true }
 padding = { open = "", close = "" }
 
@@ -996,20 +999,21 @@ exts = [
 ]
 conds = [
 	# Special files
-	{ if = "orphan", text = "", fg = "#c56b51" },
-	{ if = "link", text = "", fg = "#808080" },
-	{ if = "block", text = "", fg = "#83d4c5" },
-	{ if = "char", text = "", fg = "#83d4c5" },
-	{ if = "fifo", text = "", fg = "#83d4c5" },
-	{ if = "sock", text = "", fg = "#83d4c5" },
-	{ if = "sticky", text = "", fg = "#83d4c5" },
-	{ if = "dummy", text = "", fg = "#c56b51" },
+	{ if = "orphan", text = "", fg = "#b3b3b3" },
+	{ if = "link", text = "", fg = "#9e9e9e" },
+	{ if = "block", text = "", fg = "#83d4c5" },
+	{ if = "char", text = "", fg = "#83d4c5" },
+	{ if = "fifo", text = "", fg = "#83d4c5" },
+	{ if = "sock", text = "", fg = "#83d4c5" },
+	{ if = "sticky", text = "", fg = "#83d4c5" },
+	{ if = "dummy", text = "", fg = "#c56b51" },
 
 	# Fallback
-	{ if = "dir & hovered", text = "", fg = "#ffffff" },
-	{ if = "dir", text = "", fg = "#7fa6d4" },
-	{ if = "exec", text = "", fg = "#7abc5c" },
-	{ if = "!dir", text = "", fg = "#b3b3b3" },
+	{ if = "dir & hovered", text = "", fg = "#ffffff" },
+	{ if = "dir", text = "", fg = "#7fa6d4" },
+	{ if = "exec", text = "", fg = "#7abc5c" },
+	{ if = "!dir", text = "", fg = "#b3b3b3" },
 ]
+
 
 # : }}}
