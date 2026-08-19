@@ -13,7 +13,7 @@ DRY=0
 
 STOW_PACKAGES=(
     claude doom dunst flameshot ghostty git hypr lazygit mise
-    nvim rofi systemd tmux waybar wlogout zsh
+    nvim rofi systemd tmux waybar wlogout yazi zsh
 )
 
 log()  { printf '\n\033[1m==> %s\033[0m\n' "$*"; }

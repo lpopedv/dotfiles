@@ -1,0 +1,265 @@
+# Colors mirror nvim/colors/mono.lua, lazygit/config.yml, and ghostty's mono
+# theme, so this TUI doesn't fall back to yazi's default yellow/blue/red.
+# Palette (see mono.lua for the full set):
+#   bg #000000  bg_alt #0d0d0d  bg_sel #262626  border #333333
+#   fg #b3b3b3  fg_dim #808080  fg_mute #4d4d4d  fg_hi #ffffff
+#   sage #7abc5c (added/exec)  clay #c56b51 (removed/error)  slate #5586c0 (changed/info)
+#   sand_b #d8c288 (warn)  mauve_b #ce8ad2 (keyword)  teal_b #83d4c5 (const/hint)
+
+#:schema https://yazi-rs.github.io/schemas/theme.json
+# vim:fileencoding=utf-8:foldmethod=marker
+
+# : Flavor {{{
+
+[flavor]
+dark  = ""
+light = ""
+
+# : }}}
+
+
+# : App {{{
+
+[app]
+overall = {}
+
+# : }}}
+
+
+# : Manager {{{
+
+[mgr]
+cwd = { fg = "#7fa6d4" }
+
+# Find
+find_keyword  = { fg = "#d8c288", bold = true, italic = true, underline = true }
+find_position = { fg = "#b762bc", bg = "reset", bold = true, italic = true }
+
+# Symlink
+symlink_target = { fg = "#808080", italic = true }
+
+# Marker
+marker_copied   = { fg = "#7abc5c", bg = "#7abc5c" }
+marker_cut      = { fg = "#c56b51", bg = "#c56b51" }
+marker_marked   = { fg = "#5586c0", bg = "#5586c0" }
+marker_selected = { fg = "#cccccc", bg = "#cccccc" }
+marker_symbol   = "│"
+
+# Count
+count_copied   = { fg = "#000000", bg = "#7abc5c" }
+count_cut      = { fg = "#000000", bg = "#c56b51" }
+count_selected = { fg = "#000000", bg = "#cccccc" }
+
+# Border
+border_symbol = "│"
+border_style  = { fg = "#333333" }
+
+# Highlighting
+syntect_theme = ""
+
+# : }}}
+
+
+# : Tabs {{{
+
+[tabs]
+active   = { fg = "#000000", bg = "#ffffff", bold = true }
+inactive = { fg = "#4d4d4d", bg = "#0d0d0d" }
+
+# Separator - flat, no glyphs, matches the square/no-decoration system look
+sep_inner = { open = "", close = "" }
+sep_outer = { open = "", close = "" }
+
+# : }}}
+
+
+# : Mode {{{
+# Same mapping as MiniStatuslineMode* in mono.lua: normal=sage, select=mauve, unset=clay
+
+[mode]
+normal_main = { fg = "#000000", bg = "#9bd183", bold = true }
+normal_alt  = { fg = "#9bd183", bg = "#0d0d0d" }
+
+select_main = { fg = "#000000", bg = "#ce8ad2", bold = true }
+select_alt  = { fg = "#ce8ad2", bg = "#0d0d0d" }
+
+unset_main = { fg = "#000000", bg = "#d89179", bold = true }
+unset_alt  = { fg = "#d89179", bg = "#0d0d0d" }
+
+# : }}}
+
+
+# : Indicator of hovered file {{{
+
+[indicator]
+parent  = { reversed = true }
+current = { reversed = true }
+preview = { underline = true }
+padding = { open = "", close = "" }
+
+# : }}}
+
+
+# : Status bar {{{
+
+[status]
+overall   = {}
+sep_left  = { open = "", close = "" }
+sep_right = { open = "", close = "" }
+
+# Permissions - d/l/- neutral, read=sage, write=clay, exec=teal (ls-like, mono hues)
+perm_sep   = { fg = "#4d4d4d" }
+perm_type  = { fg = "#808080" }
+perm_read  = { fg = "#7abc5c" }
+perm_write = { fg = "#c56b51" }
+perm_exec  = { fg = "#5bbfb1" }
+
+# Progress
+progress_label  = { bold = true }
+progress_normal = { fg = "#7abc5c", bg = "#0d0d0d" }
+progress_error  = { fg = "#d89179", bg = "#0d0d0d" }
+
+# : }}}
+
+
+# : Which {{{
+
+[which]
+border          = { fg = "#333333" }
+cols            = 3
+mask            = {}
+cand            = { fg = "#ffffff", bold = true }
+rest            = { fg = "#4d4d4d" }
+desc            = { fg = "#b3b3b3" }
+separator       = "  "
+separator_style = { fg = "#4d4d4d" }
+
+# : }}}
+
+
+# : Confirmation {{{
+
+[confirm]
+border     = { fg = "#333333" }
+title      = { fg = "#ffffff", bold = true }
+body       = {}
+list       = {}
+btn_yes    = { fg = "#000000", bg = "#9bd183", bold = true }
+btn_no     = { fg = "#808080" }
+btn_labels = [ "  [Y]es  ", "  (N)o  " ]
+
+# : }}}
+
+
+# : Spotter {{{
+
+[spot]
+border = { fg = "#333333" }
+title  = { fg = "#ffffff", bold = true }
+
+# Table
+tbl_col  = { fg = "#7fa6d4" }
+tbl_cell = { fg = "#000000", bg = "#ffffff" }
+
+# : }}}
+
+
+# : Notification {{{
+
+[notify]
+title_info  = { fg = "#7fa6d4" }
+title_warn  = { fg = "#d8c288" }
+title_error = { fg = "#d89179" }
+
+# Icons
+icon_info  = ""
+icon_warn  = ""
+icon_error = ""
+
+# : }}}
+
+
+# : Picker {{{
+
+[pick]
+border   = { fg = "#333333" }
+active   = { fg = "#ffffff", bold = true }
+inactive = { fg = "#808080" }
+
+# : }}}
+
+
+# : Input {{{
+
+[input]
+border   = { fg = "#333333" }
+title    = { fg = "#ffffff", bold = true }
+value    = { fg = "#b3b3b3" }
+selected = { fg = "#000000", bg = "#ffffff" }
+
+# : }}}
+
+
+# : Completion {{{
+
+[cmp]
+border   = { fg = "#333333" }
+active   = { fg = "#000000", bg = "#ffffff", bold = true }
+inactive = { fg = "#b3b3b3" }
+
+# Icons
+icon_file    = ""
+icon_folder  = ""
+icon_command = ""
+
+# : }}}
+
+
+# : Task manager {{{
+
+[tasks]
+border  = { fg = "#333333" }
+title   = { fg = "#ffffff", bold = true }
+hovered = { fg = "#000000", bg = "#ffffff", bold = true }
+
+# : }}}
+
+
+# : Help menu {{{
+
+[help]
+border  = { fg = "#333333" }
+chord   = { fg = "#ffffff", bold = true }
+action  = { fg = "#b3b3b3" }
+hovered = { fg = "#000000", bg = "#ffffff", bold = true }
+
+# : }}}
+
+
+# : File-specific styles {{{
+# Same hue roles as mono.lua: image=sand (warm), media=mauve, archive=clay
+# (error-like), doc/dir=slate (matches nvim Directory=role.func), exec=sage
+
+[filetype]
+rules = [
+	# Image
+	{ mime = "**/image/*", fg = "#d8c288" },
+	# Media
+	{ mime = "**/{audio,video}/*", fg = "#ce8ad2" },
+	# Archive
+	{ mime = "**/application/{zip,rar,7z*,tar,gzip,xz,zstd,bzip*,lzma,compress,archive,cpio,arj,xar,ms-cab*}", fg = "#d89179" },
+	# Document
+	{ mime = "**/application/{pdf,doc,rtf}", fg = "#7fa6d4" },
+	# Virtual file system
+	{ mime = "vfs/{absent,stale}", fg = "#4d4d4d" },
+	# Special file
+	{ url = "*", is = "orphan", bg = "#c56b51" },
+	{ url = "*", is = "exec"  , fg = "#7abc5c" },
+	# Dummy file
+	{ url = "*", is = "dummy", bg = "#c56b51" },
+	{ url = "*/", is = "dummy", bg = "#c56b51" },
+	# Fallback
+	{ url = "*/", fg = "#7fa6d4" }
+]
+
+# : }}}
