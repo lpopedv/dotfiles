@@ -20,6 +20,12 @@ lazygit
 tmux
 mpv
 
+# yazi - previews need ffmpegthumbnailer (video), poppler (pdf), imagemagick (fonts/misc)
+yazi
+ffmpegthumbnailer
+poppler
+imagemagick
+
 # Maintenance - paccache (from pacman-contrib) prunes old package versions
 # from /var/cache/pacman/pkg. Runs daily via a systemd timer, see bootstrap.sh.
 pacman-contrib
@@ -60,8 +66,9 @@ wl-clipboard
 wtype
 flameshot
 obs-studio
-dolphin
-kservice
+thunar
+gvfs
+tumbler
 wiremix
 impala
 playerctl

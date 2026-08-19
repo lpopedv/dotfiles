@@ -1,7 +1,7 @@
 local mainMod = "SUPER"
 
 local terminal    = "ghostty"
-local fileManager = "dolphin"
+local fileManager = "thunar"
 local menu        = "rofi -show drun"
 local browser     = "zen-browser"
 
@@ -51,7 +51,8 @@ for i = 1, 10 do
         { description = "Move window to workspace " .. i })
 end
 
-hl.bind(mainMod .. " + S", hl.dsp.workspace.toggle_special("magic"), { description = "Toggle scratchpad" })
+hl.bind(mainMod .. " + S", hl.dsp.exec_cmd("hyprctl dispatch layoutmsg togglesplit"),
+    { description = "Toggle split direction (vertical/horizontal)" })
 hl.bind(mainMod .. " + SHIFT + S", hl.dsp.window.move({ workspace = "special:magic" }),
     { description = "Move window to scratchpad" })
 
