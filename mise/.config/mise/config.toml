@@ -1,0 +1,11 @@
+[tools]
+node = "24.18.0"
+java = "25.0.2"
+elixir = "1.20.2-otp-29"
+erlang = "29.0.2"
+lua-language-server = "latest"
+elixir-ls = "latest"
+tree-sitter = "latest"
+"npm:typescript" = "7.0.2"
+biome = "latest"
+"github:artempyanykh/marksman" = "latest"

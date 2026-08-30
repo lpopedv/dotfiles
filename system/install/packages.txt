@@ -1,0 +1,95 @@
+# Official repository packages, one per line. Comments and blank lines ignored.
+# Installed by install/bootstrap.sh with `pacman -S --needed`.
+
+# Base and build
+base-devel
+git
+stow
+cmake
+libtool
+unzip
+inotify-tools
+
+# CLI tools
+ripgrep
+fd
+fzf
+eza
+btop
+lazygit
+tmux
+mpv
+
+# yazi - previews need ffmpegthumbnailer (video), poppler (pdf), imagemagick (fonts/misc)
+yazi
+ffmpegthumbnailer
+poppler
+imagemagick
+
+# Maintenance - paccache (from pacman-contrib) prunes old package versions
+# from /var/cache/pacman/pkg. Runs daily via a systemd timer, see bootstrap.sh.
+pacman-contrib
+
+# Shell
+zsh
+zsh-autosuggestions
+zsh-syntax-highlighting
+
+# Runtimes and containers
+mise
+docker
+docker-compose
+
+# Editors
+neovim
+emacs
+
+# Hyprland session
+# uwsm is deliberately absent - see README, it only adds a duplicate session entry
+hyprland
+sddm
+xdg-desktop-portal-hyprland
+# wlr provides the Screenshot portal interface - hyprland's own backend
+# advertises it but doesn't implement it (as of 1.4.1); flameshot v14
+# needs it. See flameshot-org/flameshot#4543.
+xdg-desktop-portal-wlr
+polkit-kde-agent
+
+# Desktop
+# quickshell is the toolkit; the bar itself is our QML in quickshell/.
+quickshell
+rofi
+rofimoji
+hyprpaper
+hyprpicker
+hypridle
+hyprlock
+hyprsunset
+cliphist
+wl-clipboard
+wtype
+flameshot
+obs-studio
+swayimg
+thunar
+gvfs
+tumbler
+wiremix
+impala
+playerctl
+brightnessctl
+qt6ct
+
+# Terminal
+ghostty
+
+# Browser
+chromium
+
+# AI coding agents
+opencode
+
+# Fonts and icons
+ttf-jetbrains-mono-nerd
+noto-fonts-emoji
+adwaita-icon-theme

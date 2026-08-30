@@ -1,0 +1,11 @@
+#:schema https://yazi-rs.github.io/schemas/yazi.json
+
+[opener]
+swayimg = [
+	{ run = "swayimg %s1", desc = "swayimg", for = "unix", orphan = true },
+]
+
+[open]
+prepend_rules = [
+	{ mime = "image/*", use = "swayimg" },
+]

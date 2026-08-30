@@ -1,0 +1,5 @@
+# AUR packages, installed with paru by install/bootstrap.sh.
+# archinstall cannot install these - the AUR is excluded from it by design,
+# which is why bootstrap.sh exists as a separate step.
+
+mullvad-vpn-bin

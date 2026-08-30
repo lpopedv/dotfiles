@@ -1,0 +1,29 @@
+{
+  "archinstall_language": "English",
+  "app_config": {
+    "audio_config": { "audio": "pipewire" }
+  },
+  "bootloader_config": {
+    "bootloader": "Systemd-boot",
+    "uki": false,
+    "removable": false
+  },
+  "hostname": "archlinux",
+  "kernels": ["linux"],
+  "locale_config": {
+    "kb_layout": "br",
+    "sys_enc": "UTF-8",
+    "sys_lang": "en_US"
+  },
+  "network_config": { "type": "nm_iwd" },
+  "ntp": true,
+  "packages": ["git"],
+  "pacman_config": { "color": true, "parallel_downloads": 20 },
+  "profile_config": {
+    "gfx_driver": "All open-source",
+    "profile": { "main": "Minimal" }
+  },
+  "script": "guided",
+  "swap": { "enabled": true, "algorithm": "zstd" },
+  "timezone": "America/Sao_Paulo"
+}

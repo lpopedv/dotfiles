@@ -1,0 +1,29 @@
+{
+  "version": 1,
+  "keybindings": {},
+  "platforms": {
+    "darwin": {},
+    "linux": {
+      "terminal.splitRight": ["Ctrl+Shift+D", "Alt+Shift+V"],
+      "terminal.splitDown": ["Alt+Shift+D", "Alt+Shift+S"],
+      "terminal.focusNextPane": ["Ctrl+BracketRight", "Alt+H", "Alt+K"],
+      "terminal.focusPreviousPane": ["Ctrl+BracketLeft", "Alt+L", "Alt+J"],
+      "terminal.closePane": ["Alt+Shift+X"],
+      "terminal.expandPane": ["Ctrl+Shift+Enter", "Alt+Shift+F"],
+      "terminal.equalizePaneSizes": ["Alt+Shift+E"],
+      "sidebar.right.toggle": ["Ctrl+Alt+B"],
+      "tab.close": ["Alt+Shift+W"]
+    },
+    "win32": {
+      "terminal.splitRight": ["Ctrl+Shift+D", "Alt+Shift+V"],
+      "terminal.splitDown": ["Alt+Shift+D", "Alt+Shift+S"],
+      "terminal.focusNextPane": ["Ctrl+BracketRight", "Alt+H", "Alt+K"],
+      "terminal.focusPreviousPane": ["Ctrl+BracketLeft", "Alt+L", "Alt+J"],
+      "terminal.closePane": ["Alt+Shift+X"],
+      "terminal.expandPane": ["Ctrl+Shift+Enter", "Alt+Shift+F"],
+      "terminal.equalizePaneSizes": ["Alt+Shift+E"],
+      "sidebar.right.toggle": ["Ctrl+Alt+B"],
+      "tab.close": ["Alt+Shift+W"]
+    }
+  }
+}
