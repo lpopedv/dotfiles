@@ -10,7 +10,6 @@ Every top-level directory except `system/` is a stow package: its contents mirro
 
 | Package     | What it configures |
 |-------------|---------------------|
-| `claude`    | Claude Code (`~/.claude`) — settings, skills, themes |
 | `doom`      | Doom Emacs |
 | `flameshot` | Screenshot tool |
 | `ghostty`   | Terminal emulator |

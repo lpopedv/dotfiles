@@ -74,6 +74,7 @@ RowLayout {
                 id: mouse
                 anchors.fill: parent
                 hoverEnabled: true
+                cursorShape: Qt.PointingHandCursor
                 onClicked: Hyprland.dispatch("workspace " + slot.wsId)
             }
         }
