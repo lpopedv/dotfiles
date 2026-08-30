@@ -40,6 +40,7 @@ Rectangle {
         id: mouse
         anchors.fill: parent
         hoverEnabled: true
+        cursorShape: Qt.PointingHandCursor
         acceptedButtons: Qt.LeftButton | Qt.RightButton | Qt.MiddleButton
         onClicked: event => root.clicked(event.button)
         onWheel: event => root.wheel(event.angleDelta.y)
