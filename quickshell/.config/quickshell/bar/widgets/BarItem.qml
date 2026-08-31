@@ -10,17 +10,23 @@ Rectangle {
     property int horizontalPadding: 11
     default property alias content: layout.data
 
+    property bool collapsible: false
+    property bool revealed: true
+    readonly property bool collapsed: collapsible && !active && !revealed
+
     signal clicked(int button)
     signal wheel(int delta)
 
     Layout.alignment: Qt.AlignVCenter
     Layout.topMargin: 5
     Layout.bottomMargin: 5
-    Layout.leftMargin: 2
-    Layout.rightMargin: 2
+    Layout.leftMargin: collapsed ? 0 : 2
+    Layout.rightMargin: collapsed ? 0 : 2
 
-    implicitWidth: layout.implicitWidth + horizontalPadding * 2
+    clip: true
+    implicitWidth: collapsed ? 0 : layout.implicitWidth + horizontalPadding * 2
     implicitHeight: Theme.barHeight - 10
+    opacity: collapsed ? 0 : (collapsible && !active ? Theme.dimmedOpacity : 1)
 
     color: root.active ? Theme.activeFill : mouse.containsMouse ? Theme.hoverFill : "transparent"
     border.width: 1
@@ -28,6 +34,12 @@ Rectangle {
 
     Behavior on color {
         ColorAnimation { duration: Theme.animMs }
+    }
+    Behavior on implicitWidth {
+        NumberAnimation { duration: Theme.animMs }
+    }
+    Behavior on opacity {
+        NumberAnimation { duration: Theme.animMs }
     }
 
     RowLayout {

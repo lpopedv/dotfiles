@@ -23,6 +23,25 @@ Variants {
         implicitHeight: Theme.barHeight
         color: "transparent"
 
+        property bool indicatorsRevealed: false
+
+        Timer {
+            id: revealHideTimer
+            interval: 200
+            onTriggered: bar.indicatorsRevealed = false
+        }
+
+        HoverHandler {
+            onHoveredChanged: {
+                if (hovered) {
+                    revealHideTimer.stop();
+                    bar.indicatorsRevealed = true;
+                } else {
+                    revealHideTimer.restart();
+                }
+            }
+        }
+
         Rectangle {
             anchors.fill: parent
             color: Qt.rgba(Theme.bg.r, Theme.bg.g, Theme.bg.b, Theme.barOpacity)
@@ -45,13 +64,23 @@ Variants {
                 icon: Icons.memory
                 command: ["ghostty", "--gtk-single-instance=false",
                           "--class=org.dotfiles.btop", "--title=btop", "-e", "btop"]
+                collapsible: true
+                revealed: bar.indicatorsRevealed
             }
             LaunchButton {
                 icon: Icons.eyedropper
                 command: ["hyprpicker", "-a"]
+                collapsible: true
+                revealed: bar.indicatorsRevealed
             }
-            Caffeine {}
-            NightLight {}
+            Caffeine {
+                collapsible: true
+                revealed: bar.indicatorsRevealed
+            }
+            NightLight {
+                collapsible: true
+                revealed: bar.indicatorsRevealed
+            }
             Network {}
 
             Battery {}
