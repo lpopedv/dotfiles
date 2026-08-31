@@ -37,4 +37,5 @@ QtObject {
     readonly property int iconSize: 15
 
     readonly property int animMs: 150
+    readonly property real dimmedOpacity: 0.45
 }
