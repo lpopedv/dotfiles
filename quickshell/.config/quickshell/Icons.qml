@@ -16,6 +16,9 @@ QtObject {
     readonly property string memory: cp(0xF035B)       // nf-md-memory
     readonly property string eyedropper: cp(0xF020B)   // nf-md-eyedropper
     readonly property string coffee: cp(0xF06CA)       // nf-md-coffee_outline
+    readonly property string bell: cp(0xF009A)         // nf-md-bell
+    readonly property string bellOutline: cp(0xF009C)  // nf-md-bell_outline
+    readonly property string bellOffOutline: cp(0xF0A91) // nf-md-bell_off_outline
     // Font Awesome range: 0xF186, not 0xF0186. Wrong one renders tofu.
     readonly property string moon: cp(0xF186)          // nf-fa-moon_o
     readonly property string power: cp(0xF0425)        // nf-md-power
