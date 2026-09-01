@@ -46,6 +46,7 @@ BarItem {
         id: panel
         anchorItem: root
         visible: false
+        grabFocus: true
     }
 
     active: panel.visible
