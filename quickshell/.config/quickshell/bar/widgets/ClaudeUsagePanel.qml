@@ -37,8 +37,8 @@ PopupWindow {
     readonly property string today: Qt.formatDate(now, "yyyy-MM-dd")
 
     anchor.item: anchorItem
-    anchor.edges: Edges.Top
-    anchor.gravity: Edges.Top
+    anchor.edges: Edges.Bottom
+    anchor.gravity: Edges.Bottom
     anchor.adjustment: PopupAdjustment.SlideX
 
     implicitWidth: 360

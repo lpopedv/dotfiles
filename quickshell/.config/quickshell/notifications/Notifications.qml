@@ -9,45 +9,6 @@ import "../ui"
 Scope {
     id: root
 
-    readonly property int maxVisible: 5
-
-    // `image` arrives pre-wrapped as image://icon/<name> and `appIcon` as a bare
-    // name, and neither is checked against the theme. Handing either to Image
-    // unvalidated draws Qt's magenta placeholder, because the provider returns
-    // that placeholder successfully rather than failing. iconPath's check
-    // overload is the only thing that reports a missing icon, so every form is
-    // unwrapped down to a name and run through it.
-    readonly property string iconUrlPrefix: "image://icon/"
-
-    function resolveIcon(name) {
-        if (!name) return "";
-        if (name.startsWith(iconUrlPrefix))
-            return Quickshell.iconPath(name.substring(iconUrlPrefix.length), true);
-        if (name.startsWith("/") || name.startsWith("file:"))
-            return name;
-        return Quickshell.iconPath(name, true);
-    }
-
-    function timeoutFor(notification) {
-        if (notification.urgency === NotificationUrgency.Critical) return 0;
-        if (notification.expireTimeout > 0) return notification.expireTimeout * 1000;
-        return notification.urgency === NotificationUrgency.Low ? 4000 : 5000;
-    }
-
-    NotificationServer {
-        id: server
-
-        keepOnReload: false
-        bodySupported: true
-        bodyMarkupSupported: true
-        actionsSupported: true
-        imageSupported: true
-
-        onNotification: notification => {
-            notification.tracked = true;
-        }
-    }
-
     PanelWindow {
         anchors {
             bottom: true
@@ -71,7 +32,7 @@ Scope {
             spacing: 10
 
             Repeater {
-                model: server.trackedNotifications
+                model: NotificationsService.popupList
 
                 Rectangle {
                     id: card
@@ -81,7 +42,8 @@ Scope {
                         modelData.urgency === NotificationUrgency.Critical
                     readonly property bool low:
                         modelData.urgency === NotificationUrgency.Low
-                    readonly property int timeout: root.timeoutFor(modelData)
+                    readonly property int timeout: modelData.notification
+                        ? NotificationsService.timeoutFor(modelData.notification) : 0
                     readonly property color accent:
                         card.critical ? Theme.red : card.low ? Theme.fg : Theme.fgAct
                     readonly property bool hovered: hoverArea.containsMouse
@@ -119,7 +81,7 @@ Scope {
                         easing.type: Easing.Linear
                         running: card.timeout > 0
                         paused: card.hovered
-                        onFinished: card.modelData.expire()
+                        onFinished: NotificationsService.archive(card.modelData)
                     }
 
                     Rectangle {
@@ -154,8 +116,8 @@ Scope {
                                 IconImage {
                                     id: icon
                                     anchors.centerIn: parent
-                                    source: root.resolveIcon(card.modelData.image)
-                                        || root.resolveIcon(card.modelData.appIcon)
+                                    source: NotificationsService.resolveIcon(card.modelData.image)
+                                        || NotificationsService.resolveIcon(card.modelData.appIcon)
                                     implicitSize: 22
                                 }
                             }
@@ -211,7 +173,7 @@ Scope {
                         anchors.fill: parent
                         hoverEnabled: true
                         acceptedButtons: Qt.LeftButton | Qt.MiddleButton
-                        onClicked: card.modelData.expire()
+                        onClicked: NotificationsService.dismiss(card.modelData)
                     }
                 }
             }
