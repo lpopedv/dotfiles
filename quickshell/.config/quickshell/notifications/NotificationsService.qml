@@ -15,10 +15,11 @@ QtObject {
     property int unread: 0
     function markAllRead() { root.unread = 0; }
 
-    // Wraps a live Notification with fields that survive after the sender
-    // closes it (the underlying object is destroyed post-close, per
-    // Quickshell docs, so `notification` goes null and reads off it would
-    // otherwise go blank right when the history panel wants to show them).
+    // Snapshots a Notification's fields once, since the underlying object is
+    // destroyed as soon as it closes (ours via archive/dismiss, or the
+    // sender's own doing - plenty of apps self-close after their own
+    // timeout). History needs to survive that regardless of who closed it,
+    // so fields are captured up front instead of bound live to `notification`.
     component Notif: QtObject {
         id: wrapper
 
@@ -29,17 +30,24 @@ QtObject {
         // kept in history) or never true at all when arriving under DND.
         property bool popup: false
 
-        readonly property string appName: notification?.appName ?? ""
-        readonly property string appIcon: notification?.appIcon ?? ""
-        readonly property string image: notification?.image ?? ""
-        readonly property string summary: notification?.summary ?? ""
-        readonly property string body: notification?.body ?? ""
-        readonly property int urgency:
-            notification ? notification.urgency : NotificationUrgency.Normal
+        property string appName: ""
+        property string appIcon: ""
+        property string image: ""
+        property string summary: ""
+        property string body: ""
+        property int urgency: NotificationUrgency.Normal
+        // Actions stop working once the sender is gone - can't invoke them
+        // without a live object - so this naturally empties out on close.
         readonly property var actions: notification?.actions ?? []
 
-        onNotificationChanged: {
-            if (!notification) root.dropExpired(wrapper.notifId);
+        Component.onCompleted: {
+            if (!notification) return;
+            appName = notification.appName;
+            appIcon = notification.appIcon;
+            image = notification.image;
+            summary = notification.summary;
+            body = notification.body;
+            urgency = notification.urgency;
         }
     }
 
@@ -65,8 +73,12 @@ QtObject {
         return Quickshell.iconPath(name, true);
     }
 
+    // expireTimeout is already milliseconds (freedesktop spec: -1 means "use
+    // the daemon default", 0 means "never expire", positive is the value
+    // as-is) - it is NOT seconds, despite what it might look like at a glance.
     function timeoutFor(notification) {
-        if (notification.expireTimeout > 0) return notification.expireTimeout * 1000;
+        if (notification.expireTimeout === 0) return 0;
+        if (notification.expireTimeout > 0) return notification.expireTimeout;
         if (notification.urgency === NotificationUrgency.Critical) return 8000;
         return notification.urgency === NotificationUrgency.Low ? 4000 : 5000;
     }
@@ -81,11 +93,12 @@ QtObject {
         notif.popup = false;
     }
 
-    // Explicit user dismissal: closes the real notification, which then
-    // removes itself from history via onNotificationChanged above.
+    // Explicit user dismissal: closes the real notification (if still
+    // alive) and always drops it from history - unlike a sender-side
+    // close, this one is meant to be final.
     function dismiss(notif) {
         if (notif.notification) notif.notification.dismiss();
-        else root.dropExpired(notif.notifId);
+        root.dropExpired(notif.notifId);
     }
 
     function clearAll() {
