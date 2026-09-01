@@ -20,8 +20,7 @@ lazygit
 tmux
 mpv
 
-# yazi - previews need ffmpegthumbnailer (video), poppler (pdf), imagemagick (fonts/misc)
-yazi
+# Nautilus thumbnails - ffmpegthumbnailer (video), poppler (pdf), imagemagick (fonts/misc)
 ffmpegthumbnailer
 poppler
 imagemagick
@@ -71,9 +70,17 @@ wtype
 flameshot
 obs-studio
 swayimg
-thunar
+# nautilus - file manager. sushi = space-bar quick preview, file-roller = archive
+# extract/compress, nautilus-image-converter = batch resize/rotate context menu.
+# gvfs already covers trash/basic mounts; the gvfs-* below add mtp/camera/smb.
+nautilus
+sushi
+file-roller
+nautilus-image-converter
 gvfs
-tumbler
+gvfs-mtp
+gvfs-gphoto2
+gvfs-smb
 wiremix
 impala
 playerctl

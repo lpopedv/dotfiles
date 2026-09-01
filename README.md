@@ -14,6 +14,7 @@ Every top-level directory except `system/` is a stow package: its contents mirro
 | `flameshot` | Screenshot tool |
 | `ghostty`   | Terminal emulator |
 | `git`       | Git identity and aliases |
+| `gtk`       | GTK3/GTK4 dark-mode fallback for apps that skip the portal |
 | `hypr`       | Hyprland, hypridle, hyprlock, hyprpaper — window manager and session |
 | `lazygit`   | Git TUI |
 | `mise`      | Runtime/toolchain version manager |
@@ -24,7 +25,6 @@ Every top-level directory except `system/` is a stow package: its contents mirro
 | `rofi`      | App launcher |
 | `systemd`   | User-level systemd units and timers |
 | `tmux`      | Terminal multiplexer |
-| `yazi`      | Terminal file manager |
 | `zsh`       | Shell config, prompt, aliases |
 
 `system/` holds installer and image-building tooling — it is not stowed:
