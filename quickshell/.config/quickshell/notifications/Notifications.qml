@@ -29,8 +29,8 @@ Scope {
     }
 
     function timeoutFor(notification) {
-        if (notification.urgency === NotificationUrgency.Critical) return 0;
         if (notification.expireTimeout > 0) return notification.expireTimeout * 1000;
+        if (notification.urgency === NotificationUrgency.Critical) return 8000;
         return notification.urgency === NotificationUrgency.Low ? 4000 : 5000;
     }
 
