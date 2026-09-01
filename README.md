@@ -14,6 +14,7 @@ Every top-level directory except `system/` is a stow package: its contents mirro
 | `flameshot` | Screenshot tool |
 | `ghostty`   | Terminal emulator |
 | `git`       | Git identity and aliases |
+| `gtk`       | GTK3/GTK4 dark-mode fallback for apps that skip the portal |
 | `hypr`       | Hyprland, hypridle, hyprlock, hyprpaper — window manager and session |
 | `lazygit`   | Git TUI |
 | `mise`      | Runtime/toolchain version manager |

@@ -13,7 +13,7 @@ DRY=0
 [[ "${1:-}" == "--dry-run" ]] && DRY=1
 
 STOW_PACKAGES=(
-    doom flameshot ghostty git hypr lazygit mise nvim
+    doom flameshot ghostty git gtk hypr lazygit mise nvim
     orca qt6ct quickshell rofi systemd tmux zsh
 )
 
@@ -89,6 +89,24 @@ for pkg in "${STOW_PACKAGES[@]}"; do
         warn "$pkg conflicts with an existing file - resolve, then: stow --restow $pkg"
     fi
 done
+
+log "Desktop appearance"
+# gtk-4.0/libadwaita apps (Nautilus, Sushi, ...) only ever read color-scheme via
+# gsettings/the Settings portal, never gtk-theme-name or prefer-dark-theme - the
+# portal side of this lives in hypr/.config/xdg-desktop-portal/hyprland-portals.conf
+# (routes org.freedesktop.impl.portal.Settings to xdg-desktop-portal-gtk, which is
+# what actually reads these keys). GTK3 apps that skip the portal fall back to
+# gtk/.config/gtk-3.0/settings.ini, stowed above.
+if [[ "$(gsettings get org.gnome.desktop.interface color-scheme 2>/dev/null)" == "'prefer-dark'" ]]; then
+    ok "color-scheme = prefer-dark"
+else
+    run gsettings set org.gnome.desktop.interface color-scheme 'prefer-dark'
+fi
+if [[ "$(gsettings get org.gnome.desktop.interface gtk-theme 2>/dev/null)" == "'Adwaita'" ]]; then
+    ok "gtk-theme = Adwaita"
+else
+    run gsettings set org.gnome.desktop.interface gtk-theme 'Adwaita'
+fi
 
 log "Toolchain"
 # mise.lock pins exact versions and checksums; --locked refuses to drift from it
