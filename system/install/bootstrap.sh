@@ -14,7 +14,7 @@ DRY=0
 
 STOW_PACKAGES=(
     doom flameshot ghostty git hypr lazygit mise nvim
-    orca qt6ct quickshell rofi systemd tmux yazi zsh
+    orca qt6ct quickshell rofi systemd tmux zsh
 )
 
 log()  { printf '\n\033[1m==> %s\033[0m\n' "$*"; }
