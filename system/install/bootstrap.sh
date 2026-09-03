@@ -175,13 +175,13 @@ run systemctl --user enable --now cliphist-wipe.timer zsh-history-wipe.timer
 
 log "Trace retention"
 run sudo install -Dm644 "$INSTALL/etc/tmpfiles.d/tmp.conf" /etc/tmpfiles.d/tmp.conf
-run sudo install -Dm644 "$INSTALL/etc/tmpfiles.d/coredump.conf" /etc/tmpfiles.d/coredump.conf
+run sudo install -Dm644 "$INSTALL/etc/tmpfiles.d/zz-coredump.conf" /etc/tmpfiles.d/zz-coredump.conf
 run sudo install -Dm644 "$INSTALL/etc/systemd/journald.conf.d/10-retention.conf" \
     /etc/systemd/journald.conf.d/10-retention.conf
 run sudo install -Dm644 "$INSTALL/etc/systemd/coredump.conf.d/10-retention.conf" \
     /etc/systemd/coredump.conf.d/10-retention.conf
 run sudo systemctl reload-or-restart systemd-journald
-run sudo systemd-tmpfiles --clean /etc/tmpfiles.d/coredump.conf
+run sudo systemd-tmpfiles --clean /etc/tmpfiles.d/zz-coredump.conf
 
 log "Firewall"
 run sudo install -Dm644 "$INSTALL/etc/nftables.conf" /etc/nftables.conf
