@@ -158,6 +158,16 @@ run sudo systemctl enable systemd-timesyncd.service systemd-resolved.service
 # no-op and the drop-ins above would never be read
 run sudo systemctl restart systemd-timesyncd.service
 run sudo systemctl reload-or-restart systemd-resolved.service
+
+# NetworkManager runs with dns=none (10-no-dns.conf), so nothing writes
+# /etc/resolv.conf - glibc would never reach resolved. Point it at the stub
+# ourselves; resolved owns /run/systemd/resolve/stub-resolv.conf (127.0.0.53).
+if [[ "$(readlink -f /etc/resolv.conf 2>/dev/null)" == /run/systemd/resolve/stub-resolv.conf ]]; then
+    ok "resolv.conf -> systemd-resolved stub"
+else
+    run sudo ln -rsf /run/systemd/resolve/stub-resolv.conf /etc/resolv.conf
+fi
+
 if systemctl is-active --quiet systemd-networkd; then
     run sudo networkctl reload
 fi
@@ -175,13 +185,13 @@ run systemctl --user enable --now cliphist-wipe.timer zsh-history-wipe.timer
 
 log "Trace retention"
 run sudo install -Dm644 "$INSTALL/etc/tmpfiles.d/tmp.conf" /etc/tmpfiles.d/tmp.conf
-run sudo install -Dm644 "$INSTALL/etc/tmpfiles.d/coredump.conf" /etc/tmpfiles.d/coredump.conf
+run sudo install -Dm644 "$INSTALL/etc/tmpfiles.d/zz-coredump.conf" /etc/tmpfiles.d/zz-coredump.conf
 run sudo install -Dm644 "$INSTALL/etc/systemd/journald.conf.d/10-retention.conf" \
     /etc/systemd/journald.conf.d/10-retention.conf
 run sudo install -Dm644 "$INSTALL/etc/systemd/coredump.conf.d/10-retention.conf" \
     /etc/systemd/coredump.conf.d/10-retention.conf
 run sudo systemctl reload-or-restart systemd-journald
-run sudo systemd-tmpfiles --clean /etc/tmpfiles.d/coredump.conf
+run sudo systemd-tmpfiles --clean /etc/tmpfiles.d/zz-coredump.conf
 
 log "Firewall"
 run sudo install -Dm644 "$INSTALL/etc/nftables.conf" /etc/nftables.conf
