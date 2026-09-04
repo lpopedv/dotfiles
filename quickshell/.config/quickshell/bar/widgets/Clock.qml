@@ -12,8 +12,10 @@ BarItem {
     onClicked: root.showDate = !root.showDate
 
     SystemClock {
+        // Nothing here is finer than a minute, and Seconds would wake the whole
+        // binding chain sixty times as often for a display that cannot change.
         id: clock
-        precision: SystemClock.Seconds
+        precision: SystemClock.Minutes
     }
 
     ShellText {
