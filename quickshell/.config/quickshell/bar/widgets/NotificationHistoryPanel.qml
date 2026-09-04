@@ -1,49 +1,56 @@
 import QtQuick
 import QtQuick.Layouts
 import Quickshell
-import Quickshell.Services.Notifications
-import Quickshell.Widgets
 import "../.."
+import "../../notifications"
 import "../../ui"
 
 PopupWindow {
     id: root
 
     property var anchorItem: null
-    property date now: new Date()
 
     anchor.item: anchorItem
     anchor.edges: Edges.Bottom
     anchor.gravity: Edges.Bottom
     anchor.adjustment: PopupAdjustment.SlideX
 
-    implicitWidth: 380
-    implicitHeight: layout.implicitHeight + 28
+    implicitWidth: 400
+    // The gap under the bar is transparent space inside the popup rather than
+    // an anchor offset: the compositor clamps an anchored popup to the bar's
+    // own edge, so anchor.margins has nothing to give here.
+    implicitHeight: layout.implicitHeight + 28 + Theme.popupInset
     color: "transparent"
 
-    Timer {
-        interval: 1000
-        running: root.visible
-        repeat: true
-        onTriggered: root.now = new Date()
-    }
-
-    function elapsed(ms) {
-        let secs = Math.floor((root.now - ms) / 1000);
-        if (secs < 5) return "now";
-        if (secs < 60) return secs + "s";
-        const mins = Math.floor(secs / 60);
-        if (mins < 60) return mins + "m";
-        const hours = Math.floor(mins / 60);
-        if (hours < 24) return hours + "h";
-        return Math.floor(hours / 24) + "d";
+    onVisibleChanged: {
+        // Lets the service park its clock while nothing shows a relative time.
+        NotificationsService.historyOpen = root.visible;
+        // Reset so the fade below plays again on the next open. The window is
+        // hidden by the focus grab as well as by the bar button, so this
+        // cannot live in whatever opened it.
+        if (!root.visible) panel.opacity = 0;
     }
 
     Rectangle {
+        id: panel
+
         anchors.fill: parent
-        color: Qt.rgba(Theme.bg.r, Theme.bg.g, Theme.bg.b, 0.94)
+        anchors.topMargin: Theme.popupInset
+        color: Theme.surface
         border.width: 1
         border.color: Theme.border
+
+        opacity: 0
+
+        NumberAnimation on opacity {
+            to: 1
+            duration: Theme.animMs
+            easing.type: Easing.OutCubic
+            running: root.visible
+        }
+
+        focus: true
+        Keys.onEscapePressed: root.visible = false
 
         ColumnLayout {
             id: layout
@@ -61,181 +68,94 @@ PopupWindow {
                     font.weight: Font.DemiBold
                 }
 
-                Item { Layout.fillWidth: true }
-
                 ShellText {
                     visible: NotificationsService.history.length > 0
-                    text: "Clear all"
-                    color: clearArea.containsMouse ? Theme.fgAct : Theme.border
-
-                    MouseArea {
-                        id: clearArea
-                        anchors.fill: parent
-                        hoverEnabled: true
-                        cursorShape: Qt.PointingHandCursor
-                        onClicked: NotificationsService.clearAll()
-                    }
+                    text: NotificationsService.history.length
+                    color: Theme.subtle
                 }
+
+                Item { Layout.fillWidth: true }
+
+                // Both GNOME and KDE keep the Do Not Disturb switch in the
+                // notification list itself rather than out in the bar, where it
+                // is a mystery icon you have to remember the meaning of.
+                Chip {
+                    text: "Do not disturb"
+                    quiet: true
+                    active: NotificationsService.silent
+                    onClicked: NotificationsService.toggleSilent()
+                }
+
+                Chip {
+                    visible: NotificationsService.history.length > 0
+                    text: "Clear all"
+                    quiet: true
+                    onClicked: NotificationsService.clearAll()
+                }
+            }
+
+            Rectangle {
+                Layout.fillWidth: true
+                implicitHeight: 1
+                color: Theme.divider
             }
 
             ShellText {
                 Layout.fillWidth: true
-                Layout.topMargin: 20
-                Layout.bottomMargin: 20
+                Layout.topMargin: 22
+                Layout.bottomMargin: 22
                 visible: NotificationsService.history.length === 0
                 horizontalAlignment: Text.AlignHCenter
-                text: "No notifications"
-                color: Theme.border
+                text: NotificationsService.silent
+                    ? "Do not disturb is on"
+                    : "No notifications"
+                color: Theme.subtle
             }
 
-            ListView {
-                id: list
+            // The indicator below has to be a sibling of the list, not a child:
+            // a Flickable puts declared children inside its content item, where
+            // it would scroll away with the notifications.
+            Item {
                 Layout.fillWidth: true
-                Layout.preferredHeight: Math.min(420, contentHeight)
+                Layout.preferredHeight: Math.min(520, list.contentHeight)
                 visible: NotificationsService.history.length > 0
-                clip: true
-                spacing: 8
-                interactive: contentHeight > height
-                boundsBehavior: Flickable.StopAtBounds
-                model: NotificationsService.history
 
-                delegate: Rectangle {
-                    id: row
+                ListView {
+                    id: list
 
-                    required property var modelData
-                    readonly property bool critical:
-                        modelData.urgency === NotificationUrgency.Critical
-                    readonly property bool low:
-                        modelData.urgency === NotificationUrgency.Low
-                    readonly property color accent:
-                        row.critical ? Theme.red : row.low ? Theme.fg : Theme.fgAct
+                    anchors.fill: parent
+                    // A fixed gutter for the indicator. Sizing it to whether
+                    // the list actually overflows would loop, since a card's
+                    // height depends on the width it wraps its body at.
+                    anchors.rightMargin: 8
+                    clip: true
+                    spacing: 6
+                    boundsBehavior: Flickable.StopAtBounds
+                    model: NotificationsService.history
 
-                    width: list.width
-                    implicitHeight: rowContent.implicitHeight + 16
-                    color: rowHover.containsMouse ? Theme.hoverFill : "transparent"
-                    border.width: 1
-                    border.color: Qt.rgba(1, 1, 1, 0.08)
+                    delegate: NotificationCard {
+                        required property var modelData
 
-                    Rectangle {
-                        x: 8
-                        anchors.verticalCenter: parent.verticalCenter
-                        width: 3
-                        height: parent.height - 14
-                        color: row.accent
-                        opacity: 0.85
+                        notif: modelData
+                        compact: true
+                        width: list.width
                     }
+                }
 
-                    ColumnLayout {
-                        id: rowContent
-                        anchors.left: parent.left
-                        anchors.right: parent.right
-                        anchors.verticalCenter: parent.verticalCenter
-                        anchors.leftMargin: 20
-                        anchors.rightMargin: 12
-                        spacing: 4
+                // Hand-drawn rather than a QtQuick.Controls ScrollBar: the rest
+                // of the shell draws its own chrome, and this avoids pulling a
+                // Controls style into the config for one 2px rectangle.
+                Rectangle {
+                    anchors.right: parent.right
+                    width: 3
+                    y: list.visibleArea.yPosition * list.height
+                    height: Math.max(24, list.visibleArea.heightRatio * list.height)
+                    visible: list.contentHeight > list.height
+                    color: Theme.subtle
+                    opacity: list.moving ? 1 : 0.5
 
-                        RowLayout {
-                            Layout.fillWidth: true
-                            spacing: 8
-
-                            Rectangle {
-                                visible: icon.status === Image.Ready
-                                implicitWidth: 24
-                                implicitHeight: 24
-                                color: Qt.rgba(1, 1, 1, 0.06)
-
-                                IconImage {
-                                    id: icon
-                                    anchors.centerIn: parent
-                                    source: NotificationsService.resolveIcon(row.modelData.image)
-                                        || NotificationsService.resolveIcon(row.modelData.appIcon)
-                                    implicitSize: 16
-                                }
-                            }
-
-                            ShellText {
-                                Layout.fillWidth: true
-                                visible: text !== ""
-                                text: row.modelData.summary
-                                color: row.low ? Theme.fg : Theme.fgAct
-                                font.weight: Font.DemiBold
-                                elide: Text.ElideMiddle
-                            }
-
-                            ShellText {
-                                text: root.elapsed(row.modelData.time)
-                                color: Theme.border
-                            }
-
-                            ShellText {
-                                text: "×"
-                                color: dismissArea.containsMouse ? Theme.fgAct : Theme.border
-
-                                MouseArea {
-                                    id: dismissArea
-                                    anchors.fill: parent
-                                    hoverEnabled: true
-                                    cursorShape: Qt.PointingHandCursor
-                                    onClicked: NotificationsService.dismiss(row.modelData)
-                                }
-                            }
-                        }
-
-                        ShellText {
-                            Layout.fillWidth: true
-                            visible: text !== ""
-                            text: row.modelData.body
-                            color: row.low ? "#6b6b6b" : Theme.fg
-                            textFormat: Text.MarkdownText
-                            wrapMode: Text.Wrap
-                            maximumLineCount: 3
-                            elide: Text.ElideRight
-                        }
-
-                        RowLayout {
-                            Layout.fillWidth: true
-                            spacing: 6
-                            visible: row.modelData.actions.length > 0
-
-                            Repeater {
-                                model: row.modelData.actions
-
-                                Rectangle {
-                                    id: actionChip
-                                    required property var modelData
-
-                                    implicitWidth: actionLabel.implicitWidth + 16
-                                    implicitHeight: actionLabel.implicitHeight + 8
-                                    color: actionArea.containsMouse ? Theme.hoverFill : Theme.activeFill
-                                    border.width: 1
-                                    border.color: Theme.accentLine
-
-                                    ShellText {
-                                        id: actionLabel
-                                        anchors.centerIn: parent
-                                        text: actionChip.modelData.text
-                                    }
-
-                                    MouseArea {
-                                        id: actionArea
-                                        anchors.fill: parent
-                                        hoverEnabled: true
-                                        cursorShape: Qt.PointingHandCursor
-                                        onClicked: {
-                                            actionChip.modelData.invoke();
-                                            NotificationsService.dismiss(row.modelData);
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-
-                    MouseArea {
-                        id: rowHover
-                        anchors.fill: parent
-                        hoverEnabled: true
-                        acceptedButtons: Qt.NoButton
+                    Behavior on opacity {
+                        NumberAnimation { duration: Theme.animMs }
                     }
                 }
             }

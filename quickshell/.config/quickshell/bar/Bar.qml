@@ -81,10 +81,6 @@ Variants {
                 collapsible: true
                 revealed: bar.indicatorsRevealed
             }
-            NotificationToggle {
-                collapsible: true
-                revealed: bar.indicatorsRevealed
-            }
             Network {}
 
             Battery {}
