@@ -7,7 +7,18 @@ import "../../ui"
 RowLayout {
     id: root
 
-    readonly property int count: 6
+    // Six slots always, but the keybinds go up to ten - a window parked on
+    // workspace 8 would otherwise be invisible and unreachable from the bar.
+    // Special workspaces (the scratchpad) carry negative ids and are skipped.
+    readonly property int minimum: 6
+    readonly property int maximum: 10
+
+    readonly property int count: {
+        let highest = root.minimum;
+        for (const ws of Hyprland.workspaces.values)
+            if (ws.id > highest) highest = ws.id;
+        return Math.min(root.maximum, highest);
+    }
 
     Layout.alignment: Qt.AlignVCenter
     Layout.leftMargin: 2
