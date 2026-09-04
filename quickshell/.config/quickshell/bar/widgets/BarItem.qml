@@ -18,14 +18,14 @@ Rectangle {
     signal wheel(int delta)
 
     Layout.alignment: Qt.AlignVCenter
-    Layout.topMargin: 5
-    Layout.bottomMargin: 5
+    Layout.topMargin: Theme.barItemInset
+    Layout.bottomMargin: Theme.barItemInset
     Layout.leftMargin: collapsed ? 0 : 2
     Layout.rightMargin: collapsed ? 0 : 2
 
     clip: true
     implicitWidth: collapsed ? 0 : layout.implicitWidth + horizontalPadding * 2
-    implicitHeight: Theme.barHeight - 10
+    implicitHeight: Theme.barHeight - Theme.barItemInset * 2
     opacity: collapsed ? 0 : (collapsible && !active ? Theme.dimmedOpacity : 1)
 
     color: root.active ? Theme.activeFill : mouse.containsMouse ? Theme.hoverFill : "transparent"
@@ -36,7 +36,7 @@ Rectangle {
         ColorAnimation { duration: Theme.animMs }
     }
     Behavior on implicitWidth {
-        NumberAnimation { duration: Theme.animMs }
+        NumberAnimation { duration: Theme.animSlideMs; easing.type: Easing.OutCubic }
     }
     Behavior on opacity {
         NumberAnimation { duration: Theme.animMs }

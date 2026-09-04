@@ -105,10 +105,10 @@ PanelWindow {
                     opacity: mouse.containsMouse ? 1.0 : 0.62
 
                     Behavior on opacity {
-                        NumberAnimation { duration: 150; easing.type: Easing.OutQuad }
+                        NumberAnimation { duration: Theme.animMs; easing.type: Easing.OutQuad }
                     }
                     Behavior on color {
-                        ColorAnimation { duration: 150 }
+                        ColorAnimation { duration: Theme.animMs }
                     }
 
                     Image {
