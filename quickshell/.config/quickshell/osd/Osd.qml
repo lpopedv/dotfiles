@@ -13,18 +13,20 @@ Scope {
     property real fraction: 0
     property bool muted: false
 
+    property bool shown: false
+
     function show(icon, fraction, muted) {
         root.icon = icon;
         root.fraction = fraction;
         root.muted = muted || false;
         hideTimer.restart();
-        window.visible = true;
+        root.shown = true;
     }
 
     Timer {
         id: hideTimer
         interval: 1400
-        onTriggered: window.visible = false
+        onTriggered: root.shown = false
     }
 
     // Bindings fire once on startup with whatever the current value is. Without
@@ -101,7 +103,9 @@ Scope {
     PanelWindow {
         id: window
 
-        visible: false
+        // A layer surface cannot be faded, so the window stays mapped until
+        // the panel inside it has finished fading out.
+        visible: root.shown || panel.opacity > 0
         anchors.bottom: true
         margins.bottom: 120
 
@@ -112,10 +116,18 @@ Scope {
         focusable: false
 
         Rectangle {
+            id: panel
+
             anchors.fill: parent
-            color: Qt.rgba(Theme.bg.r, Theme.bg.g, Theme.bg.b, 0.82)
+            color: Theme.overlay
             border.width: 1
-            border.color: Qt.rgba(1, 1, 1, 0.10)
+            border.color: Theme.divider
+
+            opacity: root.shown ? 1 : 0
+
+            Behavior on opacity {
+                NumberAnimation { duration: Theme.animMs; easing.type: Easing.OutCubic }
+            }
 
             ColumnLayout {
                 anchors.fill: parent
