@@ -1,45 +1,48 @@
 import QtQuick
-import QtQuick.Layouts
+import Quickshell.Io
 import "../.."
 import "../../ui"
 
 BarItem {
     id: root
 
-    onClicked: {
+    active: panel.visible
+
+    function togglePanel() {
         panel.visible = !panel.visible;
         if (panel.visible) NotificationsService.markAllRead();
     }
 
-    Item {
-        implicitWidth: bellIcon.implicitWidth
-        implicitHeight: bellIcon.implicitHeight
+    onClicked: button => {
+        // Right click is the shortcut for Do Not Disturb; the switch itself
+        // lives in the panel, where it says what it does.
+        if (button === Qt.RightButton) NotificationsService.toggleSilent();
+        else root.togglePanel();
+    }
 
-        ShellText {
-            id: bellIcon
-            text: Icons.bell
-            color: root.active || root.hovered ? Theme.fgAct : Theme.fg
-            font.pixelSize: Theme.iconSize
-        }
+    IpcHandler {
+        target: "notifications"
 
-        Rectangle {
-            visible: NotificationsService.unread > 0
-            width: 6
-            height: 6
-            radius: 3
-            color: Theme.red
-            anchors.top: parent.top
-            anchors.right: parent.right
-            anchors.topMargin: -1
-            anchors.rightMargin: -1
+        function toggle(): void { root.togglePanel(); }
+        function clear(): void { NotificationsService.clearAll(); }
+        function dnd(): void { NotificationsService.toggleSilent(); }
+    }
 
-            SequentialAnimation on opacity {
-                running: NotificationsService.unread > 0
-                loops: Animation.Infinite
-                NumberAnimation { to: 0.4; duration: 900; easing.type: Easing.InOutQuad }
-                NumberAnimation { to: 1.0; duration: 900; easing.type: Easing.InOutQuad }
-            }
-        }
+    ShellText {
+        text: NotificationsService.silent ? Icons.bellOffOutline : Icons.bell
+        color: NotificationsService.silent
+            ? Theme.subtle
+            : root.active || root.hovered ? Theme.fgAct : Theme.fg
+        font.pixelSize: Theme.iconSize
+    }
+
+    // A count rather than a bare dot: the bar has no tooltip to hover for, so
+    // the badge has to carry the whole message on its own.
+    ShellText {
+        visible: NotificationsService.unread > 0
+        text: NotificationsService.unread
+        color: NotificationsService.urgent ? Theme.red : Theme.fgAct
+        font.weight: Font.DemiBold
     }
 
     NotificationHistoryPanel {
@@ -48,6 +51,4 @@ BarItem {
         visible: false
         grabFocus: true
     }
-
-    active: panel.visible
 }

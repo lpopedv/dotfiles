@@ -42,8 +42,16 @@ PopupWindow {
     anchor.adjustment: PopupAdjustment.SlideX
 
     implicitWidth: 360
-    implicitHeight: layout.implicitHeight + 28
+    // The gap under the bar is transparent space inside the popup rather than
+    // an anchor offset: the compositor clamps an anchored popup to the bar's
+    // own edge, so anchor.margins has nothing to give here.
+    implicitHeight: layout.implicitHeight + 28 + Theme.popupInset
     color: "transparent"
+
+    // Reset so the fade below plays again on the next open. The window is
+    // hidden by the focus grab as well as by the bar button, so this cannot
+    // live in whatever opened it.
+    onVisibleChanged: if (!root.visible) panel.opacity = 0
 
     Timer {
         interval: 1000
@@ -79,10 +87,25 @@ PopupWindow {
     }
 
     Rectangle {
+        id: panel
+
         anchors.fill: parent
-        color: Qt.rgba(Theme.bg.r, Theme.bg.g, Theme.bg.b, 0.94)
+        anchors.topMargin: Theme.popupInset
+        color: Theme.surface
         border.width: 1
         border.color: Theme.border
+
+        opacity: 0
+
+        NumberAnimation on opacity {
+            to: 1
+            duration: Theme.animMs
+            easing.type: Easing.OutCubic
+            running: root.visible
+        }
+
+        focus: true
+        Keys.onEscapePressed: root.visible = false
 
         ColumnLayout {
             id: layout

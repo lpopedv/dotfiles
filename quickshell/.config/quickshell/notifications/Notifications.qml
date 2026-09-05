@@ -1,11 +1,11 @@
 import QtQuick
 import QtQuick.Layouts
 import Quickshell
-import Quickshell.Services.Notifications
-import Quickshell.Widgets
 import ".."
-import "../ui"
 
+// The toast stack. Everything about *what* is on screen lives in
+// NotificationsService; this file only knows how a card arrives, counts down
+// and leaves.
 Scope {
     id: root
 
@@ -16,164 +16,113 @@ Scope {
         }
 
         margins {
-            bottom: 16
-            right: 16
+            bottom: 14
+            right: 14
         }
 
-        implicitWidth: 380
+        implicitWidth: 400
         implicitHeight: Math.max(1, stack.implicitHeight)
         color: "transparent"
         exclusionMode: ExclusionMode.Ignore
-        visible: stack.children.length > 0
+
+        // The Repeater counts as a child of the layout, so the popup list is
+        // the only honest test for "is anything on screen".
+        visible: NotificationsService.popupList.length > 0
 
         ColumnLayout {
             id: stack
             width: parent.width
-            spacing: 10
+            spacing: 8
 
             Repeater {
                 model: NotificationsService.popupList
 
-                Rectangle {
-                    id: card
+                Item {
+                    id: slot
 
                     required property var modelData
-                    readonly property bool critical:
-                        modelData.urgency === NotificationUrgency.Critical
-                    readonly property bool low:
-                        modelData.urgency === NotificationUrgency.Low
-                    readonly property int timeout: modelData.notification
-                        ? NotificationsService.timeoutFor(modelData.notification) : 0
-                    readonly property color accent:
-                        card.critical ? Theme.red : card.low ? Theme.fg : Theme.fgAct
-                    readonly property bool hovered: hoverArea.containsMouse
 
+                    // 0 is fully out of the way, 1 is settled in place. One
+                    // driver for the fade, the slide and the height the stack
+                    // reserves, so a card leaving collapses the gap above it
+                    // rather than letting the rest jump.
+                    property real reveal: 0
+                    // 1 when the countdown starts, 0 when it runs out.
                     property real remaining: 1
-                    property bool entered: false
 
                     Layout.fillWidth: true
-                    implicitHeight: Math.min(220, contentColumn.implicitHeight + 28)
+                    Layout.preferredHeight: Math.round(card.implicitHeight * slot.reveal)
+                    clip: true
+                    opacity: slot.reveal
 
-                    color: Qt.rgba(Theme.bg.r, Theme.bg.g, Theme.bg.b, 0.85)
-                    border.width: 1
-                    border.color: card.critical
-                        ? Qt.rgba(Theme.red.r, Theme.red.g, Theme.red.b, 0.40)
-                        : Qt.rgba(1, 1, 1, 0.09)
-
-                    opacity: card.entered ? 1 : 0
-                    Behavior on opacity {
-                        NumberAnimation { duration: 220; easing.type: Easing.OutCubic }
-                    }
                     transform: Translate {
-                        y: card.entered ? 0 : 14
-                        Behavior on y {
-                            NumberAnimation { duration: 220; easing.type: Easing.OutCubic }
-                        }
+                        x: (1 - slot.reveal) * 26
                     }
-                    Component.onCompleted: card.entered = true
+
+                    // Both driven off `closing` rather than started by hand, so
+                    // a card rebuilt part way through an exit picks the
+                    // animation back up instead of freezing where it was.
+                    NumberAnimation on reveal {
+                        to: 1
+                        duration: Theme.animSlideMs
+                        easing.type: Easing.OutCubic
+                        running: !slot.modelData.closing
+                    }
 
                     NumberAnimation {
-                        target: card
-                        property: "remaining"
-                        from: 1
+                        target: slot
+                        property: "reveal"
                         to: 0
-                        duration: card.timeout
-                        easing.type: Easing.Linear
-                        running: card.timeout > 0
-                        paused: card.hovered
-                        onFinished: NotificationsService.archive(card.modelData)
+                        duration: NotificationsService.leaveMs
+                        easing.type: Easing.InCubic
+                        running: slot.modelData.closing
                     }
 
-                    Rectangle {
-                        x: 10
-                        anchors.verticalCenter: parent.verticalCenter
-                        width: 3
-                        height: parent.height - 20
-                        color: card.accent
-                        opacity: 0.85
-                    }
+                    NotificationCard {
+                        id: card
 
-                    ColumnLayout {
-                        id: contentColumn
+                        notif: slot.modelData
+                        progress: countdown.running || countdown.paused ? slot.remaining : -1
+
                         anchors.left: parent.left
                         anchors.right: parent.right
                         anchors.top: parent.top
-                        anchors.leftMargin: 22
-                        anchors.rightMargin: 16
-                        anchors.topMargin: 14
-                        spacing: 10
-
-                        RowLayout {
-                            Layout.fillWidth: true
-                            spacing: 12
-
-                            Rectangle {
-                                visible: icon.status === Image.Ready
-                                implicitWidth: 36
-                                implicitHeight: 36
-                                color: Qt.rgba(1, 1, 1, 0.06)
-
-                                IconImage {
-                                    id: icon
-                                    anchors.centerIn: parent
-                                    source: NotificationsService.resolveIcon(card.modelData.image)
-                                        || NotificationsService.resolveIcon(card.modelData.appIcon)
-                                    implicitSize: 22
-                                }
-                            }
-
-                            ColumnLayout {
-                                Layout.fillWidth: true
-                                spacing: 3
-
-                                ShellText {
-                                    Layout.fillWidth: true
-                                    visible: text !== ""
-                                    text: card.modelData.summary
-                                    color: card.low ? Theme.fg : Theme.fgAct
-                                    font.weight: Font.DemiBold
-                                    elide: Text.ElideMiddle
-                                }
-
-                                ShellText {
-                                    Layout.fillWidth: true
-                                    visible: text !== ""
-                                    text: card.modelData.body
-                                    color: card.low ? "#6b6b6b" : Theme.fg
-                                    textFormat: Text.MarkdownText
-                                    wrapMode: Text.Wrap
-                                    maximumLineCount: 6
-                                    elide: Text.ElideRight
-                                }
-                            }
-                        }
-
-                        Item {
-                            Layout.fillWidth: true
-                            Layout.topMargin: 2
-                            implicitHeight: 3
-                            visible: card.timeout > 0
-
-                            Rectangle {
-                                anchors.fill: parent
-                                color: Qt.rgba(1, 1, 1, 0.08)
-                            }
-
-                            Rectangle {
-                                width: parent.width * card.remaining
-                                height: parent.height
-                                color: card.accent
-                                opacity: 0.85
-                            }
-                        }
                     }
 
-                    MouseArea {
-                        id: hoverArea
-                        anchors.fill: parent
-                        hoverEnabled: true
-                        acceptedButtons: Qt.LeftButton | Qt.MiddleButton
-                        onClicked: NotificationsService.dismiss(card.modelData)
+                    // How much of the toast's life had already gone by the time
+                    // this card was built. Zero in the normal case; only a
+                    // rebuild of the stack makes it anything else.
+                    readonly property int spent: Math.min(slot.modelData.timeout,
+                        Date.now() - slot.modelData.popupAt)
+
+                    // A timeout of 0 means the sender asked for no expiry, or
+                    // the notification is critical - either way it stays until
+                    // it is dealt with, exactly as GNOME and KDE do.
+                    NumberAnimation {
+                        id: countdown
+                        target: slot
+                        property: "remaining"
+                        from: 1 - slot.spent / Math.max(1, slot.modelData.timeout)
+                        to: 0
+                        duration: Math.max(1, slot.modelData.timeout - slot.spent)
+                        easing.type: Easing.Linear
+                        running: slot.modelData.timeout > 0 && !slot.modelData.closing
+                        // Reading `running` here keeps Qt from being asked to
+                        // pause an animation that never started.
+                        paused: countdown.running && card.hovered
+                        onFinished: NotificationsService.hidePopup(slot.modelData)
+                    }
+
+                    Connections {
+                        target: slot.modelData
+
+                        // The sender replaced this notification, so the time it
+                        // already spent on screen no longer applies. `from` and
+                        // `duration` have re-read the new start by now; the
+                        // animation just has to be told to pick them up.
+                        function onGenerationChanged() {
+                            if (countdown.running) countdown.restart();
+                        }
                     }
                 }
             }
