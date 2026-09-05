@@ -73,6 +73,10 @@ Variants {
                 collapsible: true
                 revealed: bar.indicatorsRevealed
             }
+            DockToggle {
+                collapsible: true
+                revealed: bar.indicatorsRevealed
+            }
             Caffeine {
                 collapsible: true
                 revealed: bar.indicatorsRevealed
