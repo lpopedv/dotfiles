@@ -16,11 +16,6 @@ QtObject {
     readonly property color accentLine: Qt.rgba(1, 1, 1, 0.35)
     readonly property color divider: Qt.rgba(1, 1, 1, 0.08)
 
-    // Everything floating over the desktop shares these two grounds, so the
-    // hyprland blur rule (ignore_alpha 0.2) reads the same behind all of them.
-    readonly property color surface: Qt.rgba(bg.r, bg.g, bg.b, 0.94)
-    readonly property color overlay: Qt.rgba(bg.r, bg.g, bg.b, 0.86)
-
     readonly property color amber: "#d2a24c"
     readonly property color red: "#cc5f5f"
 
@@ -37,13 +32,16 @@ QtObject {
         return used >= warnAt;
     }
 
-    readonly property real barOpacity: 0.55
     readonly property int barHeight: 34
 
-    // The ground the bar and the dock share. Thin enough that the hyprland blur
-    // rule (ignore_alpha 0.2) does the work of the background, which is why the
-    // two read as the same material rather than as two dark rectangles.
-    readonly property color glass: Qt.rgba(bg.r, bg.g, bg.b, barOpacity)
+    // The single ground every floating surface uses: bar, dock, popups, the
+    // notification cards and the osd. Thin enough that the hyprland blur rules
+    // (blur + blur_popups, ignore_alpha 0.2) do the work of the background,
+    // which is why they all read as one material rather than as dark
+    // rectangles. Anything painted here must clear ignore_alpha or the
+    // compositor skips blurring it and it turns into a hole in the desktop.
+    readonly property real glassOpacity: 0.55
+    readonly property color glass: Qt.rgba(bg.r, bg.g, bg.b, glassOpacity)
 
     readonly property string fontFamily: "JetBrainsMono Nerd Font"
     readonly property int fontSize: 13
