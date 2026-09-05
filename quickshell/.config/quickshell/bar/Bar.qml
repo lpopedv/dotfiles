@@ -44,7 +44,7 @@ Variants {
 
         Rectangle {
             anchors.fill: parent
-            color: Qt.rgba(Theme.bg.r, Theme.bg.g, Theme.bg.b, Theme.barOpacity)
+            color: Theme.glass
         }
 
         RowLayout {
