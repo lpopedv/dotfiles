@@ -5,7 +5,7 @@
   },
   "bootloader_config": {
     "bootloader": "Systemd-boot",
-    "uki": false,
+    "uki": true,
     "removable": false
   },
   "hostname": "archlinux",

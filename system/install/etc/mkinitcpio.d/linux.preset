@@ -1,0 +1,25 @@
+# mkinitcpio preset for the 'linux' package. Installed by install/bootstrap.sh.
+#
+# Emits a Unified Kernel Image instead of a vmlinuz + initramfs pair. A UKI is
+# one EFI binary holding the kernel, the initramfs and the command line, so a
+# single signature covers all three. The pair cannot be protected: firmware
+# verifies the kernel it chainloads, but the initramfs arrives over the EFI
+# initrd protocol and nothing checks it - and the initramfs is the half an evil
+# maid rewrites, because that is where the disk password gets typed.
+#
+# /boot is the ESP on the machines this repo targets (archinstall + systemd-boot
+# put it there), which is why the paths below are not /efi. systemd-boot
+# auto-discovers anything in <esp>/EFI/Linux, so no loader entry is needed.
+
+ALL_kver="/boot/vmlinuz-linux"
+
+PRESETS=('default')
+
+# No default_image on purpose. Building one would leave an unsigned initramfs on
+# the ESP that only the retired type-1 entry could ever use, and that entry is
+# the thing the UKI replaces.
+default_uki="/boot/EFI/Linux/arch-linux.efi"
+
+# Cosmetic, and useful: the Arch splash is instant confirmation that the machine
+# came up through the UKI rather than an older loader entry.
+default_options="--splash /usr/share/systemd/bootctl/splash-arch.bmp"

@@ -40,6 +40,11 @@ QtObject {
     readonly property real barOpacity: 0.55
     readonly property int barHeight: 34
 
+    // The ground the bar and the dock share. Thin enough that the hyprland blur
+    // rule (ignore_alpha 0.2) does the work of the background, which is why the
+    // two read as the same material rather than as two dark rectangles.
+    readonly property color glass: Qt.rgba(bg.r, bg.g, bg.b, barOpacity)
+
     readonly property string fontFamily: "JetBrainsMono Nerd Font"
     readonly property int fontSize: 13
     readonly property int iconSize: 15
@@ -61,4 +66,27 @@ QtObject {
     readonly property int popupInset: popupGap + barItemInset
 
     readonly property real dimmedOpacity: 0.45
+
+    // ------------------------------------------------------------------- dock
+    // The dock's icon size is not here: it is one of the things the bar's dock
+    // button lets you change, so it lives in DockService with the rest of that
+    // state. Everything below is fixed.
+    readonly property int dockIconGap: 10
+
+    // Icons on the dock never change size. Hover is answered by a highlight
+    // that slides between slots, so the only thing that moves is the one box
+    // following the pointer - see dock/Dock.qml.
+    readonly property int dockPad: 8
+    // How far the dock floats above the screen edge. Matches hyprland's
+    // gaps_out, so a maximised window and the dock keep the same margin.
+    readonly property int dockFloat: 4
+    // Sliver of the hidden dock left on screen for the pointer to find.
+    readonly property int dockStrip: 2
+    readonly property int dockDot: 3
+
+    // Asymmetric on purpose: coming back has to feel immediate, leaving has to
+    // be slow enough that crossing the bottom edge on the way somewhere else
+    // does not make the dock flicker.
+    readonly property int dockRevealMs: 170
+    readonly property int dockHideMs: 240
 }

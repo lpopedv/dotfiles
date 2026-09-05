@@ -44,7 +44,7 @@ Variants {
 
         Rectangle {
             anchors.fill: parent
-            color: Qt.rgba(Theme.bg.r, Theme.bg.g, Theme.bg.b, Theme.barOpacity)
+            color: Theme.glass
         }
 
         RowLayout {
@@ -70,6 +70,10 @@ Variants {
             LaunchButton {
                 icon: Icons.eyedropper
                 command: ["hyprpicker", "-a"]
+                collapsible: true
+                revealed: bar.indicatorsRevealed
+            }
+            DockToggle {
                 collapsible: true
                 revealed: bar.indicatorsRevealed
             }

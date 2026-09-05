@@ -26,6 +26,13 @@ QtObject {
     readonly property string wifiOff: cp(0xF092E)      // nf-md-wifi_strength_off_outline
     readonly property string brightness: cp(0xF00DF)   // nf-md-brightness_6
     readonly property string charging: cp(0xF0084)     // nf-md-battery_charging
+    readonly property string dock: cp(0xF10A9)         // nf-md-dock_bottom
+
+    // Menu marks. A tick for the independent switches, filled and hollow
+    // circles for the one group where the options exclude each other.
+    readonly property string check: cp(0xF012C)        // nf-md-check
+    readonly property string radioOn: cp(0xF0765)      // nf-md-circle
+    readonly property string radioOff: cp(0xF0130)     // nf-md-circle_outline
 
     readonly property string workspaceDot: "●"    // BLACK CIRCLE
 

@@ -21,7 +21,8 @@ meant to land in `$HOME`.
   - `system/install/bootstrap.sh --dry-run` — print what would change, touch nothing
   - Order: pacman packages (`packages.txt`) → paru/AUR packages (`aur.txt`) → `stow --restow`
     every package → `mise install --locked` → pacman.conf tweaks → DNS/time hardening →
-    maintenance timers → trace retention → firewall/sysctl hardening → service enablement.
+    maintenance timers → trace retention → firewall/sysctl hardening → Secure Boot →
+    service enablement.
     Every step checks its own state before acting, so it's fine to run repeatedly.
   - The `dotup` zsh function (in `zsh/.zshrc`) is `git pull --ff-only` + this script — the
     normal way this repo's changes get applied to the live machine.
