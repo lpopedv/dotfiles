@@ -36,7 +36,7 @@ Rectangle {
 
     color: root.compact
         ? (root.hovered ? Theme.hoverFill : "transparent")
-        : Theme.overlay
+        : Theme.glass
     border.width: 1
     border.color: root.critical
         ? Qt.rgba(Theme.red.r, Theme.red.g, Theme.red.b, 0.40)

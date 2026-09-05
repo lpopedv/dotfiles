@@ -302,7 +302,7 @@ Variants {
                 implicitWidth: labelText.implicitWidth + 20
                 implicitHeight: labelText.implicitHeight + 10
 
-                color: Theme.overlay
+                color: Theme.glass
                 border.width: 1
                 border.color: Theme.border
 

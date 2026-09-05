@@ -91,7 +91,7 @@ PopupWindow {
 
         anchors.fill: parent
         anchors.topMargin: Theme.popupInset
-        color: Theme.surface
+        color: Theme.glass
         border.width: 1
         border.color: Theme.border
 

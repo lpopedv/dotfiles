@@ -119,7 +119,7 @@ Scope {
             id: panel
 
             anchors.fill: parent
-            color: Theme.overlay
+            color: Theme.glass
             border.width: 1
             border.color: Theme.divider
 
