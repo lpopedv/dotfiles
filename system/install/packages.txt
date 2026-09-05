@@ -25,6 +25,10 @@ ffmpegthumbnailer
 poppler
 imagemagick
 
+# Secure Boot - sbctl owns the custom keys, signs the UKI and systemd-boot, and
+# ships a pacman hook that re-signs after every kernel or systemd upgrade.
+sbctl
+
 # Maintenance - paccache (from pacman-contrib) prunes old package versions
 # from /var/cache/pacman/pkg. Runs daily via a systemd timer, see bootstrap.sh.
 pacman-contrib

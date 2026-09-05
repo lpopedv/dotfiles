@@ -212,6 +212,98 @@ run sudo install -Dm644 "$INSTALL/etc/sysctl.d/99-hardening.conf" /etc/sysctl.d/
 run sudo rm -f /etc/sysctl.d/10-hardening.conf
 run sudo sysctl --system
 
+log "Secure Boot"
+# Replaces the vmlinuz + initramfs pair with a Unified Kernel Image signed by
+# our own keys, so the firmware refuses a kernel, an initramfs or a command line
+# that anyone tampered with. See etc/mkinitcpio.d/linux.preset for why the pair
+# itself can never be made safe.
+#
+# Two things are deliberately NOT done here:
+#
+#  - /boot/vmlinuz-linux is never signed. Signing it would make the old type-1
+#    entry bootable under Secure Boot with an initramfs nothing verifies, which
+#    is the exact hole the UKI closes. Unsigned, that entry is a rescue path
+#    that only works with Secure Boot switched off.
+#  - the old entry is never deleted. Retiring someone's boot path is not a thing
+#    a re-runnable script should do behind their back; it warns instead.
+UKI=/boot/EFI/Linux/arch-linux.efi
+
+if (( DRY )); then
+    plan "record the kernel command line in /etc/cmdline.d/10-root.conf"
+    plan "install the UKI mkinitcpio preset and build $UKI"
+    plan "create Secure Boot keys with sbctl and sign the UKI and systemd-boot"
+    plan "enroll those keys into the firmware, if it is in setup mode"
+elif ! command -v sbctl >/dev/null; then
+    warn "sbctl is not installed - skipping Secure Boot"
+else
+    # root= is machine-specific, so the command line is derived from the running
+    # system once rather than shipped in this repo. initrd= is dropped: the UKI
+    # carries its own. Later hardening (lsm=apparmor, for one) drops in beside
+    # this file as its own numbered .conf, which is why it is not /etc/kernel/cmdline.
+    if [[ -e /etc/cmdline.d/10-root.conf ]]; then
+        ok "kernel command line recorded"
+    else
+        tr ' ' '\n' < /proc/cmdline \
+            | grep -vE '^(initrd|BOOT_IMAGE)=' \
+            | paste -sd' ' \
+            | sudo install -Dm644 /dev/stdin /etc/cmdline.d/10-root.conf
+        ok "kernel command line recorded from /proc/cmdline"
+    fi
+
+    sudo install -Dm644 "$INSTALL/etc/mkinitcpio.d/linux.preset" /etc/mkinitcpio.d/linux.preset
+    sudo install -d -m755 /boot/EFI/Linux
+
+    if sudo test "$UKI" -nt /boot/vmlinuz-linux &&
+        sudo test "$UKI" -nt /etc/cmdline.d/10-root.conf; then
+        ok "unified kernel image is up to date"
+    else
+        sudo mkinitcpio -P
+    fi
+
+    if sudo test -d /var/lib/sbctl/keys; then
+        ok "Secure Boot keys exist"
+    else
+        sudo sbctl create-keys
+    fi
+
+    # -s records the file in sbctl's database, which is what its pacman hook
+    # re-signs after a kernel or systemd upgrade rebuilds them.
+    for efi in "$UKI" /boot/EFI/systemd/systemd-bootx64.efi /boot/EFI/BOOT/BOOTX64.EFI; do
+        sudo test -e "$efi" || continue
+        sudo sbctl sign -s "$efi" >/dev/null || warn "could not sign $efi"
+    done
+    ok "UKI and boot loader signed"
+
+    # --microsoft enrolls Microsoft's certificates alongside ours. Without them,
+    # firmware that verifies option ROMs with those certs (most discrete GPUs and
+    # some NICs) refuses to initialise them once Secure Boot is on.
+    sb="$(bootctl status 2>/dev/null | sed -n 's/^[[:space:]]*Secure Boot:[[:space:]]*//p')"
+    case "$sb" in
+        *enabled*)
+            ok "Secure Boot is enabled" ;;
+        *"(setup)"*)
+            if sudo sbctl enroll-keys --microsoft; then
+                ok "keys enrolled - turn Secure Boot on in the firmware setup, then reboot"
+            else
+                warn "enrolling the keys failed - Secure Boot stays off, nothing is broken"
+            fi ;;
+        *)
+            warn "firmware is not in setup mode ($sb) - clear the platform key in the firmware setup, then re-run" ;;
+    esac
+
+    # The stale entry stops being regenerated the moment this preset lands, so
+    # the next kernel upgrade leaves it pointing at a mismatched initramfs. Say
+    # so rather than quietly leaving a boot entry that breaks weeks from now.
+    if [[ -n "$(sudo find /boot/loader/entries -maxdepth 1 -name '*.conf' -print -quit 2>/dev/null)" ]]; then
+        booted="$(bootctl status 2>/dev/null | sed -n 's/^[[:space:]]*Current Entry:[[:space:]]*//p')"
+        if [[ "$booted" == arch-linux.efi ]]; then
+            warn "booted from the UKI - retire the old path: sudo rm /boot/loader/entries/*.conf /boot/initramfs-linux*.img"
+        else
+            warn "still booted from $booted - reboot into arch-linux.efi, then retire the old entry"
+        fi
+    fi
+fi
+
 log "Services"
 if [[ "$(readlink -f /etc/systemd/system/display-manager.service 2>/dev/null)" == *sddm* ]]; then
     ok "sddm is the display manager"
