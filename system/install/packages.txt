@@ -99,4 +99,11 @@ opencode
 # Fonts and icons
 ttf-jetbrains-mono-nerd
 noto-fonts-emoji
+# Adwaita is still the base: gtk looks up its own stock and symbolic icons
+# there, and Papirus inherits from it rather than replacing it.
 adwaita-icon-theme
+# The theme everything actually displays. Adwaita only covers GNOME's own
+# apps, so third-party ones fall back to a low-resolution hicolor png that has
+# to be scaled up; Papirus is svg throughout and covers thousands of apps, so
+# the dock and the launcher stay sharp at any icon size.
+papirus-icon-theme

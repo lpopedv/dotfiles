@@ -107,6 +107,16 @@ if [[ "$(gsettings get org.gnome.desktop.interface gtk-theme 2>/dev/null)" == "'
 else
     run gsettings set org.gnome.desktop.interface gtk-theme 'Adwaita'
 fi
+# The icon theme has three readers and they have to agree, or an app's icon
+# changes depending on which one found it: gsettings/the portal for gtk4 and
+# libadwaita, gtk/.config/gtk-*/settings.ini for gtk3, and qt6ct.conf for Qt -
+# which is the one quickshell's own dock and bar read. The last two are stowed;
+# only this one has to be set imperatively.
+if [[ "$(gsettings get org.gnome.desktop.interface icon-theme 2>/dev/null)" == "'Papirus-Dark'" ]]; then
+    ok "icon-theme = Papirus-Dark"
+else
+    run gsettings set org.gnome.desktop.interface icon-theme 'Papirus-Dark'
+fi
 
 log "Toolchain"
 # mise.lock pins exact versions and checksums; --locked refuses to drift from it
