@@ -81,7 +81,7 @@ BarItem {
     }
 
     ShellText {
-        text: Icons.robot + "  " + (root.ready ? root.worst + "%" : "--")
+        text: Icons.robot
         color: !root.ready
             ? Theme.border
             : Theme.alertColor(root.worst / 100,
