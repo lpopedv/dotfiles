@@ -1,0 +1,4 @@
+# Written into the ISO's own clone of this repo by system/iso/build.sh, so the
+# installer can print which commit it shipped. Never source: a copy here is a
+# leftover from a build run, and it is stale the moment anything is committed.
+.iso-revision
