@@ -33,6 +33,8 @@ QtObject {
     readonly property string check: cp(0xF012C)        // nf-md-check
     readonly property string radioOn: cp(0xF0765)      // nf-md-circle
     readonly property string radioOff: cp(0xF0130)     // nf-md-circle_outline
+    // Submenu indicator, e.g. a tray item's "Select location" row.
+    readonly property string chevronRight: cp(0xF0142) // nf-md-chevron_right
 
     readonly property string workspaceDot: "●"    // BLACK CIRCLE
 

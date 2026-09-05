@@ -52,10 +52,10 @@ RowLayout {
                 onClicked: event => {
                     const item = entry.modelData;
                     if (event.button === Qt.LeftButton) {
-                        if (item.onlyMenu) menuAnchor.visible = true;
+                        if (item.onlyMenu) menu.visible = true;
                         else item.activate();
                     } else if (event.button === Qt.RightButton) {
-                        if (item.hasMenu) menuAnchor.visible = true;
+                        if (item.hasMenu) menu.visible = true;
                     } else {
                         item.secondaryActivate();
                     }
@@ -68,11 +68,12 @@ RowLayout {
                 }
             }
 
-            QsMenuAnchor {
-                id: menuAnchor
+            TrayMenu {
+                id: menu
                 menu: entry.modelData.menu
-                anchor.item: entry
-                anchor.edges: Edges.Bottom
+                anchorItem: entry
+                visible: false
+                grabFocus: true
             }
         }
     }
