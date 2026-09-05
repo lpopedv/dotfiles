@@ -98,12 +98,8 @@ BarItem {
         }
     }
 
-    color: panel.visible ? Theme.activeFill
-        : root.hovered ? Theme.hoverFill
+    color: root.hovered ? Theme.hoverFill : "transparent"
+    border.color: root.ready && root.worst / 100 >= Theme.dangerAt
+        ? Qt.rgba(Theme.red.r, Theme.red.g, Theme.red.b, 0.45)
         : "transparent"
-    border.color: panel.visible
-        ? Theme.accentLine
-        : root.ready && root.worst / 100 >= Theme.dangerAt
-            ? Qt.rgba(Theme.red.r, Theme.red.g, Theme.red.b, 0.45)
-            : "transparent"
 }

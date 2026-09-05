@@ -28,9 +28,9 @@ Rectangle {
     implicitHeight: Theme.barHeight - Theme.barItemInset * 2
     opacity: collapsed ? 0 : (collapsible && !active ? Theme.dimmedOpacity : 1)
 
-    color: root.active ? Theme.activeFill : mouse.containsMouse ? Theme.hoverFill : "transparent"
+    color: mouse.containsMouse ? Theme.hoverFill : "transparent"
     border.width: 1
-    border.color: root.active ? Theme.accentLine : "transparent"
+    border.color: "transparent"
 
     Behavior on color {
         ColorAnimation { duration: Theme.animMs }
