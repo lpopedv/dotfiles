@@ -17,7 +17,7 @@ hl.bind(mainMod .. " + SPACE", hl.dsp.exec_cmd(menu), { description = "App launc
 hl.bind(mainMod .. " + SHIFT + F", hl.dsp.window.fullscreen({ mode = "fullscreen" }), { description = "Fullscreen window" })
 hl.bind(mainMod .. " + B", hl.dsp.exec_cmd(browser), { description = "Open browser" })
 hl.bind(mainMod .. " + E", hl.dsp.exec_cmd("emacsclient -c -a 'emacs'"), { description = "Open Emacs" })
-hl.bind(mainMod .. " + V",
+hl.bind(mainMod .. " + SHIFT + V",
     hl.dsp.exec_cmd("cliphist list | rofi -dmenu -display-columns 2 | cliphist decode | wl-copy"),
     { description = "Clipboard history" })
 
