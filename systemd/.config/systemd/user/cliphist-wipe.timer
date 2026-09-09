@@ -2,7 +2,7 @@
 Description=Wipe clipboard history every 2 days
 
 [Timer]
-OnBootSec=10min
+OnBootSec=5min
 OnUnitActiveSec=2d
 Persistent=true
 
