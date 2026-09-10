@@ -44,17 +44,6 @@ alias v="nvim ."
 alias lg="lazygit"
 alias t="tmux"
 
-norm() {
-  if tmux has-session -t norm-platform 2>/dev/null; then
-    if [ -n "$TMUX" ]; then
-      tmux switch-client -t norm-platform
-    else
-      tmux attach -t norm-platform
-    fi
-  else
-    tmuxp load ~/Workspace/norm-platform
-  fi
-}
 
 dotup() {
   git -C ~/Dotfiles pull --ff-only && ~/Dotfiles/system/install/bootstrap.sh "$@"
