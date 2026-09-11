@@ -59,7 +59,16 @@ Variants {
         exclusionMode: DockService.mode === "pinned"
             ? ExclusionMode.Normal
             : ExclusionMode.Ignore
-        exclusiveZone: Theme.dockFloat + dock.plateHeight
+        // Zero unless the space is actually wanted. Asking for the exclusion
+        // to be ignored is not enough: the zone is committed with the dock's
+        // first layer-shell surface anyway, and hyprland only recomputes a
+        // monitor's reserved area when that zone changes afterwards. A
+        // standing height here is therefore reserved for the life of the
+        // shell - a hidden dock whose strip of screen is still taken, which
+        // only toggling the mode by hand ever cleared.
+        exclusiveZone: DockService.mode === "pinned"
+            ? Theme.dockFloat + dock.plateHeight
+            : 0
 
         color: "transparent"
         visible: dock.count > 0 && DockService.mode !== "hidden"
