@@ -42,15 +42,12 @@ PopupWindow {
     anchor.adjustment: PopupAdjustment.SlideX
 
     implicitWidth: 360
-    // The gap under the bar is transparent space inside the popup rather than
-    // an anchor offset: the compositor clamps an anchored popup to the bar's
-    // own edge, so anchor.margins has nothing to give here.
+    // Gap under the bar is transparent space inside the popup: the compositor
+    // clamps an anchored popup to the bar's edge, so anchor.margins can't do it.
     implicitHeight: layout.implicitHeight + 28 + Theme.popupInset
     color: "transparent"
 
-    // Reset so the fade below plays again on the next open. The window is
-    // hidden by the focus grab as well as by the bar button, so this cannot
-    // live in whatever opened it.
+    // Resets the fade-in for next open; can close via focus grab too, not just the button.
     onVisibleChanged: if (!root.visible) panel.opacity = 0
 
     Timer {

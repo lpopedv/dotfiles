@@ -8,7 +8,6 @@ require('gitsigns').setup({
       vim.keymap.set(mode, l, r, opts)
     end
 
-    -- Navigation
     map('n', ']c', function()
       if vim.wo.diff then
         vim.cmd.normal({ ']c', bang = true })
@@ -25,7 +24,6 @@ require('gitsigns').setup({
       end
     end, { desc = 'Prev git hunk' })
 
-    -- Actions
     map('n', '<leader>s', gitsigns.stage_buffer, { desc = 'Stage buffer' })
     map('n', '<leader>gs', gitsigns.stage_hunk, { desc = 'Stage hunk' })
     map('v', '<leader>gs', function()

@@ -25,7 +25,6 @@ local p = {
   white   = '#ffffff',
   black   = '#0d0d0d',
 
-  -- saturated hues — same hue wheel as before, pushed for clear syntax differentiation
   clay    = '#c56b51',
   sage    = '#7abc5c',
   sand    = '#c4a560',

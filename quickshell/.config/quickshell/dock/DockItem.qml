@@ -5,12 +5,6 @@ import Quickshell.Widgets
 import ".."
 import "../ui"
 
-// One tile: an app, the windows it has open, and what a click on it means.
-// Where it sits is handed down by Dock, which owns the row's layout.
-//
-// Nothing here resizes. The tile is a fixed slot and the icon is drawn at one
-// size for the whole life of the dock - the hover feedback is the highlight
-// sliding underneath, which belongs to the row rather than to any one tile.
 Item {
     id: root
 
@@ -27,8 +21,6 @@ Item {
 
     signal menuRequested
 
-    // A whole slot wide, so the row has no dead gaps between tiles for the
-    // pointer to fall through. The icon is centred in it.
     width: DockService.iconSize + Theme.dockIconGap
     height: parent.height
 
@@ -40,21 +32,15 @@ Item {
         source: root.tile.icon
         visible: status === Image.Ready
 
-        // A pinned app that is not running sits back a little, so the dock
-        // says what is open without needing the dots to be read.
         opacity: root.running || root.hovered ? 1 : 0.62
 
         Behavior on opacity {
             NumberAnimation { duration: Theme.animMs }
         }
 
-        // The hop when an app is asked to start. This is a launch answering
-        // the click, not hover feedback - it is the one thing on the dock that
-        // moves without the pointer having caused it.
         transform: Translate { y: -bounce.value }
     }
 
-    // Apps with no usable icon still get a tile rather than a hole in the row.
     ShellText {
         anchors.centerIn: parent
         visible: !glyph.visible
@@ -69,8 +55,6 @@ Item {
         property real value: 0
     }
 
-    // Runs until the app's first window shows up, so a slow starter keeps
-    // saying it heard the click instead of going quiet after one hop.
     SequentialAnimation {
         id: bounceLoop
 
@@ -93,9 +77,6 @@ Item {
         PauseAnimation { duration: 280 }
     }
 
-    // One mark per window, up to three. A single dot would say "running" and
-    // stop there, and the count is the thing worth knowing before clicking: it
-    // is the difference between a click that focuses and one that cycles.
     Row {
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.top: parent.bottom
@@ -128,8 +109,6 @@ Item {
 
         onClicked: event => {
             if (event.button === Qt.RightButton) root.menuRequested();
-            // Middle click opening a second window is the convention every
-            // taskbar and dock shares.
             else if (event.button === Qt.MiddleButton) DockService.launch(root.tile);
             else DockService.activate(root.tile);
         }

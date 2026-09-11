@@ -7,7 +7,7 @@ configuration {
     kb-row-left:  "Control+h";
     kb-row-right: "Control+l";
 
-    /* Free conflicts */
+    /* Unbind: clashes with vim-style nav above */
     kb-remove-to-eol: "";
     kb-accept-entry: "Control+m,Return,KP_Enter";
     kb-mode-complete: "";

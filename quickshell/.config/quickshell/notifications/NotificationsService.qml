@@ -4,52 +4,34 @@ import QtQuick
 import Quickshell
 import Quickshell.Services.Notifications
 
-// The whole notification model lives here so the toast stack and the history
-// panel can never disagree about what exists. The behaviour it implements is
-// the one GNOME and KDE share:
-//
-//   - a toast timing out or being closed by hand only takes the *toast* away;
-//     the notification stays in history, still alive, so its buttons work
-//   - only an explicit removal (the row's x, "Clear all", or invoking an
-//     action) tells the sender the notification is gone
-//   - a sender withdrawing its own notification removes it everywhere, which
-//     is what makes chat apps stop leaving read messages behind
+// Toast timeout/close only hides the toast - stays alive in history. Only
+// explicit removal (x, Clear all, invoking an action) tells the sender it's
+// gone. Sender withdrawing its own notification removes it everywhere.
 QtObject {
     id: root
 
     readonly property int maxHistory: 50
-    // GNOME and KDE both cap how many toasts are on screen and queue the rest.
-    // Without this a burst of notifications papers over the whole desktop.
+    // Caps toasts on screen; a notification burst shouldn't paper over the whole desktop.
     readonly property int maxPopups: 4
 
-    // How long a toast takes to animate away. The card and the exit timer both
-    // read it, so the two cannot fall out of step and strand a half-faded card.
+    // Read by both the card and the exit timer so they can't fall out of step.
     readonly property int leaveMs: 110
-
-    // ------------------------------------------------------------ do not disturb
 
     property bool silent: false
     function toggleSilent() { root.silent = !root.silent; }
 
-    // Critical notifications ignore Do Not Disturb, the way KDE treats them.
-    // The point of the urgency level is that it survives being muted.
+    // Critical notifications ignore Do Not Disturb (KDE convention).
     function wantsPopup(urgency) {
         return !root.silent || urgency === NotificationUrgency.Critical;
     }
 
-    // ------------------------------------------------------------------ entries
-
-    // Snapshot of a Notification that outlives it. The sender's object is
-    // destroyed the moment the notification closes, so `detach` copies the
-    // fields into plain values before that happens; until then they are live
-    // bindings, because a sender replacing a notification through replaces_id
-    // updates this same object in place rather than sending a new one.
+    // Snapshot of a Notification that outlives it: the sender's object is
+    // destroyed on close, so `detach` copies fields out first. Until then
+    // they're live bindings, since replaces_id updates this object in place.
     component Notif: QtObject {
         id: wrapper
 
-        // An inline component does not share scope with the file it is
-        // declared in, so it cannot reach `root` by id - the service hands
-        // itself in at creation instead.
+        // Inline component can't reach `root` by scope; service hands itself in at creation.
         required property var service
 
         required property int notifId
@@ -57,26 +39,18 @@ QtObject {
 
         property double time: Date.now()
         property bool read: false
-        // True while shown as a toast. False once it has timed out or been
-        // closed by hand (still in history), or from the start under DND.
         property bool popup: false
-        // Set while the toast plays its leaving animation, so the stack
-        // collapses smoothly instead of snapping shut.
+        // True while the leaving animation plays, so the stack collapses smoothly.
         property bool closing: false
-        // Bumped when the sender replaces the notification, which is the
-        // toast's cue to start its countdown over.
+        // Bumped on replace; the toast's cue to restart its countdown.
         property int generation: 0
 
-        // When the toast's current stretch on screen began. `popupList` is a
-        // plain array, so any change to it rebuilds every card from scratch;
-        // the countdown measures from here rather than starting over each time
-        // that happens.
+        // popupList is a plain array: any change rebuilds every card, so the
+        // countdown reads from here instead of restarting each rebuild.
         property double popupAt: Date.now()
         onPopupChanged: if (wrapper.popup) wrapper.popupAt = Date.now();
 
-        // The exit is timed here and not in the card for the same reason: a
-        // card destroyed mid-fade would never get round to clearing `popup`,
-        // and the toast would sit on screen for good.
+        // Timed here, not in the card: a card destroyed mid-fade would never clear `popup`.
         property Timer exit: Timer {
             interval: wrapper.service.leaveMs + 20
             running: wrapper.closing
@@ -90,18 +64,15 @@ QtObject {
         property string summary: notification ? notification.summary : ""
         property string body: notification ? notification.body : ""
         property int urgency: notification ? notification.urgency : NotificationUrgency.Normal
-        // Senders that set these want, respectively, to be left out of history
-        // entirely and to survive one of their own actions being invoked.
+        // transient = skip history; resident = survive its own action being invoked.
         property bool isTransient: notification ? notification.transient : false
         property bool isResident: notification ? notification.resident : false
-        // Actions cannot be invoked without a live sender, so this empties out
-        // on detach and the buttons disappear with it.
+        // Empties on detach (no live sender to invoke), so buttons disappear with it.
         property var actions: notification ? notification.actions : []
 
         readonly property int timeout: wrapper.service.timeoutFor(wrapper)
 
-        // Only true once the sender's first state is in. Everything after that
-        // is a genuine replacement.
+        // True once the sender's first state is in; anything after is a genuine replacement.
         property bool settled: false
         Component.onCompleted: wrapper.settled = true
 
@@ -109,9 +80,7 @@ QtObject {
             target: wrapper.notification
 
             function onClosed(reason) {
-                // Reached both when the sender withdraws the notification and
-                // when we close it ourselves; `detach` makes the second case a
-                // no-op, so this only ever has real work to do for the first.
+                // Fires on both sender withdrawal and our own close; detach() is a no-op for the latter.
                 wrapper.detach();
                 wrapper.service.remove(wrapper);
             }
@@ -120,16 +89,11 @@ QtObject {
             function onBodyChanged() { wrapper.replaced(); }
         }
 
-        // A replaced notification is new information, so it goes back on
-        // screen with a fresh countdown - this is what makes now-playing and
-        // progress notifications behave instead of flickering past.
         function replaced() {
             if (!wrapper.settled) return;
             wrapper.time = Date.now();
             wrapper.read = false;
-            // Set by hand: `popup` may already be true, in which case its own
-            // change handler never fires and the countdown would carry on from
-            // the superseded notification's start.
+            // Set by hand: if popup was already true, its onPopupChanged won't refire.
             wrapper.popupAt = Date.now();
             wrapper.generation++;
             if (wrapper.service.wantsPopup(wrapper.urgency)) {
@@ -139,10 +103,8 @@ QtObject {
             }
         }
 
-        // Freezes the sender's fields into plain values and lets go of it,
-        // returning it so the caller can decide whether to close it. Assigning
-        // to each property breaks its binding, which is the point: the card
-        // keeps rendering real text for the frame it takes to animate away.
+        // Freezes fields into plain values (breaking their bindings) so the card
+        // keeps rendering real text during its exit animation.
         function detach() {
             const sender = wrapper.notification;
             if (!sender) return null;
@@ -164,8 +126,6 @@ QtObject {
 
     property Component notifComponent: Component { Notif {} }
 
-    // ------------------------------------------------------------------ history
-
     property list<Notif> history: []
 
     readonly property int unread: {
@@ -180,13 +140,8 @@ QtObject {
         return false;
     }
 
-    // Oldest first, so a new toast joins at the bottom of the stack nearest the
-    // corner and whichever times out first leaves from the top - the toast
-    // under the pointer does not shift while it is being read.
-    //
-    // Toasts on their way out stay in the list past the cap so their leaving
-    // animation can finish; without that they would be yanked mid-fade and
-    // their `popup` flag would never get cleared.
+    // Oldest first so a new toast joins nearest the corner. Closing toasts
+    // stay past the cap so their exit animation can finish (else `popup` never clears).
     readonly property var popupList: {
         const shown = [];
         let live = 0;
@@ -202,10 +157,8 @@ QtObject {
         return shown.reverse();
     }
 
-    // Stands the oldest toasts down to history once the screen is full. They
-    // are not queued for later: a notification that surfaces half a minute
-    // after it happened is no longer news, and critical toasts - which never
-    // time out on their own - would otherwise hold every slot forever.
+    // Drops oldest toasts to history when full; not queued (stale news), and
+    // critical toasts never time out on their own so they'd hold every slot.
     function trimPopups() {
         let live = 0;
         for (const notif of root.history) {
@@ -219,15 +172,12 @@ QtObject {
         for (const notif of root.history) notif.read = true;
     }
 
-    // True while the history panel is on screen; only used to keep the clock
-    // below from ticking for nothing.
     property bool historyOpen: false
 
     property double now: Date.now()
 
+    // Single shared ticker, not one per panel, so two lists never disagree on age.
     readonly property Timer clock: Timer {
-        // One ticker for every relative timestamp on screen. Per-panel timers
-        // are how two lists end up disagreeing about how old something is.
         running: root.popupList.length > 0 || root.historyOpen
         interval: 5000
         repeat: true
@@ -245,13 +195,8 @@ QtObject {
         return Math.floor(hours / 24) + "d";
     }
 
-    // ---------------------------------------------------------------- lifecycle
-
-    // expireTimeout is already milliseconds (freedesktop spec: -1 means "use
-    // the daemon default", 0 means "never expire", positive is the value
-    // as-is) - it is NOT seconds, despite what it might look like at a glance.
-    // Critical notifications never time out on their own, matching GNOME and
-    // KDE; a sender asking for one to expire is deliberately ignored.
+    // expireTimeout is already milliseconds per the freedesktop spec (-1 =
+    // daemon default, 0 = never). Critical notifications ignore any requested expiry.
     function timeoutFor(notif) {
         if (notif.urgency === NotificationUrgency.Critical) return 0;
         const requested = notif.notification ? notif.notification.expireTimeout : -1;
@@ -260,27 +205,19 @@ QtObject {
         return notif.urgency === NotificationUrgency.Low ? 4000 : 5000;
     }
 
-    // Takes the toast off screen and leaves the entry in history, alive. This
-    // is what a timeout and the toast's own close button do.
     function hidePopup(notif) {
         if (!notif || !notif.popup || notif.closing) return;
         notif.closing = true;
     }
 
-    // Runs off the entry's own exit timer, once the card has had time to
-    // animate away.
     function popupClosed(notif) {
         if (!notif) return;
         notif.closing = false;
         notif.popup = false;
-        // Transient notifications are explicitly not meant to be persisted.
         if (notif.isTransient) root.remove(notif);
     }
 
-    // Lets go of an entry for good: tells the sender it is gone and frees the
-    // wrapper. Callers take it out of `history` first - this does not touch
-    // the list. Without the destroy() these pile up on the singleton for the
-    // whole session.
+    // Doesn't touch `history` (caller's job); without destroy() wrappers pile up all session.
     function discard(notif) {
         const sender = notif.detach();
         if (sender) sender.dismiss();
@@ -303,11 +240,7 @@ QtObject {
         for (const notif of all) root.discard(notif);
     }
 
-    // ------------------------------------------------------------------ actions
-
-    // The "default" action is what clicking the notification body triggers and
-    // is never drawn as a button - that is the freedesktop convention every
-    // desktop follows.
+    // Freedesktop convention: "default" is triggered by clicking the body, never drawn as a button.
     function defaultAction(notif) {
         for (const action of notif.actions)
             if (action.identifier === "default") return action;
@@ -324,8 +257,7 @@ QtObject {
     function invoke(notif, action) {
         if (!action) return;
         action.invoke();
-        // A resident sender keeps the notification on purpose (media controls,
-        // progress dialogs); anything else is finished once it is actioned.
+        // Resident senders (media controls, progress dialogs) keep the notification on purpose.
         if (notif.isResident) root.hidePopup(notif);
         else root.remove(notif);
     }
@@ -337,15 +269,8 @@ QtObject {
         else root.hidePopup(notif);
     }
 
-    // -------------------------------------------------------------------- icons
-
-    // `image` is whatever the sender attached - an avatar, album art, or a raw
-    // pixmap handed back as image://qsimage/... - and `appIcon` is an icon
-    // name. Neither is checked against the theme, and handing an unknown *name*
-    // to Image draws Qt's magenta placeholder, because the icon provider
-    // returns that placeholder successfully rather than failing. iconPath's
-    // check overload is the only thing that reports a missing icon, so bare
-    // names go through it and real URLs are passed straight through.
+    // Image draws Qt's magenta placeholder for an unknown icon *name* instead
+    // of failing, so bare names must go through iconPath's checked overload; real URLs pass through.
     readonly property string iconUrlPrefix: "image://icon/"
 
     function resolveIcon(name) {
@@ -356,8 +281,6 @@ QtObject {
         return Quickshell.iconPath(name, true);
     }
 
-    // Senders that set no icon name usually still declare their desktop entry,
-    // which is where GNOME and KDE go looking next.
     function appIconFor(notif) {
         const direct = root.resolveIcon(notif.appIcon);
         if (direct) return direct;
@@ -368,15 +291,11 @@ QtObject {
         return entry ? root.resolveIcon(entry.icon) : "";
     }
 
-    // ------------------------------------------------------------------- server
-
     readonly property NotificationServer server: NotificationServer {
         keepOnReload: false
-        // We keep a history, so senders may say so in their own UI.
         persistenceSupported: true
         bodySupported: true
-        // The spec's body markup is the <b>/<i>/<u>/<a> subset, which is
-        // exactly what Text.StyledText renders - see NotificationCard.
+        // Matches Text.StyledText in NotificationCard.qml.
         bodyMarkupSupported: true
         actionsSupported: true
         imageSupported: true
@@ -392,8 +311,7 @@ QtObject {
             });
 
             const updated = [wrapper, ...root.history];
-            // Evicted entries would otherwise stay tracked - and so alive - on
-            // the server forever, just invisible to the history UI.
+            // Otherwise evicted entries stay tracked (and alive) on the server, just invisible.
             for (const evicted of updated.splice(root.maxHistory)) root.discard(evicted);
             root.history = updated;
             root.trimPopups();

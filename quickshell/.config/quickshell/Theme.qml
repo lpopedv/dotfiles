@@ -34,12 +34,8 @@ QtObject {
 
     readonly property int barHeight: 34
 
-    // The single ground every floating surface uses: bar, dock, popups, the
-    // notification cards and the osd. Thin enough that the hyprland blur rules
-    // (blur + blur_popups, ignore_alpha 0.2) do the work of the background,
-    // which is why they all read as one material rather than as dark
-    // rectangles. Anything painted here must clear ignore_alpha or the
-    // compositor skips blurring it and it turns into a hole in the desktop.
+    // Must clear hyprland's ignore_alpha (0.2) or the compositor skips
+    // blurring it and it becomes a hole in the desktop.
     readonly property real glassOpacity: 0.55
     readonly property color glass: Qt.rgba(bg.r, bg.g, bg.b, glassOpacity)
 
@@ -47,44 +43,29 @@ QtObject {
     readonly property int fontSize: 13
     readonly property int iconSize: 15
 
-    // Deliberately short. These are feedback, not choreography: past about
-    // 150ms a hover or a panel stops reading as responsive and starts reading
-    // as the machine being slow.
     readonly property int animMs: 90
     readonly property int animSlideMs: 140
 
-    // How far a bar item's box stops short of the bar's own top and bottom.
     readonly property int barItemInset: 5
 
-    // Popups hang this far below the bar instead of butting up against it, so
-    // they read as their own surface rather than as part of the bar. They
-    // anchor to the bar *item*, whose bottom edge is already barItemInset above
-    // the bar's, so clearing the bar means insetting by both.
+    // Anchors to the bar item, already barItemInset above the bar, so
+    // clearing the bar means insetting by both.
     readonly property int popupGap: 8
     readonly property int popupInset: popupGap + barItemInset
 
     readonly property real dimmedOpacity: 0.45
 
-    // ------------------------------------------------------------------- dock
-    // The dock's icon size is not here: it is one of the things the bar's dock
-    // button lets you change, so it lives in DockService with the rest of that
-    // state. Everything below is fixed.
+    // Icon size is user-configurable via the dock button; lives in DockService.
     readonly property int dockIconGap: 10
 
-    // Icons on the dock never change size. Hover is answered by a highlight
-    // that slides between slots, so the only thing that moves is the one box
-    // following the pointer - see dock/Dock.qml.
     readonly property int dockPad: 8
-    // How far the dock floats above the screen edge. Matches hyprland's
-    // gaps_out, so a maximised window and the dock keep the same margin.
+    // Matches hyprland's gaps_out so a maximised window keeps the same margin.
     readonly property int dockFloat: 4
-    // Sliver of the hidden dock left on screen for the pointer to find.
     readonly property int dockStrip: 2
     readonly property int dockDot: 3
 
-    // Asymmetric on purpose: coming back has to feel immediate, leaving has to
-    // be slow enough that crossing the bottom edge on the way somewhere else
-    // does not make the dock flicker.
+    // Asymmetric on purpose: fast reveal, slow hide so passing the edge
+    // doesn't flicker.
     readonly property int dockRevealMs: 170
     readonly property int dockHideMs: 240
 }

@@ -1,6 +1,3 @@
-# Official repository packages, one per line. Comments and blank lines ignored.
-# Installed by install/bootstrap.sh with `pacman -S --needed`.
-
 # Base and build
 base-devel
 git
@@ -20,17 +17,14 @@ lazygit
 tmux
 mpv
 
-# Nautilus thumbnails - ffmpegthumbnailer (video), poppler (pdf), imagemagick (fonts/misc)
 ffmpegthumbnailer
 poppler
 imagemagick
 
-# Secure Boot - sbctl owns the custom keys, signs the UKI and systemd-boot, and
-# ships a pacman hook that re-signs after every kernel or systemd upgrade.
+# Secure Boot
 sbctl
 
-# Maintenance - paccache (from pacman-contrib) prunes old package versions
-# from /var/cache/pacman/pkg. Runs daily via a systemd timer, see bootstrap.sh.
+# Maintenance (paccache, daily via systemd timer, see bootstrap.sh)
 pacman-contrib
 
 # Shell
@@ -48,18 +42,15 @@ neovim
 emacs
 
 # Hyprland session
-# uwsm is deliberately absent - see README, it only adds a duplicate session entry
+# uwsm deliberately absent - see README, adds only a duplicate session entry
 hyprland
 sddm
 xdg-desktop-portal-hyprland
-# wlr provides the Screenshot portal interface - hyprland's own backend
-# advertises it but doesn't implement it (as of 1.4.1); flameshot v14
-# needs it. See flameshot-org/flameshot#4543.
+# Needed for the Screenshot portal - hyprland's own backend doesn't implement it.
 xdg-desktop-portal-wlr
 polkit-kde-agent
 
 # Desktop
-# quickshell is the toolkit; the bar itself is our QML in quickshell/.
 quickshell
 rofi
 rofimoji
@@ -74,9 +65,6 @@ wtype
 flameshot
 obs-studio
 swayimg
-# nautilus - file manager. sushi = space-bar quick preview, file-roller = archive
-# extract/compress, nautilus-image-converter = batch resize/rotate context menu.
-# gvfs already covers trash/basic mounts; the gvfs-* below add mtp/camera/smb.
 nautilus
 sushi
 file-roller
@@ -103,11 +91,5 @@ opencode
 # Fonts and icons
 ttf-jetbrains-mono-nerd
 noto-fonts-emoji
-# Adwaita is still the base: gtk looks up its own stock and symbolic icons
-# there, and Papirus inherits from it rather than replacing it.
 adwaita-icon-theme
-# The theme everything actually displays. Adwaita only covers GNOME's own
-# apps, so third-party ones fall back to a low-resolution hicolor png that has
-# to be scaled up; Papirus is svg throughout and covers thousands of apps, so
-# the dock and the launcher stay sharp at any icon size.
 papirus-icon-theme

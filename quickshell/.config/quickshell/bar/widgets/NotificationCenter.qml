@@ -14,8 +14,6 @@ BarItem {
     }
 
     onClicked: button => {
-        // Right click is the shortcut for Do Not Disturb; the switch itself
-        // lives in the panel, where it says what it does.
         if (button === Qt.RightButton) NotificationsService.toggleSilent();
         else root.togglePanel();
     }
@@ -36,8 +34,7 @@ BarItem {
         font.pixelSize: Theme.iconSize
     }
 
-    // A count rather than a bare dot: the bar has no tooltip to hover for, so
-    // the badge has to carry the whole message on its own.
+    // Count, not a bare dot: no tooltip to hover for in the bar.
     ShellText {
         visible: NotificationsService.unread > 0
         text: NotificationsService.unread

@@ -73,10 +73,8 @@ hl.window_rule({
     float = true,
 })
 
--- The bar and the dock are the layer surface itself; every panel they open
--- (notifications, dock settings, claude usage) is an xdg popup of it, and a
--- popup is not covered by `blur` - it needs `blur_popups` or it renders as a
--- flat black rectangle over the wallpaper.
+-- popups (notifications, dock settings, etc.) aren't covered by `blur` alone - need `blur_popups`,
+-- or they render as flat black rectangles
 hl.layer_rule({
     name         = "quickshell-blur",
     match        = { namespace = "^quickshell$" },

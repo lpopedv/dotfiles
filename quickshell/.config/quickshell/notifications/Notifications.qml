@@ -3,9 +3,6 @@ import QtQuick.Layouts
 import Quickshell
 import ".."
 
-// The toast stack. Everything about *what* is on screen lives in
-// NotificationsService; this file only knows how a card arrives, counts down
-// and leaves.
 Scope {
     id: root
 
@@ -25,8 +22,7 @@ Scope {
         color: "transparent"
         exclusionMode: ExclusionMode.Ignore
 
-        // The Repeater counts as a child of the layout, so the popup list is
-        // the only honest test for "is anything on screen".
+        // Repeater counts as a layout child, so check the list, not implicitHeight.
         visible: NotificationsService.popupList.length > 0
 
         ColumnLayout {
@@ -42,12 +38,9 @@ Scope {
 
                     required property var modelData
 
-                    // 0 is fully out of the way, 1 is settled in place. One
-                    // driver for the fade, the slide and the height the stack
-                    // reserves, so a card leaving collapses the gap above it
-                    // rather than letting the rest jump.
+                    // 0 = out of the way, 1 = settled. Drives fade, slide, and the
+                    // stack's reserved height together so a leaving card collapses cleanly.
                     property real reveal: 0
-                    // 1 when the countdown starts, 0 when it runs out.
                     property real remaining: 1
 
                     Layout.fillWidth: true
@@ -59,9 +52,7 @@ Scope {
                         x: (1 - slot.reveal) * 26
                     }
 
-                    // Both driven off `closing` rather than started by hand, so
-                    // a card rebuilt part way through an exit picks the
-                    // animation back up instead of freezing where it was.
+                    // Driven off `closing`, not started by hand, so a rebuilt card resumes mid-exit.
                     NumberAnimation on reveal {
                         to: 1
                         duration: Theme.animSlideMs
@@ -89,15 +80,11 @@ Scope {
                         anchors.top: parent.top
                     }
 
-                    // How much of the toast's life had already gone by the time
-                    // this card was built. Zero in the normal case; only a
-                    // rebuild of the stack makes it anything else.
+                    // Nonzero only when a stack rebuild reconstructs an already-aging toast.
                     readonly property int spent: Math.min(slot.modelData.timeout,
                         Date.now() - slot.modelData.popupAt)
 
-                    // A timeout of 0 means the sender asked for no expiry, or
-                    // the notification is critical - either way it stays until
-                    // it is dealt with, exactly as GNOME and KDE do.
+                    // timeout of 0 = no expiry or critical: stays until dismissed.
                     NumberAnimation {
                         id: countdown
                         target: slot
@@ -107,8 +94,7 @@ Scope {
                         duration: Math.max(1, slot.modelData.timeout - slot.spent)
                         easing.type: Easing.Linear
                         running: slot.modelData.timeout > 0 && !slot.modelData.closing
-                        // Reading `running` here keeps Qt from being asked to
-                        // pause an animation that never started.
+                        // Guards against pausing an animation that never started.
                         paused: countdown.running && card.hovered
                         onFinished: NotificationsService.hidePopup(slot.modelData)
                     }
@@ -116,10 +102,7 @@ Scope {
                     Connections {
                         target: slot.modelData
 
-                        // The sender replaced this notification, so the time it
-                        // already spent on screen no longer applies. `from` and
-                        // `duration` have re-read the new start by now; the
-                        // animation just has to be told to pick them up.
+                        // Sender replaced the notification; from/duration already re-read, just needs a restart.
                         function onGenerationChanged() {
                             if (countdown.running) countdown.restart();
                         }

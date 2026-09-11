@@ -5,19 +5,12 @@ import Quickshell.Widgets
 import ".."
 import "../ui"
 
-// One card, used both as a toast and as a row in the history panel, so the two
-// cannot drift apart. The layout is the one GNOME and KDE share: app identity
-// and age on a dim header line, then the summary, then the body, then the
-// sender's action buttons.
 Rectangle {
     id: root
 
     required property var notif
-    // History rows are denser: smaller icon, fewer body lines, no ground of
-    // their own since the panel already provides one.
     property bool compact: false
-    // 1 while a toast has its full time left, 0 as it times out. Negative
-    // hides the bar, which is what critical and never-expiring toasts get.
+    // 1 = full time left, 0 = timed out, negative hides the bar (critical/never-expiring).
     property real progress: -1
 
     readonly property bool critical: root.notif.urgency === NotificationUrgency.Critical
@@ -46,10 +39,7 @@ Rectangle {
         ColorAnimation { duration: Theme.animMs }
     }
 
-    // Declared first so it sits *under* everything else: the action buttons
-    // and the close button are later siblings and therefore get the click
-    // first, which is the only thing keeping a button press from also firing
-    // the card's default action.
+    // Declared first (under later siblings) so the close/action buttons get the click before this does.
     MouseArea {
         anchors.fill: parent
         acceptedButtons: Qt.LeftButton | Qt.MiddleButton
@@ -57,8 +47,6 @@ Rectangle {
             ? Qt.PointingHandCursor : Qt.ArrowCursor
 
         onClicked: event => {
-            // Middle click closes without acting on it, the way it does
-            // everywhere else; left click runs the sender's default action.
             if (event.button === Qt.MiddleButton) {
                 if (root.compact) NotificationsService.remove(root.notif);
                 else NotificationsService.hidePopup(root.notif);
@@ -68,8 +56,6 @@ Rectangle {
         }
     }
 
-    // Urgency stripe. Deliberately flush with the border rather than inset:
-    // it reads as an edge marker, not as another element in the layout.
     Rectangle {
         anchors.left: parent.left
         anchors.top: parent.top
@@ -104,8 +90,6 @@ Rectangle {
                 implicitSize: root.iconSize - (root.compact ? 8 : 12)
             }
 
-            // Senders with no usable icon still get a tile, so every card in a
-            // stack lines up on the same left edge.
             ShellText {
                 anchors.centerIn: parent
                 visible: icon.status !== Image.Ready
@@ -114,8 +98,6 @@ Rectangle {
                 font.pixelSize: root.compact ? 12 : 16
             }
 
-            // When the sender supplied both a picture and an app icon, the
-            // picture is the subject and the icon says who sent it.
             Rectangle {
                 visible: !root.compact && root.appIcon !== ""
                     && root.image !== "" && icon.status === Image.Ready
@@ -158,8 +140,7 @@ Rectangle {
                     font.pixelSize: Theme.fontSize - 2
                 }
 
-                // Same affordance as GNOME and KDE: appears on hover, and only
-                // takes the toast away - the entry stays in history.
+                // Only dismisses the toast; entry stays in history.
                 ShellText {
                     text: "×"
                     color: closeArea.containsMouse ? Theme.fgAct : Theme.subtle
@@ -199,9 +180,8 @@ Rectangle {
                 visible: text !== ""
                 text: root.notif.body
                 color: root.low ? Theme.subtle : Theme.fg
-                // The spec's body markup is the <b>/<i>/<u>/<a> subset, which
-                // is what StyledText renders - not Markdown, which would eat
-                // the asterisks and underscores in ordinary prose.
+                // Spec body markup is <b>/<i>/<u>/<a>; StyledText, not Markdown
+                // (which would eat literal asterisks/underscores in prose).
                 textFormat: Text.StyledText
                 wrapMode: Text.Wrap
                 maximumLineCount: root.compact ? 3 : 5
@@ -227,8 +207,6 @@ Rectangle {
         }
     }
 
-    // Time remaining, flush along the bottom edge. Hidden for critical toasts,
-    // which have no countdown to show in the first place.
     Rectangle {
         anchors.left: parent.left
         anchors.right: parent.right
@@ -246,9 +224,7 @@ Rectangle {
         }
     }
 
-    // A handler rather than another MouseArea: hovering an action button must
-    // still count as hovering the card, or the close button would blink out
-    // from under the pointer on its way there.
+    // HoverHandler so hovering an action button still counts as hovering the card.
     HoverHandler {
         id: hover
     }

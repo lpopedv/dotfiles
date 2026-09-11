@@ -4,8 +4,7 @@ local cond = require('nvim-autopairs.conds')
 
 npairs.setup({})
 
--- space inside a freshly-closed pair opens a space on each side, cursor in
--- the middle (jetbrains-style); backspace right after collapses it back
+-- jetbrains-style space pairing: `(|)` + space -> `( | )`, backspace collapses it back
 npairs.add_rules({
   Rule(' ', ' ')
     :with_pair(function(opts)

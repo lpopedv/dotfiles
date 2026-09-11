@@ -1,16 +1,12 @@
 import QtQuick
 import ".."
 
-// Small clickable label. Notification actions, "Clear all" and the Do Not
-// Disturb switch are all the same affordance at different weights, so they
-// share one so their hit targets and hover feedback cannot drift apart.
 Rectangle {
     id: root
 
     property alias text: label.text
     property bool active: false
-    // Borderless until hovered - for text that reads as a link rather than a
-    // button ("Clear all"), where a permanent box would shout.
+    // Borderless until hovered, for a link-like affordance rather than a button.
     property bool quiet: false
     property color textColor: root.active || mouse.containsMouse ? Theme.fgAct : Theme.fg
 

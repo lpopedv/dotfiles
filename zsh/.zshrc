@@ -6,16 +6,13 @@ bindkey "^[[3;5~" kill-word
 bindkey "^[[1;5D" backward-word
 bindkey "^[[1;5C" forward-word
 
-# Exports
 export EDITOR=nvim
 export PATH=$HOME/.local/bin:$PATH
 export PATH=$HOME/.config/emacs/bin:$PATH
 export PATH=$HOME/.opencode/bin:$PATH
 
-# Evals
 eval "$(mise activate zsh)"
 
-# Prompt 
 autoload -Uz vcs_info
 autoload -Uz colors && colors
 setopt PROMPT_SUBST
@@ -29,21 +26,16 @@ precmd() { vcs_info }
 PROMPT='%F{cyan}%~%f${vcs_info_msg_0_}
 %(?.%F{green}.%F{red})❯%f '
 
-# Fzf
 source <(fzf --zsh)
 
-# Plugins
 source /usr/share/zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 
-
-# Aliases
 alias ls="eza --icons --git --links --long"
 alias l="eza --icons --git --links --long"
 alias ai="claude"
 alias v="nvim ."
 alias lg="lazygit"
 alias t="tmux"
-
 
 dotup() {
   git -C ~/Dotfiles pull --ff-only && ~/Dotfiles/system/install/bootstrap.sh "$@"
@@ -57,6 +49,5 @@ setopt HIST_IGNORE_SPACE
 setopt SHARE_HISTORY
 setopt APPEND_HISTORY
 
-# bun
 export BUN_INSTALL="$HOME/.bun"
 export PATH="$BUN_INSTALL/bin:$PATH"

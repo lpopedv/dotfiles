@@ -29,8 +29,7 @@ Scope {
         onTriggered: root.shown = false
     }
 
-    // Bindings fire once on startup with whatever the current value is. Without
-    // this the OSD flashes on login for a volume nobody touched.
+    // Guards against bindings firing once on startup and flashing the OSD unprompted.
     property bool settled: false
     Timer {
         interval: 1500
@@ -60,9 +59,7 @@ Scope {
         }
     }
 
-    // The backlight is not always intel_backlight, and a desktop has none at
-    // all - hardcoding a path means a failed read logged on every start. Empty
-    // until the lookup answers, which leaves the FileViews below idle.
+    // Not hardcoded: not always intel_backlight, and a desktop has none at all.
     property string backlight: ""
 
     Process {
@@ -77,9 +74,7 @@ Scope {
         }
     }
 
-    // FileView.text is a method, not a property, and watchChanges only reports
-    // that the file changed - it does not re-read it. Hence reload() on
-    // fileChanged and reading the value in onLoaded.
+    // watchChanges only reports the change, doesn't re-read; reload() does that.
     FileView {
         id: brightness
         path: root.backlight ? root.backlight + "/brightness" : ""
@@ -103,8 +98,7 @@ Scope {
     PanelWindow {
         id: window
 
-        // A layer surface cannot be faded, so the window stays mapped until
-        // the panel inside it has finished fading out.
+        // Layer surface can't be faded, so it stays mapped until the panel's own fade finishes.
         visible: root.shown || panel.opacity > 0
         anchors.bottom: true
         margins.bottom: 120

@@ -1,8 +1,4 @@
 #!/usr/bin/env bash
-# Runs on tty1 when the live ISO boots. Starts archinstall with this repo's
-# configuration prefilled, then hands over to the TUI so a human answers the
-# questions that should not be answered by a file: the disk, the user and the
-# passwords.
 set -uo pipefail
 
 CONFIG=/root/Dotfiles/system/install/archinstall.json
@@ -27,10 +23,8 @@ EOF
 
 read -rp '  Press enter to start, or Ctrl-C for a shell: ' _
 
-# pacstrap needs a working network. Test reachability directly rather than
-# waiting on network-online.target: nothing pulls that target in on the live
-# ISO when the connection was made by hand with iwctl, so waiting on it hangs
-# forever on exactly the machines that need wifi.
+# Test reachability directly: waiting on network-online.target hangs forever
+# when the connection was made by hand with iwctl, which nothing pulls it in for.
 printf '\n  checking the network...\n'
 if ! curl -sf --max-time 8 -o /dev/null https://archlinux.org; then
     cat <<'EOF'
@@ -59,32 +53,21 @@ if (( rt != 0 )); then
     exit "$rt"
 fi
 
-# archinstall mounts the new system here. Not /mnt/archinstall: that was the
-# 2.x path, and pointing at it made every step below a silent no-op.
+# Not /mnt/archinstall: that was the 2.x path, now a silent no-op.
 target=/mnt
 
-# Both steps are best effort - the install itself already succeeded, and
-# archinstall may have unmounted the target on the way out. But they are the
-# difference between a usable first boot and one with no repo and no wifi, so
-# say out loud when they do not happen.
 skipped=()
 
 if ! mountpoint -q "$target"; then
     printf '\n  %s is not mounted - skipping the post-install steps.\n' "$target"
     skipped+=("the repo copy" "the wifi credentials")
 else
-    # Leave the repo on the installed system so the next step needs neither the
-    # network nor a clone.
     home="$(find "$target/home" -mindepth 1 -maxdepth 1 -type d 2>/dev/null | head -1)"
     if [[ -n "$home" ]] && cp -r /root/Dotfiles "$home/Dotfiles" 2>/dev/null; then
         chown -R "$(stat -c %u "$home"):$(stat -c %g "$home")" "$home/Dotfiles"
         printf '\n  Dotfiles copied to %s\n' "${home#$target}/Dotfiles"
 
-        # First login has nothing runnable yet - no zsh, no stowed dotfiles,
-        # no sddm. A one-shot .bash_profile hook runs bootstrap.sh the first
-        # time the new user logs in, guarded by a flag file so it only fires
-        # once and retries on the next login if it fails partway (bootstrap.sh
-        # is set -euo pipefail, so a failure never touches the flag).
+        # One-shot hook: flag-guarded so it fires once and retries on failure.
         if ! grep -q '.dotfiles-bootstrapped' "$home/.bash_profile" 2>/dev/null; then
             cat >> "$home/.bash_profile" <<'HOOK'
 
@@ -98,10 +81,7 @@ HOOK
         skipped+=("the repo copy")
     fi
 
-    # Carry the wifi across. Whatever iwctl connected to on the live ISO is a
-    # profile under /var/lib/iwd; archinstall.json asks for the nm_iwd backend,
-    # so NetworkManager reads the same directory on the installed system and
-    # reconnects on its own at first boot.
+    # NetworkManager (nm_iwd backend) reads the same /var/lib/iwd profiles.
     if compgen -G '/var/lib/iwd/*.psk' >/dev/null; then
         if install -d -m 700 "$target/var/lib/iwd" &&
             install -m 600 /var/lib/iwd/*.psk "$target/var/lib/iwd/"; then
