@@ -4,9 +4,6 @@ import Quickshell
 import "../.."
 import "../../ui"
 
-// The dock's settings, hung off the bar button. Everything here is state the
-// user owns, so every row writes straight through to DockService and is on
-// disk before the panel closes.
 PopupWindow {
     id: root
 
@@ -18,15 +15,12 @@ PopupWindow {
     anchor.adjustment: PopupAdjustment.SlideX
 
     implicitWidth: 250
-    // The gap under the bar is transparent space inside the popup rather than
-    // an anchor offset: the compositor clamps an anchored popup to the bar's
-    // own edge, so anchor.margins has nothing to give here.
+    // Gap under the bar is transparent space inside the popup: the compositor
+    // clamps an anchored popup to the bar's edge, so anchor.margins can't do it.
     implicitHeight: layout.implicitHeight + 20 + Theme.popupInset
     color: "transparent"
 
-    // Reset so the fade below plays again on the next open. The window is
-    // hidden by the focus grab as well as by the bar button, so this cannot
-    // live in whatever opened it.
+    // Resets the fade-in for next open; can close via focus grab too, not just the button.
     onVisibleChanged: if (!root.visible) panel.opacity = 0;
 
     Rectangle {
@@ -66,9 +60,7 @@ PopupWindow {
                 font.weight: Font.DemiBold
             }
 
-            // The three reveal modes exclude each other, so they get circles
-            // rather than ticks and the panel stays open as they are tried -
-            // picking between them is a comparison, not a single decision.
+            // Radio circles, not ticks: the three modes are mutually exclusive.
             Repeater {
                 model: DockService.modes
 
@@ -92,7 +84,6 @@ PopupWindow {
             }
 
             MenuRow {
-                // Only means anything while the dock hides in the first place.
                 enabled: DockService.mode === "auto"
                 opacity: enabled ? 1 : Theme.dimmedOpacity
                 text: "Show on empty workspace"
@@ -125,8 +116,6 @@ PopupWindow {
                 font.pixelSize: Theme.fontSize - 2
             }
 
-            // Wide enough targets to pick from without reading, and the dock
-            // resizes under the panel as they are pressed.
             RowLayout {
                 Layout.fillWidth: true
                 Layout.leftMargin: 10

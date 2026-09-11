@@ -9,9 +9,7 @@ BarItem {
 
     readonly property var battery: UPower.displayDevice
     readonly property bool present: battery && battery.isLaptopBattery && battery.isPresent
-    // `visible` does not stop a binding from evaluating, so every read of the
-    // device has to survive there being no battery at all - which is the
-    // normal case on a desktop.
+    // `visible` doesn't stop bindings evaluating; must survive no battery present.
     readonly property real level: present ? battery.percentage : 1
     readonly property int percent: Math.round(level * 100)
     readonly property bool charging: present && battery.state === UPowerDeviceState.Charging

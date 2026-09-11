@@ -2,25 +2,15 @@ import QtQuick
 import QtQuick.Layouts
 import ".."
 
-// One row of a popup menu. Both menus the dock puts on screen are built from
-// these, so their hit targets, gutters and hover feedback cannot drift apart.
-//
-// `mark` is drawn in a gutter that is reserved whether or not the row has one,
-// which is what keeps the labels of a mixed menu on a single left edge.
 Rectangle {
     id: root
 
     property alias text: label.text
-    // For rows that name something rather than doing something, like the
-    // window titles the dock's menu lists.
     property bool dim: false
-    // A glyph from Icons, or empty. Reserving the gutter is `gutter`'s job,
-    // not this one's: an unchecked switch has no mark but still needs the
-    // room, or its label would slide sideways as it was toggled.
+    // Gutter reservation is `gutter`'s job, not this one's, so an unchecked
+    // row's label doesn't slide sideways when toggled.
     property string mark: ""
     property bool gutter: false
-    // A glyph from Icons shown flush with the right edge, e.g. the chevron
-    // marking a row that opens a submenu.
     property string trailing: ""
 
     readonly property bool hovered: mouse.containsMouse

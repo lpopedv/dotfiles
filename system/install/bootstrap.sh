@@ -1,9 +1,4 @@
 #!/usr/bin/env bash
-# Bring a machine up to this repository's configuration.
-# Safe to re-run: every step checks its own state first.
-#
-#   bootstrap.sh              apply
-#   bootstrap.sh --dry-run    print what would change, touch nothing
 set -euo pipefail
 
 DOTFILES="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
@@ -91,12 +86,8 @@ for pkg in "${STOW_PACKAGES[@]}"; do
 done
 
 log "Desktop appearance"
-# gtk-4.0/libadwaita apps (Nautilus, Sushi, ...) only ever read color-scheme via
-# gsettings/the Settings portal, never gtk-theme-name or prefer-dark-theme - the
-# portal side of this lives in hypr/.config/xdg-desktop-portal/hyprland-portals.conf
-# (routes org.freedesktop.impl.portal.Settings to xdg-desktop-portal-gtk, which is
-# what actually reads these keys). GTK3 apps that skip the portal fall back to
-# gtk/.config/gtk-3.0/settings.ini, stowed above.
+# gtk4/libadwaita apps read theme only via gsettings/the portal, not these
+# keys directly; see hypr/xdg-desktop-portal and gtk/gtk-3.0/settings.ini.
 if [[ "$(gsettings get org.gnome.desktop.interface color-scheme 2>/dev/null)" == "'prefer-dark'" ]]; then
     ok "color-scheme = prefer-dark"
 else
@@ -107,11 +98,9 @@ if [[ "$(gsettings get org.gnome.desktop.interface gtk-theme 2>/dev/null)" == "'
 else
     run gsettings set org.gnome.desktop.interface gtk-theme 'Adwaita'
 fi
-# The icon theme has three readers and they have to agree, or an app's icon
-# changes depending on which one found it: gsettings/the portal for gtk4 and
-# libadwaita, gtk/.config/gtk-*/settings.ini for gtk3, and qt6ct.conf for Qt -
-# which is the one quickshell's own dock and bar read. The last two are stowed;
-# only this one has to be set imperatively.
+# Icon theme has three readers that must agree: gsettings/portal (gtk4),
+# gtk-3.0/settings.ini (gtk3), qt6ct.conf (Qt, incl. quickshell). Only this one
+# needs to be set imperatively.
 if [[ "$(gsettings get org.gnome.desktop.interface icon-theme 2>/dev/null)" == "'Papirus-Dark'" ]]; then
     ok "icon-theme = Papirus-Dark"
 else
@@ -119,12 +108,10 @@ else
 fi
 
 log "Toolchain"
-# mise.lock pins exact versions and checksums; --locked refuses to drift from it
 run mise install --locked
 
 log "Pacman"
-# ParallelDownloads and ILoveCandy live in [options]; pacman.conf has no
-# drop-in directory, so these are edited in place. Both are no-ops when set.
+# No drop-in directory for pacman.conf, so these are edited in place.
 if grep -qE '^ParallelDownloads = 20$' /etc/pacman.conf; then
     ok "ParallelDownloads = 20"
 else
@@ -147,31 +134,24 @@ run sudo install -Dm644 "$INSTALL/etc/systemd/timesyncd.conf.d/10-cloudflare.con
 run sudo install -Dm644 "$INSTALL/etc/systemd/resolved.conf.d/10-cloudflare-dot.conf" \
     /etc/systemd/resolved.conf.d/10-cloudflare-dot.conf
 
-# Domains=~. already makes the Cloudflare servers authoritative, but a DHCP
-# lease that registers its own DNS on the link is one less thing to reason about
-# if it never happens.
+# Belt-and-suspenders: Domains=~. already makes Cloudflare authoritative.
 for net in /etc/systemd/network/*.network; do
     [[ -e "$net" ]] || continue
     run sudo install -Dm644 "$INSTALL/etc/systemd/network/no-dhcp-dns.conf" \
         "${net}.d/10-no-dhcp-dns.conf"
 done
 
-# Same leak, NetworkManager's side - archinstall's nm_iwd network_config means
-# NetworkManager, not systemd-networkd, manages the actual links on most
-# machines this repo targets, so the drop-in above alone leaves DHCP-advertised
-# DNS servers registered with resolved per-link.
+# Same leak, NetworkManager's side (archinstall's nm_iwd manages links here).
 run sudo install -Dm644 "$INSTALL/etc/NetworkManager/conf.d/10-no-dns.conf" \
     /etc/NetworkManager/conf.d/10-no-dns.conf
 
 run sudo systemctl enable systemd-timesyncd.service systemd-resolved.service
-# restart, not enable --now: on a machine where these already run, --now is a
-# no-op and the drop-ins above would never be read
+# restart, not enable --now: --now is a no-op if already running, and the
+# drop-ins above would never be read.
 run sudo systemctl restart systemd-timesyncd.service
 run sudo systemctl reload-or-restart systemd-resolved.service
 
-# NetworkManager runs with dns=none (10-no-dns.conf), so nothing writes
-# /etc/resolv.conf - glibc would never reach resolved. Point it at the stub
-# ourselves; resolved owns /run/systemd/resolve/stub-resolv.conf (127.0.0.53).
+# dns=none means nothing writes /etc/resolv.conf; point it at resolved's stub.
 if [[ "$(readlink -f /etc/resolv.conf 2>/dev/null)" == /run/systemd/resolve/stub-resolv.conf ]]; then
     ok "resolv.conf -> systemd-resolved stub"
 else
@@ -213,19 +193,9 @@ run sudo rm -f /etc/sysctl.d/10-hardening.conf
 run sudo sysctl --system
 
 log "Secure Boot"
-# Replaces the vmlinuz + initramfs pair with a Unified Kernel Image signed by
-# our own keys, so the firmware refuses a kernel, an initramfs or a command line
-# that anyone tampered with. See etc/mkinitcpio.d/linux.preset for why the pair
-# itself can never be made safe.
-#
-# Two things are deliberately NOT done here:
-#
-#  - /boot/vmlinuz-linux is never signed. Signing it would make the old type-1
-#    entry bootable under Secure Boot with an initramfs nothing verifies, which
-#    is the exact hole the UKI closes. Unsigned, that entry is a rescue path
-#    that only works with Secure Boot switched off.
-#  - the old entry is never deleted. Retiring someone's boot path is not a thing
-#    a re-runnable script should do behind their back; it warns instead.
+# vmlinuz-linux is deliberately never signed (would leave the old type-1 entry
+# bootable with an unverified initramfs) and the old boot entry is deliberately
+# never deleted (only warned about) - this script doesn't retire it for you.
 UKI=/boot/EFI/Linux/arch-linux.efi
 
 if (( DRY )); then
@@ -236,10 +206,7 @@ if (( DRY )); then
 elif ! command -v sbctl >/dev/null; then
     warn "sbctl is not installed - skipping Secure Boot"
 else
-    # root= is machine-specific, so the command line is derived from the running
-    # system once rather than shipped in this repo. initrd= is dropped: the UKI
-    # carries its own. Later hardening (lsm=apparmor, for one) drops in beside
-    # this file as its own numbered .conf, which is why it is not /etc/kernel/cmdline.
+    # root= is machine-specific: derived from the running system, not shipped here.
     if [[ -e /etc/cmdline.d/10-root.conf ]]; then
         ok "kernel command line recorded"
     else
@@ -266,17 +233,15 @@ else
         sudo sbctl create-keys
     fi
 
-    # -s records the file in sbctl's database, which is what its pacman hook
-    # re-signs after a kernel or systemd upgrade rebuilds them.
+    # -s records the file so sbctl's pacman hook re-signs it after upgrades.
     for efi in "$UKI" /boot/EFI/systemd/systemd-bootx64.efi /boot/EFI/BOOT/BOOTX64.EFI; do
         sudo test -e "$efi" || continue
         sudo sbctl sign -s "$efi" >/dev/null || warn "could not sign $efi"
     done
     ok "UKI and boot loader signed"
 
-    # --microsoft enrolls Microsoft's certificates alongside ours. Without them,
-    # firmware that verifies option ROMs with those certs (most discrete GPUs and
-    # some NICs) refuses to initialise them once Secure Boot is on.
+    # --microsoft: without these certs, firmware refuses to init option ROMs
+    # (most discrete GPUs, some NICs) once Secure Boot is on.
     sb="$(bootctl status 2>/dev/null | sed -n 's/^[[:space:]]*Secure Boot:[[:space:]]*//p')"
     case "$sb" in
         *enabled*)
@@ -291,9 +256,6 @@ else
             warn "firmware is not in setup mode ($sb) - clear the platform key in the firmware setup, then re-run" ;;
     esac
 
-    # The stale entry stops being regenerated the moment this preset lands, so
-    # the next kernel upgrade leaves it pointing at a mismatched initramfs. Say
-    # so rather than quietly leaving a boot entry that breaks weeks from now.
     if [[ -n "$(sudo find /boot/loader/entries -maxdepth 1 -name '*.conf' -print -quit 2>/dev/null)" ]]; then
         booted="$(bootctl status 2>/dev/null | sed -n 's/^[[:space:]]*Current Entry:[[:space:]]*//p')"
         if [[ "$booted" == arch-linux.efi ]]; then

@@ -5,9 +5,7 @@ Description=Wipe clipboard history periodically
 Type=oneshot
 ExecStart=/usr/bin/cliphist wipe
 
-# Sandboxing - this unit only ever needs to touch cliphist's own db
-# directory, so it gets nothing else: whole filesystem read-only bar that
-# one path, no new capabilities, no kernel/namespace/device access.
+# Sandboxed: read-only filesystem except cliphist's own cache dir.
 NoNewPrivileges=yes
 ProtectSystem=strict
 ProtectHome=read-only

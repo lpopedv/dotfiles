@@ -4,26 +4,14 @@ import Quickshell
 import "../.."
 import "../../ui"
 
-// One level of a system tray item's context menu: the top-level popup below
-// the tray icon (Steam, Mullvad, ...) or a submenu hanging off one of its
-// rows. QsMenuAnchor renders nothing by itself - it is just a positioner -
-// so the actual rows are built here from the item's live DBus menu via
-// QsMenuOpener and styled the way every other popup on this bar is
-// (Theme.glass panel, MenuRow rows), rather than left to look like a bare
-// native menu.
 PopupWindow {
     id: root
 
     property var menu: null
     property var anchorItem: null
-    // A submenu grows to the right of the row that opened it instead of
-    // hanging below the tray icon.
     property bool nested: false
 
-    // Emitted once, by whichever level is deepest when a leaf entry is
-    // chosen. Each ancestor level forwards it upward (see the Connections
-    // below) so the whole chain closes together instead of leaving stale
-    // submenus open behind the tray icon.
+    // Forwarded upward by each ancestor (see Connections below) so the whole chain closes together.
     signal dismissed()
 
     function closeSelf() {
@@ -37,13 +25,9 @@ PopupWindow {
     anchor.adjustment: PopupAdjustment.Slide
 
     implicitWidth: 220
-    // The gap under the bar is transparent space inside the popup rather
-    // than an anchor offset, same reasoning as every other bar popup: the
-    // compositor clamps an anchored popup to the bar's own edge.
     implicitHeight: layout.implicitHeight + 20 + (root.nested ? 0 : Theme.popupInset)
     color: "transparent"
 
-    // Which row (if any) currently has its submenu open.
     property var openRow: null
 
     onVisibleChanged: {
@@ -136,13 +120,7 @@ PopupWindow {
                         }
                     }
 
-                    // A plain nested `TrayMenu {}` here would make the type
-                    // instantiate itself recursively, which quickshell
-                    // refuses at load time even wrapped in a LazyLoader's
-                    // inline delegate (still the same static type graph).
-                    // Loading this same file by URL instead compiles it as
-                    // its own unit, resolved only once a submenu actually
-                    // opens, which breaks the cycle.
+                    // Loaded by URL, not `TrayMenu {}`: quickshell refuses direct recursive instantiation.
                     Loader {
                         id: submenuLoader
                         active: entry.modelData.hasChildren && root.openRow === entry

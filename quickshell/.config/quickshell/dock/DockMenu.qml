@@ -3,24 +3,18 @@ import QtQuick.Layouts
 import Quickshell
 import ".."
 import "../ui"
-
-
-// The right-click menu for one tile. Same shape as the menu every dock puts
-// there: the app's own windows first, then what can be done to the app.
 PopupWindow {
     id: root
 
     property var tile: null
     property var anchorItem: null
-    // Centre of the tile that opened this, in the anchor item's coordinates.
     property real centreX: 0
 
     readonly property var windows: root.tile ? root.tile.windows : []
     readonly property bool running: root.windows.length > 0
 
     anchor.item: root.anchorItem
-    // A one-pixel rect on the plate's top edge: anchored and gravitied to Top,
-    // the compositor centres the menu on it and grows it upward from there.
+    // 1px anchor rect: compositor centres the menu on it and grows upward.
     anchor.rect.x: root.centreX
     anchor.rect.y: 0
     anchor.rect.width: 1
@@ -30,9 +24,8 @@ PopupWindow {
     anchor.adjustment: PopupAdjustment.SlideX
 
     implicitWidth: 250
-    // The gap above the dock is transparent space inside the popup rather than
-    // an anchor margin, for the same reason the notification panel does it:
-    // the compositor clamps an anchored popup to the edge it is anchored to.
+    // Gap above the dock is transparent space inside the popup: compositor
+    // clamps an anchored popup to its anchor edge, so a margin can't do it.
     implicitHeight: layout.implicitHeight + 20 + Theme.popupGap
     color: "transparent"
 
@@ -42,8 +35,6 @@ PopupWindow {
     }
 
     onVisibleChanged: {
-        // Reset so the fade plays again next time. The focus grab closes this
-        // window as well as the tile does, so it cannot live in the caller.
         if (!root.visible) panel.opacity = 0;
     }
 
@@ -85,8 +76,6 @@ PopupWindow {
                 elide: Text.ElideRight
             }
 
-            // Only worth listing when there is a choice to make. With a single
-            // window the tile itself already goes there.
             Repeater {
                 model: root.windows.length > 1 ? root.windows.slice(0, 6) : []
 

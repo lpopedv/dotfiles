@@ -1,5 +1,4 @@
-# Colors mirror nvim/colors/mono.lua and ghostty/themes/mono so this TUI
-# doesn't fall back to a duller default palette.
+# Colors mirror nvim/colors/mono.lua and ghostty/themes/mono.
 gui:
   theme:
     activeBorderColor:

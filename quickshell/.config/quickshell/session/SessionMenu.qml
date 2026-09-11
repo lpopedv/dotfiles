@@ -52,8 +52,7 @@ PanelWindow {
         anchors.fill: parent
         focus: true
 
-        // A fullscreen overlay whose only exit is a key is a trap if keyboard
-        // focus ever fails to arrive. Clicking the background always closes it.
+        // Backstop: a keyboard-only exit is a trap if focus ever fails to arrive.
         MouseArea {
             anchors.fill: parent
             onClicked: SessionState.open = false
@@ -76,10 +75,7 @@ PanelWindow {
 
         GridLayout {
             anchors.fill: parent
-            // wlogout insets the grid rather than filling the screen, which is
-            // what gives its buttons their wide, short proportion. Filling
-            // edge to edge made them tall enough that an icon at 42% read as
-            // floating near the top.
+            // Insets like wlogout does, for the same wide/short button proportion.
             anchors.margins: 230
             columns: root.columns
             columnSpacing: 16
@@ -100,8 +96,7 @@ PanelWindow {
                     color: mouse.containsMouse ? "#1a1a1a" : "#0d0d0d"
                     border.width: 1
                     border.color: mouse.containsMouse ? Theme.fgAct : Theme.border
-                    // wlogout dimmed the whole button rather than recolouring the
-                    // icon, which is why these svgs can stay a fixed #cccccc.
+                    // Dims the whole button rather than recolouring the icon; svgs stay fixed #cccccc.
                     opacity: mouse.containsMouse ? 1.0 : 0.62
 
                     Behavior on opacity {
@@ -113,11 +108,7 @@ PanelWindow {
 
                     Image {
                         source: Qt.resolvedUrl("icons/" + button.modelData.icon + ".svg")
-                        // background-size: 22% is 22% of the width, and a
-                        // background-position percentage aligns that point of
-                        // the image with the same point of the box - so it is
-                        // 0.38 * (free space), not 0.38 * height. That lands
-                        // the icon centre at 42%, which is where wlogout's is.
+                        // y = 0.38 * free space (not height) matches wlogout's icon centre at 42%.
                         width: button.width * 0.22
                         height: width
                         sourceSize.width: width * 2
@@ -129,8 +120,7 @@ PanelWindow {
 
                     ShellText {
                         anchors.horizontalCenter: parent.horizontalCenter
-                        // Measured off wlogout: the label sits low, not tucked
-                        // under the icon.
+                        // Measured off wlogout.
                         y: parent.height * 0.87 - height / 2
                         text: button.modelData.text
                         color: mouse.containsMouse ? Theme.fgAct : Theme.fg

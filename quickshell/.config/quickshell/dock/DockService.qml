@@ -5,33 +5,19 @@ import Quickshell
 import Quickshell.Io
 import Quickshell.Wayland
 
-// Everything the dock knows about applications: which are pinned, which are
-// running, and how a window gets back to the .desktop entry that describes it.
-// The views only draw what this exposes, so the dock and its context menu can
-// never disagree about what an icon stands for.
-//
-// Windows come from the wlr foreign-toplevel protocol rather than from
-// Hyprland's IPC: it is the same list every compositor publishes, so nothing
-// here is tied to this machine's window manager.
+// Windows come from wlr foreign-toplevel, not Hyprland IPC: compositor-agnostic.
 QtObject {
     id: root
 
-    // ------------------------------------------------------------------- pins
-
-    // What hypr/keybinds.lua reaches for, in the order it binds them. A machine
-    // that has just been installed should have a dock worth looking at before
-    // anything has been pinned by hand.
+    // Matches what hypr/keybinds.lua binds, so a fresh install has a usable dock.
     readonly property var defaultPinned: [
         "com.mitchellh.ghostty", "chromium", "org.gnome.Nautilus", "emacsclient"
     ]
 
     readonly property var pinned: settings.apps ?? []
 
-    // State, not config: this is the record of what the user put on their own
-    // dock and how they like it behaving, so it lives beside the rest of the
-    // shell's state rather than in the repo. `watchChanges` is what keeps a
-    // second monitor's dock - a separate window with its own view of this
-    // singleton - in step with the first.
+    // State, not config: lives beside shell state, not in the repo.
+    // watchChanges keeps a second monitor's dock window in sync with this one.
     property FileView store: FileView {
         id: store
 
@@ -41,8 +27,6 @@ QtObject {
         onAdapterUpdated: store.writeAdapter()
 
         onLoadFailed: error => {
-            // First run: seed the file rather than leaving the dock empty and
-            // the user with nothing to click.
             if (error === FileViewError.FileNotFound) store.writeAdapter();
         }
 
@@ -50,35 +34,19 @@ QtObject {
             id: settings
 
             property var apps: root.defaultPinned.slice()
-
-            // "auto" reveals on hover, "pinned" stays up, "hidden" is off.
             property string mode: "auto"
-            // An empty workspace is the one time a hidden dock is worth
-            // showing without being asked for.
             property bool showOnDesktop: true
-            // Drops pinned apps that are not running, which turns the dock
-            // from a launcher into a window switcher.
             property bool runningOnly: false
-            // The "Medium" preset below. A literal rather than a Theme token
-            // because the size is the user's to change at runtime, so this
-            // file is where it lives.
             property int iconSize: 40
         }
     }
 
-    // --------------------------------------------------------------- settings
-
-    // Every one of these falls back rather than reading the adapter straight.
-    // A key the stored file does not have yet comes back undefined - which is
-    // what happens to all of these the first time a dock.json written by an
-    // older version of this file is loaded, and to any of them if the file is
-    // edited by hand.
+    // Fallbacks handle a dock.json missing a key (older version, or hand-edited).
     readonly property string mode: settings.mode ?? "auto"
     readonly property bool showOnDesktop: settings.showOnDesktop ?? true
     readonly property bool runningOnly: settings.runningOnly ?? false
 
-    // Clamped on read for the same reason: a typo in the file should not be
-    // able to produce a dock with no icons on it.
+    // Clamped so a bad value in the file can't produce a dock with no icons.
     readonly property int iconSize: Math.max(24, Math.min(64, settings.iconSize ?? 40))
 
     readonly property var modes: [
@@ -89,9 +57,7 @@ QtObject {
 
     function setMode(mode) { settings.mode = mode; }
 
-    // What the bar button's click does. Off is deliberately not in the cycle:
-    // it is reachable from the menu, and a stray click that made the dock
-    // vanish with no visible way back would be a trap.
+    // "hidden" deliberately excluded: a stray click shouldn't vanish the dock with no way back.
     function toggleMode() {
         settings.mode = settings.mode === "pinned" ? "auto" : "pinned";
     }
@@ -111,9 +77,7 @@ QtObject {
         return root.pinned.indexOf(key) >= 0;
     }
 
-    // Every one of these assigns a fresh array. Mutating `settings.apps` in
-    // place would change the value without changing the property, so nothing
-    // would redraw and nothing would be written back to disk.
+    // Fresh array each time: mutating settings.apps in place wouldn't trigger a redraw or a save.
     function pin(key) {
         if (!key || root.isPinned(key)) return;
         settings.apps = [...root.pinned, key];
@@ -128,17 +92,13 @@ QtObject {
         else root.pin(key);
     }
 
-    // ------------------------------------------------------------------ entry
-
-    // Resolving an app id walks the whole application list in the worst case,
-    // and the dock asks for every window on every rebuild, so answers are kept.
+    // Resolving an app id can walk the whole application list; the dock asks per rebuild, so cache it.
     property var entryCache: ({})
 
     property Connections catalogue: Connections {
         target: DesktopEntries
 
-        // An app installed mid-session would otherwise stay unrecognised - and
-        // iconless - until the shell was reloaded.
+        // Otherwise an app installed mid-session stays unrecognised until reload.
         function onApplicationsChanged() {
             root.entryCache = ({});
         }
@@ -152,9 +112,8 @@ QtObject {
         let entry = DesktopEntries.byId(bare);
         if (!entry) entry = DesktopEntries.byId(bare.toLowerCase());
 
-        // StartupWMClass is the entry's own claim about the app id its windows
-        // will carry. It is the only reliable link for the apps whose window
-        // class has nothing to do with the name of their desktop file.
+        // startupClass is the entry's own claim about its windows' app id - the
+        // only reliable link when the window class doesn't match the desktop file name.
         if (!entry) {
             const wanted = bare.toLowerCase();
             for (const candidate of DesktopEntries.applications.values) {
@@ -166,18 +125,15 @@ QtObject {
             }
         }
 
-        // Guesses, and documented as such upstream - last resort, after both
-        // of the answers the app told us itself.
+        // Last resort: a guess, after both of the app's own claims.
         if (!entry) entry = DesktopEntries.heuristicLookup(bare);
 
         root.entryCache[appId] = entry;
         return entry;
     }
 
-    // Which tile a window belongs on. Pinned tiles get first claim on their own
-    // id and on the window class they declare, so a pinned launcher and the
-    // windows it opens stay one icon even when the two are named differently -
-    // emacsclient.desktop opening windows classed `Emacs` is the usual case.
+    // Pinned tiles get first claim on their id and startupClass, so a pinned
+    // launcher and the windows it opens stay one icon even when named differently.
     function keyFor(appId) {
         if (!appId) return "";
         const lower = appId.toLowerCase();
@@ -192,8 +148,6 @@ QtObject {
         const entry = root.entryFor(appId);
         return entry ? entry.id : lower;
     }
-
-    // ------------------------------------------------------------------ tiles
 
     function describe(key, windows, pinned) {
         const entry = root.entryFor(key);
@@ -211,18 +165,15 @@ QtObject {
         };
     }
 
-    // Pinned tiles first, in the order they were pinned, then everything else
-    // that happens to be running - the layout every dock has settled on, and
-    // the reason a pinned icon never moves out from under the pointer just
-    // because something else was launched.
+    // Pinned tiles first (pin order), then running ones - a pinned icon never
+    // moves under the pointer just because something else launched.
     readonly property var items: {
         const groups = {};
         const running = [];
 
         for (const toplevel of ToplevelManager.toplevels.values) {
-            // Reading appId here is also what makes this rebuild when an app
-            // sets its id late, which several toolkits do a frame after the
-            // window is first mapped.
+            // Reading appId here is also what triggers a rebuild once a
+            // toolkit sets it late, a frame after the window is mapped.
             const key = root.keyFor(toplevel.appId);
             if (!(key in groups)) {
                 groups[key] = [];
@@ -242,25 +193,18 @@ QtObject {
         return tiles;
     }
 
-    // Where the divider goes. Counted off the tiles actually on the dock rather
-    // than off the pin list, which are not the same number once `runningOnly`
-    // has dropped the pinned apps that are closed.
+    // Counted off actual tiles, not the pin list: runningOnly can make them differ.
     readonly property int pinnedCount: {
         let count = 0;
         for (const tile of root.items) if (tile.pinned) count++;
         return count;
     }
 
-    // ---------------------------------------------------------------- actions
-
-    // The tile whose icon is bouncing because it was just asked to start. One
-    // at a time on purpose: a queue of bouncing icons is noise, and the bounce
-    // only has to answer "did my click land".
+    // One bouncing tile at a time on purpose - a queue would just be noise.
     property string launching: ""
 
     property Timer launchTimer: Timer {
-        // Long enough for a cold start on a slow disk. This is the backstop -
-        // the bounce normally ends the moment the app's first window appears.
+        // Backstop for a cold start; normally the bounce ends once a window appears.
         interval: 8000
         onTriggered: root.launching = ""
     }
@@ -285,15 +229,12 @@ QtObject {
 
     function focus(toplevel) {
         if (!toplevel) return;
-        // A minimised window that is only activated comes back focused but
-        // still hidden, which reads as the click having done nothing.
+        // activate() alone leaves a minimised window focused but still hidden.
         if (toplevel.minimized) toplevel.minimized = false;
         toplevel.activate();
     }
 
-    // Clicking a tile that is already focused steps to that app's next window.
-    // `indexOf` returning -1 for a window we do not own lands on the first one,
-    // which is what a click from anywhere else should do.
+    // indexOf returning -1 for an unowned window lands on the first one, as intended.
     function activate(tile) {
         if (tile.windows.length === 0) {
             root.launch(tile);
@@ -314,7 +255,7 @@ QtObject {
     }
 
     function quit(tile) {
-        // A copy: closing a window takes it out of the live list mid-loop.
+        // slice(): closing a window mutates the live list mid-iteration otherwise.
         for (const toplevel of tile.windows.slice()) toplevel.close();
     }
 }

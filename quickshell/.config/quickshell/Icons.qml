@@ -9,34 +9,31 @@ QtObject {
         return String.fromCodePoint(code);
     }
 
-    readonly property string clock: cp(0xF0954)        // nf-md-clock_outline
-    readonly property string robot: cp(0xF06A9)        // nf-md-robot
-    readonly property string volume: cp(0xF057E)       // nf-md-volume_high
-    readonly property string volumeMuted: cp(0xF075F)  // nf-md-volume_off
-    readonly property string memory: cp(0xF035B)       // nf-md-memory
-    readonly property string eyedropper: cp(0xF020B)   // nf-md-eyedropper
-    readonly property string coffee: cp(0xF06CA)       // nf-md-coffee_outline
-    readonly property string bell: cp(0xF009A)         // nf-md-bell
-    readonly property string bellOutline: cp(0xF009C)  // nf-md-bell_outline
-    readonly property string bellOffOutline: cp(0xF0A91) // nf-md-bell_off_outline
-    // Font Awesome range: 0xF186, not 0xF0186. Wrong one renders tofu.
-    readonly property string moon: cp(0xF186)          // nf-fa-moon_o
-    readonly property string power: cp(0xF0425)        // nf-md-power
-    readonly property string ethernet: cp(0xF0002)     // nf-md-access_point_network
-    readonly property string wifiOff: cp(0xF092E)      // nf-md-wifi_strength_off_outline
-    readonly property string brightness: cp(0xF00DF)   // nf-md-brightness_6
-    readonly property string charging: cp(0xF0084)     // nf-md-battery_charging
-    readonly property string dock: cp(0xF10A9)         // nf-md-dock_bottom
+    readonly property string clock: cp(0xF0954)
+    readonly property string robot: cp(0xF06A9)
+    readonly property string volume: cp(0xF057E)
+    readonly property string volumeMuted: cp(0xF075F)
+    readonly property string memory: cp(0xF035B)
+    readonly property string eyedropper: cp(0xF020B)
+    readonly property string coffee: cp(0xF06CA)
+    readonly property string bell: cp(0xF009A)
+    readonly property string bellOutline: cp(0xF009C)
+    readonly property string bellOffOutline: cp(0xF0A91)
+    // FA range is 0xF186, not 0xF0186 - wrong one renders tofu.
+    readonly property string moon: cp(0xF186)
+    readonly property string power: cp(0xF0425)
+    readonly property string ethernet: cp(0xF0002)
+    readonly property string wifiOff: cp(0xF092E)
+    readonly property string brightness: cp(0xF00DF)
+    readonly property string charging: cp(0xF0084)
+    readonly property string dock: cp(0xF10A9)
 
-    // Menu marks. A tick for the independent switches, filled and hollow
-    // circles for the one group where the options exclude each other.
-    readonly property string check: cp(0xF012C)        // nf-md-check
-    readonly property string radioOn: cp(0xF0765)      // nf-md-circle
-    readonly property string radioOff: cp(0xF0130)     // nf-md-circle_outline
-    // Submenu indicator, e.g. a tray item's "Select location" row.
-    readonly property string chevronRight: cp(0xF0142) // nf-md-chevron_right
+    readonly property string check: cp(0xF012C)
+    readonly property string radioOn: cp(0xF0765)
+    readonly property string radioOff: cp(0xF0130)
+    readonly property string chevronRight: cp(0xF0142)
 
-    readonly property string workspaceDot: "●"    // BLACK CIRCLE
+    readonly property string workspaceDot: "●"
 
     readonly property var wifi: [
         cp(0xF092F), cp(0xF091F), cp(0xF0922), cp(0xF0925), cp(0xF0928)

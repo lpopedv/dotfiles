@@ -1,8 +1,7 @@
 background = #000000
 foreground = #b3b3b3
 
-# ANSI palette mirrors nvim/colors/mono.lua's `ansi` table exactly, so TUIs
-# (lazygit, htop, etc.) that only get 16 colors read the same theme as nvim.
+# Palette mirrors nvim/colors/mono.lua's `ansi` table (16-color TUIs).
 palette = 0=#0d0d0d
 palette = 1=#c56b51
 palette = 2=#7abc5c

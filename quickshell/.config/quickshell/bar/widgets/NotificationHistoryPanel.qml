@@ -16,18 +16,14 @@ PopupWindow {
     anchor.adjustment: PopupAdjustment.SlideX
 
     implicitWidth: 400
-    // The gap under the bar is transparent space inside the popup rather than
-    // an anchor offset: the compositor clamps an anchored popup to the bar's
-    // own edge, so anchor.margins has nothing to give here.
+    // Gap under the bar is transparent space inside the popup: the compositor
+    // clamps an anchored popup to the bar's edge, so anchor.margins can't do it.
     implicitHeight: layout.implicitHeight + 28 + Theme.popupInset
     color: "transparent"
 
     onVisibleChanged: {
-        // Lets the service park its clock while nothing shows a relative time.
         NotificationsService.historyOpen = root.visible;
-        // Reset so the fade below plays again on the next open. The window is
-        // hidden by the focus grab as well as by the bar button, so this
-        // cannot live in whatever opened it.
+        // Resets the fade-in for next open; can close via focus grab too, not just the button.
         if (!root.visible) panel.opacity = 0;
     }
 
@@ -76,9 +72,6 @@ PopupWindow {
 
                 Item { Layout.fillWidth: true }
 
-                // Both GNOME and KDE keep the Do Not Disturb switch in the
-                // notification list itself rather than out in the bar, where it
-                // is a mystery icon you have to remember the meaning of.
                 Chip {
                     text: "Do not disturb"
                     quiet: true
@@ -112,9 +105,7 @@ PopupWindow {
                 color: Theme.subtle
             }
 
-            // The indicator below has to be a sibling of the list, not a child:
-            // a Flickable puts declared children inside its content item, where
-            // it would scroll away with the notifications.
+            // Indicator must be a sibling of the list: as a Flickable child it'd scroll away too.
             Item {
                 Layout.fillWidth: true
                 Layout.preferredHeight: Math.min(520, list.contentHeight)
@@ -124,9 +115,7 @@ PopupWindow {
                     id: list
 
                     anchors.fill: parent
-                    // A fixed gutter for the indicator. Sizing it to whether
-                    // the list actually overflows would loop, since a card's
-                    // height depends on the width it wraps its body at.
+                    // Fixed gutter: sizing to actual overflow would loop (card height depends on wrap width).
                     anchors.rightMargin: 8
                     clip: true
                     spacing: 6
@@ -142,9 +131,7 @@ PopupWindow {
                     }
                 }
 
-                // Hand-drawn rather than a QtQuick.Controls ScrollBar: the rest
-                // of the shell draws its own chrome, and this avoids pulling a
-                // Controls style into the config for one 2px rectangle.
+                // Hand-drawn, not QtQuick.Controls ScrollBar: avoids pulling in a Controls style for one rectangle.
                 Rectangle {
                     anchors.right: parent.right
                     width: 3

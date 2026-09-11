@@ -7,9 +7,7 @@ import "../../ui"
 BarItem {
     id: root
 
-    // A config reload rebuilds every widget from scratch, which would drop the
-    // inhibitor and let the machine lock part way through whatever the toggle
-    // was protecting. This is state that has to outlive a reload.
+    // Must outlive a config reload, or the inhibitor drops and the machine locks mid-use.
     property PersistentProperties persist: PersistentProperties {
         reloadableId: "caffeine"
         property bool enabled: false

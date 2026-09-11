@@ -1,6 +1,5 @@
 #!/usr/bin/env bash
-# Prints "  <icon> <capacity>%" for the first battery found, or nothing on
-# machines without one (e.g. desktops), so the tmux status bar stays clean.
+# Prints nothing if there's no battery (e.g. desktops).
 
 bat=$(find /sys/class/power_supply -maxdepth 1 -name 'BAT*' -print -quit 2>/dev/null)
 [ -z "$bat" ] && exit 0

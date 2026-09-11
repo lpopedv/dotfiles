@@ -1,7 +1,5 @@
 local M = {}
 
--- MODE
-
 local NORMAL = { icon = '󰇀', hl = 'MiniStatuslineModeNormal' }
 local INSERT = { icon = '', hl = 'MiniStatuslineModeInsert' }
 local VISUAL = { icon = '󰈈', hl = 'MiniStatuslineModeVisual' }
@@ -15,7 +13,7 @@ local TERMINAL = { icon = '', hl = 'MiniStatuslineModeOther' }
 
 local CTRL_V, CTRL_S = '\22', '\19'
 
--- Every value `mode()` can return, per `:help mode()`.
+-- every value `mode()` can return, per :help mode()
 local mode_map = {
   n = vim.tbl_extend('force', NORMAL, { label = 'NORMAL' }),
   niI = vim.tbl_extend('force', NORMAL, { label = 'NORMAL' }),
@@ -76,8 +74,6 @@ vim.api.nvim_create_autocmd('ModeChanged', {
   callback = function() vim.cmd.redrawstatus() end,
 })
 
--- GIT BRANCH (async, cached per buffer)
-
 local function refresh_git_branch()
   local buf = vim.api.nvim_get_current_buf()
   if vim.bo[buf].buftype ~= '' then return end
@@ -111,8 +107,6 @@ local function git_branch()
   return (branch and branch ~= '') and (' %#Comment#  ' .. branch .. '%*') or ''
 end
 
--- DIAGNOSTICS
-
 local diagnostic_icons = {
   { vim.diagnostic.severity.ERROR, '', '%#DiagnosticError#' },
   { vim.diagnostic.severity.WARN, '', '%#DiagnosticWarn#' },
@@ -132,14 +126,10 @@ local function diagnostics()
   return #parts > 0 and (table.concat(parts, ' ') .. ' ') or ''
 end
 
--- LSP CLIENTS
-
 local function lsp_clients()
   local names = vim.tbl_map(function(c) return c.name end, vim.lsp.get_clients({ bufnr = 0 }))
   return #names > 0 and ('│ %#Comment# ' .. table.concat(names, ',') .. '%*') or ''
 end
-
--- FILETYPE (via nvim-web-devicons, already installed)
 
 local has_devicons, devicons = pcall(require, 'nvim-web-devicons')
 
@@ -154,8 +144,6 @@ local function filetype()
   end
   return ' ' .. ft
 end
-
--- RENDER
 
 function M.render()
   return table.concat({

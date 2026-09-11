@@ -7,9 +7,7 @@ import "../../ui"
 RowLayout {
     id: root
 
-    // Six slots always, but the keybinds go up to ten - a window parked on
-    // workspace 8 would otherwise be invisible and unreachable from the bar.
-    // Special workspaces (the scratchpad) carry negative ids and are skipped.
+    // Keybinds go up to 10; grows past 6 so a window on ws 8 stays reachable.
     readonly property int minimum: 6
     readonly property int maximum: 10
 

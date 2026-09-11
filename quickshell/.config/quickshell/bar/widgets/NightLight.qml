@@ -9,8 +9,7 @@ BarItem {
 
     readonly property int warmTemp: 4000
 
-    // Survives a config reload for the same reason Caffeine does: otherwise
-    // the screen snaps back to cold white every time the config is touched.
+    // Must outlive a config reload like Caffeine.qml, or it snaps back to cold white.
     property PersistentProperties persist: PersistentProperties {
         reloadableId: "nightlight"
         property bool enabled: false
