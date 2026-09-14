@@ -47,36 +47,36 @@ url_api = "https://api.github.com/repos/biomejs/biome/releases/assets/501376679"
 provenance = "github-attestations"
 
 [[tools.elixir]]
-version = "1.20.2-otp-29"
+version = "1.20.4-otp-29"
 backend = "core:elixir"
 
 [tools.elixir."platforms.linux-arm64"]
-checksum = "sha256:a9e88cd41fbbba7da6f6dc237a49dd2ed4e70457121035cc7fc56ad05582f394"
-url = "https://builds.hex.pm/builds/elixir/v1.20.2-otp-29.zip"
+checksum = "sha256:7863c546cda13fecc949e562e326042451dacf8fd8698a36783cb71eeb223b46"
+url = "https://builds.hex.pm/builds/elixir/v1.20.4-otp-29.zip"
 
 [tools.elixir."platforms.linux-arm64-musl"]
-checksum = "sha256:a9e88cd41fbbba7da6f6dc237a49dd2ed4e70457121035cc7fc56ad05582f394"
-url = "https://builds.hex.pm/builds/elixir/v1.20.2-otp-29.zip"
+checksum = "sha256:7863c546cda13fecc949e562e326042451dacf8fd8698a36783cb71eeb223b46"
+url = "https://builds.hex.pm/builds/elixir/v1.20.4-otp-29.zip"
 
 [tools.elixir."platforms.linux-x64"]
-checksum = "sha256:a9e88cd41fbbba7da6f6dc237a49dd2ed4e70457121035cc7fc56ad05582f394"
-url = "https://builds.hex.pm/builds/elixir/v1.20.2-otp-29.zip"
+checksum = "blake3:cfddef5f170efc103420c845ee627c6eb80f9b61c25691d50bc99fec0738b560"
+url = "https://builds.hex.pm/builds/elixir/v1.20.4-otp-29.zip"
 
 [tools.elixir."platforms.linux-x64-musl"]
-checksum = "sha256:a9e88cd41fbbba7da6f6dc237a49dd2ed4e70457121035cc7fc56ad05582f394"
-url = "https://builds.hex.pm/builds/elixir/v1.20.2-otp-29.zip"
+checksum = "sha256:7863c546cda13fecc949e562e326042451dacf8fd8698a36783cb71eeb223b46"
+url = "https://builds.hex.pm/builds/elixir/v1.20.4-otp-29.zip"
 
 [tools.elixir."platforms.macos-arm64"]
-checksum = "sha256:a9e88cd41fbbba7da6f6dc237a49dd2ed4e70457121035cc7fc56ad05582f394"
-url = "https://builds.hex.pm/builds/elixir/v1.20.2-otp-29.zip"
+checksum = "sha256:7863c546cda13fecc949e562e326042451dacf8fd8698a36783cb71eeb223b46"
+url = "https://builds.hex.pm/builds/elixir/v1.20.4-otp-29.zip"
 
 [tools.elixir."platforms.macos-x64"]
-checksum = "sha256:a9e88cd41fbbba7da6f6dc237a49dd2ed4e70457121035cc7fc56ad05582f394"
-url = "https://builds.hex.pm/builds/elixir/v1.20.2-otp-29.zip"
+checksum = "sha256:7863c546cda13fecc949e562e326042451dacf8fd8698a36783cb71eeb223b46"
+url = "https://builds.hex.pm/builds/elixir/v1.20.4-otp-29.zip"
 
 [tools.elixir."platforms.windows-x64"]
-checksum = "sha256:a9e88cd41fbbba7da6f6dc237a49dd2ed4e70457121035cc7fc56ad05582f394"
-url = "https://builds.hex.pm/builds/elixir/v1.20.2-otp-29.zip"
+checksum = "sha256:7863c546cda13fecc949e562e326042451dacf8fd8698a36783cb71eeb223b46"
+url = "https://builds.hex.pm/builds/elixir/v1.20.4-otp-29.zip"
 
 [[tools.elixir-ls]]
 version = "0.31.1"
@@ -118,47 +118,47 @@ url = "https://github.com/elixir-lsp/elixir-ls/releases/download/v0.31.1/elixir-
 url_api = "https://api.github.com/repos/elixir-lsp/elixir-ls/releases/assets/444092062"
 
 [[tools.erlang]]
-version = "29.0.2"
+version = "29.0.6"
 backend = "core:erlang"
 
 [tools.erlang."platforms.linux-arm64"]
-checksum = "sha256:b9a7714fdd282c4a7113651b1e2728a58799e60ffe20e545f5cc94c621527b15"
-url = "https://github.com/erlang/otp/releases/download/OTP-29.0.2/otp_src_29.0.2.tar.gz"
-url_api = "https://api.github.com/repos/erlang/otp/releases/assets/443592302"
+checksum = "sha256:36c89ffdac9d7531c19be0cee34355b167ea95188625d32bee61ebf49ac82afa"
+url = "https://github.com/erlang/otp/releases/download/OTP-29.0.6/otp_src_29.0.6.tar.gz"
+url_api = "https://api.github.com/repos/erlang/otp/releases/assets/539623111"
 install = "source"
 
 [tools.erlang."platforms.linux-arm64-musl"]
-checksum = "sha256:b9a7714fdd282c4a7113651b1e2728a58799e60ffe20e545f5cc94c621527b15"
-url = "https://github.com/erlang/otp/releases/download/OTP-29.0.2/otp_src_29.0.2.tar.gz"
-url_api = "https://api.github.com/repos/erlang/otp/releases/assets/443592302"
+checksum = "sha256:36c89ffdac9d7531c19be0cee34355b167ea95188625d32bee61ebf49ac82afa"
+url = "https://github.com/erlang/otp/releases/download/OTP-29.0.6/otp_src_29.0.6.tar.gz"
+url_api = "https://api.github.com/repos/erlang/otp/releases/assets/539623111"
 install = "source"
 
 [tools.erlang."platforms.linux-x64"]
-checksum = "sha256:b9a7714fdd282c4a7113651b1e2728a58799e60ffe20e545f5cc94c621527b15"
-url = "https://github.com/erlang/otp/releases/download/OTP-29.0.2/otp_src_29.0.2.tar.gz"
-url_api = "https://api.github.com/repos/erlang/otp/releases/assets/443592302"
+checksum = "sha256:36c89ffdac9d7531c19be0cee34355b167ea95188625d32bee61ebf49ac82afa"
+url = "https://github.com/erlang/otp/releases/download/OTP-29.0.6/otp_src_29.0.6.tar.gz"
+url_api = "https://api.github.com/repos/erlang/otp/releases/assets/539623111"
 install = "source"
 
 [tools.erlang."platforms.linux-x64-musl"]
-checksum = "sha256:b9a7714fdd282c4a7113651b1e2728a58799e60ffe20e545f5cc94c621527b15"
-url = "https://github.com/erlang/otp/releases/download/OTP-29.0.2/otp_src_29.0.2.tar.gz"
-url_api = "https://api.github.com/repos/erlang/otp/releases/assets/443592302"
+checksum = "sha256:36c89ffdac9d7531c19be0cee34355b167ea95188625d32bee61ebf49ac82afa"
+url = "https://github.com/erlang/otp/releases/download/OTP-29.0.6/otp_src_29.0.6.tar.gz"
+url_api = "https://api.github.com/repos/erlang/otp/releases/assets/539623111"
 install = "source"
 
 [tools.erlang."platforms.macos-arm64"]
-checksum = "sha256:ec6e09dee496adf646b0a22eef26b769e7f8032c83dd10292c58d50fb38e2210"
-url = "https://github.com/erlef/otp_builds/releases/download/OTP-29.0.2/otp-aarch64-apple-darwin.tar.gz"
-url_api = "https://api.github.com/repos/erlef/otp_builds/releases/assets/443541329"
+checksum = "sha256:935ecc08e3ea156d3050536a84338518020c28fa9a977d02671037069cb85a41"
+url = "https://github.com/erlef/otp_builds/releases/download/OTP-29.0.6/otp-aarch64-apple-darwin.tar.gz"
+url_api = "https://api.github.com/repos/erlef/otp_builds/releases/assets/539509715"
 
 [tools.erlang."platforms.macos-x64"]
-checksum = "sha256:3da4495ce6372f5fda002ed1ae45832a11e05aaa9928790e0bf1d14e3ee84657"
-url = "https://github.com/erlef/otp_builds/releases/download/OTP-29.0.2/otp-x86_64-apple-darwin.tar.gz"
-url_api = "https://api.github.com/repos/erlef/otp_builds/releases/assets/443557769"
+checksum = "sha256:f07c376d6f0810af3acfd90204e9459c76887c07960e78901e2fac170891f1a3"
+url = "https://github.com/erlef/otp_builds/releases/download/OTP-29.0.6/otp-x86_64-apple-darwin.tar.gz"
+url_api = "https://api.github.com/repos/erlef/otp_builds/releases/assets/539520619"
 
 [tools.erlang."platforms.windows-x64"]
-checksum = "sha256:dffd5fca2e841267bfb4e961c38bb18436a4b55548deae727d5691a984f7b80f"
-url = "https://github.com/erlang/otp/releases/download/OTP-29.0.2/otp_win64_29.0.2.zip"
-url_api = "https://api.github.com/repos/erlang/otp/releases/assets/443733928"
+checksum = "sha256:c13b374db73c2d7d757eb3317183d74f872354e5746976f18bbd5de46bc95d51"
+url = "https://github.com/erlang/otp/releases/download/OTP-29.0.6/otp_win64_29.0.6.zip"
+url_api = "https://api.github.com/repos/erlang/otp/releases/assets/539580967"
 
 [[tools."github:artempyanykh/marksman"]]
 version = "2026-02-08"
@@ -266,36 +266,36 @@ url = "https://github.com/LuaLS/lua-language-server/releases/download/3.19.0/lua
 url_api = "https://api.github.com/repos/LuaLS/lua-language-server/releases/assets/505550527"
 
 [[tools.node]]
-version = "24.18.0"
+version = "24.21.0"
 backend = "core:node"
 
 [tools.node."platforms.linux-arm64"]
-checksum = "sha256:6b4484c2190274175df9aa8f28e2d758a819cb1c1fe6ab481e2f95b463ab8508"
-url = "https://nodejs.org/dist/v24.18.0/node-v24.18.0-linux-arm64.tar.gz"
+checksum = "sha256:724282c3b43aec998aa9527380465b45d229e021b58035f5f4f63095eabfe5d5"
+url = "https://nodejs.org/dist/v24.21.0/node-v24.21.0-linux-arm64.tar.gz"
 
 [tools.node."platforms.linux-arm64-musl"]
-checksum = "sha256:b1c6c2dc31b46dd8fb2322f4fe75b07e775c5120bc37251deeea28f529d4567b"
-url = "https://unofficial-builds.nodejs.org/download/release/v24.18.0/node-v24.18.0-linux-arm64-musl.tar.gz"
+checksum = "sha256:3048b0811e158ca0d8672b59c839861763e144492980d8d29b369dfee45747e4"
+url = "https://unofficial-builds.nodejs.org/download/release/v24.21.0/node-v24.21.0-linux-arm64-musl.tar.gz"
 
 [tools.node."platforms.linux-x64"]
-checksum = "sha256:783130984963db7ba9cbd01089eaf2c2efb055c7c1693c943174b967b3050cb8"
-url = "https://nodejs.org/dist/v24.18.0/node-v24.18.0-linux-x64.tar.gz"
+checksum = "sha256:6e1db87ef58b8819e5d5402eff1536491b18edd8eb7bee5ef7897876e88dc5ff"
+url = "https://nodejs.org/dist/v24.21.0/node-v24.21.0-linux-x64.tar.gz"
 
 [tools.node."platforms.linux-x64-musl"]
-checksum = "sha256:ea58409911e141ec6b19d9178efa2d9185a13295005b1cbf5521b3157eed1d95"
-url = "https://unofficial-builds.nodejs.org/download/release/v24.18.0/node-v24.18.0-linux-x64-musl.tar.gz"
+checksum = "sha256:01a713e34da98e7b4d2a3191ee7ca3f93dd0384d1a2ef23c379b2161ee6e133a"
+url = "https://unofficial-builds.nodejs.org/download/release/v24.21.0/node-v24.21.0-linux-x64-musl.tar.gz"
 
 [tools.node."platforms.macos-arm64"]
-checksum = "sha256:e1a97e14c99c803e96c7339403282ea05a499c32f8d83defe9ef5ec66f979ed1"
-url = "https://nodejs.org/dist/v24.18.0/node-v24.18.0-darwin-arm64.tar.gz"
+checksum = "sha256:bed7eea5325e1108f32ce5228ddd6a5f0f08a499ee42aa7442aea583702f6057"
+url = "https://nodejs.org/dist/v24.21.0/node-v24.21.0-darwin-arm64.tar.gz"
 
 [tools.node."platforms.macos-x64"]
-checksum = "sha256:dfd0dbd3e721503434df7b7205e719f61b3a3a31b2bcf9729b8b91fea240f080"
-url = "https://nodejs.org/dist/v24.18.0/node-v24.18.0-darwin-x64.tar.gz"
+checksum = "sha256:1462cb3b3046b815cf8ea436d3da450ec1a9f11dac7e5a46b0ada5305d7e8097"
+url = "https://nodejs.org/dist/v24.21.0/node-v24.21.0-darwin-x64.tar.gz"
 
 [tools.node."platforms.windows-x64"]
-checksum = "sha256:0ae68406b42d7725661da979b1403ec9926da205c6770827f33aac9d8f26e821"
-url = "https://nodejs.org/dist/v24.18.0/node-v24.18.0-win-x64.zip"
+checksum = "sha256:158f7685b44de51f6c0df1d153526cbcd3e1bc739a8dfc607721cef75de9e541"
+url = "https://nodejs.org/dist/v24.21.0/node-v24.21.0-win-x64.zip"
 
 [[tools."npm:typescript"]]
 version = "7.0.2"
