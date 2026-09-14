@@ -7,6 +7,8 @@
 # `split-window -f` to break out of an existing layout later.
 
 set -euo pipefail
+exec >> "$(dirname "$0")/project-layout.log" 2>&1
+echo "--- $(date -Iseconds) args=$* pane=${HERDR_ACTIVE_PANE_ID:-unset} cwd=${HERDR_ACTIVE_PANE_CWD:-unset} ---"
 
 editor_cmd="nvim"
 agent_cmd="claude"
@@ -20,7 +22,7 @@ for arg in "$@"; do
   esac
 done
 
-cwd="${HERDR_ACTIVE_PANE_CWD:-$PWD}"
+cwd="${HERDR_ACTIVE_PANE_CWD:-$HOME}"
 
 json() { python3 -c "import sys,json;d=json.load(sys.stdin);print(d$1)"; }
 
