@@ -1,5 +1,4 @@
 #!/usr/bin/env bash
-# herdr port of tmux/.config/tmux/scripts/project-layout.sh.
 # Builds a 3-column top row (editor/agent/git) over a full-width bottom pane,
 # in a fresh tab. --tools also starts those three commands; bare splits otherwise.
 #

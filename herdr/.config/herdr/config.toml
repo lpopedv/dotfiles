@@ -7,8 +7,8 @@ auto_switch = false
 [keys]
 prefix = "ctrl+space"
 
-split_vertical   = ["prefix+v"]        # como seu antigo w-table v
-split_horizontal = ["prefix+minus", "prefix+s"]  # como seu antigo w-table s
+split_vertical   = ["prefix+v"]
+split_horizontal = ["prefix+minus", "prefix+s"]
 
 focus_pane_left  = ["prefix+h"]
 focus_pane_down  = ["prefix+j"]
@@ -20,10 +20,10 @@ swap_pane_down  = ["prefix+shift+j"]
 swap_pane_up    = ["prefix+shift+k"]
 swap_pane_right = ["prefix+shift+l"]
 
-zoom        = ["prefix+f"]      # seu bind -r f
-resize_mode = ["prefix+r"]      # dentro do modo, h/j/k/l redimensionam
-copy_mode   = ["prefix+space"]  # como seu bind Space
-close_pane  = ["prefix+x"]      # como seu b-table d
+zoom        = ["prefix+f"]
+resize_mode = ["prefix+r"]
+copy_mode   = ["prefix+space"]
+close_pane  = ["prefix+x"]
 
 next_tab     = ["prefix+]"]
 previous_tab = ["prefix+["]
