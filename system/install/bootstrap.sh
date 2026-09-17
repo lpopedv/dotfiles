@@ -30,6 +30,14 @@ fi
 
 (( DRY )) && log "DRY RUN - nothing will be modified"
 
+if (( ! DRY )); then
+    log "Sudo"
+    # Asked upfront, once, with context - the alternative is a silent sudo
+    # prompt buried dozens of steps in (e.g. mid Secure Boot), which on a
+    # freshly-booted login looks like the terminal just hung.
+    sudo -v || { echo "sudo access is required to continue" >&2; exit 1; }
+fi
+
 log "Official packages"
 mapfile -t want < <(read_list "$INSTALL/packages.txt")
 mapfile -t missing < <(comm -23 \
@@ -242,7 +250,10 @@ else
 
     # --microsoft: without these certs, firmware refuses to init option ROMs
     # (most discrete GPUs, some NICs) once Secure Boot is on.
-    sb="$(bootctl status 2>/dev/null | sed -n 's/^[[:space:]]*Secure Boot:[[:space:]]*//p')"
+    # sudo, not a plain read: unprivileged bootctl exits non-zero on the ESP
+    # permission-denied reads, and pipefail+set-e would silently kill the
+    # script here, skipping everything after (including enabling sddm).
+    sb="$(sudo bootctl status 2>/dev/null | sed -n 's/^[[:space:]]*Secure Boot:[[:space:]]*//p')"
     case "$sb" in
         *enabled*)
             ok "Secure Boot is enabled" ;;
