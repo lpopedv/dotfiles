@@ -36,6 +36,7 @@ zsh-syntax-highlighting
 mise
 docker
 docker-compose
+kubectl
 
 # Editors
 neovim
