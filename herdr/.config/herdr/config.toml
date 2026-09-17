@@ -7,7 +7,7 @@ auto_switch = false
 [theme.custom]
 active_row_bg = "#333333"
 selection_bg  = "#262626"
-accent        = "#5bbfb1"
+accent        = "#7fa6d4"
 
 [keys]
 prefix = "ctrl+space"
