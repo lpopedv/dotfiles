@@ -5,6 +5,11 @@ description: Open a draft PR with a clean, community-standard body derived from 
 
 Open a draft pull request against `main`, with a body written from the branch's commits and diff. This repo has no PR template file, so the structure below is the standard to follow every time.
 
+## Flags
+
+- Default: run the whole flow without stopping for confirmation — build the PR, then open it.
+- `--confirm`: pause at Step 4 and wait for explicit user confirmation before opening the PR.
+
 ## Step 1 — Collect context
 
 Run all in parallel:
@@ -55,13 +60,15 @@ reuse one already performed this session) and mark it `- [x]` once confirmed. Le
 box unchecked (`- [ ]`) only when it genuinely could not be verified — say so explicitly
 rather than defaulting to an all-unchecked list.
 
-## Step 4 — Show and confirm
+## Step 4 — Present the PR
 
 Present the full PR title and body to the user.
 
-Ask: **"Does this look right? Confirm to open the draft PR, or tell me what to adjust."**
-
-Do NOT open the PR until the user explicitly confirms.
+- Without `--confirm` (default): this is a status update, not a question — go
+  straight to Step 5.
+- With `--confirm`: ask **"Does this look right? Confirm to open the draft PR,
+  or tell me what to adjust."** and do not open the PR until the user
+  explicitly confirms.
 
 ## Step 5 — Open the draft PR
 

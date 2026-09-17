@@ -6,6 +6,11 @@ description: Split staged changes into logical commits with clean Conventional C
 Split staged changes into multiple logical commits, each with a clean [Conventional
 Commits](https://www.conventionalcommits.org/) message.
 
+## Flags
+
+- Default: run the whole flow without stopping for confirmation — plan, then commit.
+- `--confirm`: pause at Step 4 and wait for explicit user confirmation before committing.
+
 ## Step 0 — Create the feature branch (only when on `main`)
 
 Run `git branch --show-current` first.
@@ -60,12 +65,12 @@ Add a scope in parentheses matching the stow package or area touched (e.g.
 `feat(quickshell):`, `fix(hypr):`, `chore(zsh):`); omit it when the type alone
 already says enough.
 
-## Step 4 — Propose the commit plan
+## Step 4 — Present the commit plan
 
-Present the full plan to the user as a numbered list before doing anything:
+Present the full plan to the user as a numbered list:
 
 ```
-Proposed commits (in order):
+Commits (in order):
 
 1. feat(quickshell): switch workspace on bar click
    Files: quickshell/.config/quickshell/bar/widgets/Workspaces.qml
@@ -78,9 +83,10 @@ Proposed commits (in order):
    Files: README.md, CLAUDE.md, system/install/bootstrap.sh
 ```
 
-Ask the user: **"Does this split look right? Confirm or tell me what to change."**
-
-Do NOT proceed until the user explicitly confirms.
+- Without `--confirm` (default): this is a status update, not a question — go
+  straight to Step 5.
+- With `--confirm`: ask **"Does this split look right? Confirm or tell me what
+  to change."** and do not proceed to Step 5 until the user explicitly confirms.
 
 ## Step 5 — Execute commits in order
 
