@@ -41,7 +41,6 @@ kubectl
 
 # Editors
 neovim
-emacs
 
 # Hyprland session
 # uwsm deliberately absent - see README, adds only a duplicate session entry
