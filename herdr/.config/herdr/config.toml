@@ -1,8 +1,13 @@
 onboarding = false
 
 [theme]
-name = "vesper"
+name = "terminal"
 auto_switch = false
+
+[theme.custom]
+active_row_bg = "#333333"
+selection_bg  = "#262626"
+accent        = "#5bbfb1"
 
 [keys]
 prefix = "ctrl+space"
