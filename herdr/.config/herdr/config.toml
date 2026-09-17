@@ -29,6 +29,9 @@ next_tab     = ["prefix+]"]
 previous_tab = ["prefix+["]
 new_tab      = ["prefix+n"]
 
+navigate_workspace_up   = ["k"]
+navigate_workspace_down = ["j"]
+
 [[keys.command]]
 key = "prefix+a"
 type = "shell"
