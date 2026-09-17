@@ -3,3 +3,9 @@
 
 # Runtime debug logs written by herdr keybinding scripts.
 herdr/.config/herdr/scripts/*.log
+
+# herdr's own runtime state: session snapshot, client/server logs, plugin lock.
+# Regenerated locally on every run, not source.
+herdr/.config/herdr/*.log
+herdr/.config/herdr/session.json
+herdr/.config/herdr/.plugins.lock

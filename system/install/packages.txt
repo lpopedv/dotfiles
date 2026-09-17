@@ -16,6 +16,7 @@ btop
 lazygit
 tmux
 mpv
+github-cli
 
 ffmpegthumbnailer
 poppler
@@ -36,10 +37,10 @@ zsh-syntax-highlighting
 mise
 docker
 docker-compose
+kubectl
 
 # Editors
 neovim
-emacs
 
 # Hyprland session
 # uwsm deliberately absent - see README, adds only a duplicate session entry
