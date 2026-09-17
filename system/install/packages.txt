@@ -16,6 +16,7 @@ btop
 lazygit
 tmux
 mpv
+github-cli
 
 ffmpegthumbnailer
 poppler
