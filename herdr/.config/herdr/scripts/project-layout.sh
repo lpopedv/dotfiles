@@ -1,10 +1,12 @@
 #!/usr/bin/env bash
 # Builds a 3-column top row (editor/agent/git) over a full-width bottom pane,
-# in a fresh tab. --tools also starts those three commands; bare splits otherwise.
+# in the CURRENT tab. --tools also starts those three commands; bare splits
+# otherwise.
 #
-# The full-width bottom split only comes for free because it's the FIRST split
-# of a brand-new, solitary tab pane -- herdr has no equivalent to tmux's
-# `split-window -f` to break out of an existing layout later.
+# The full-width bottom split only comes for free as the FIRST split of a
+# solitary pane -- herdr has no equivalent to tmux's `split-window -f` to
+# break out of an existing layout, so we flatten the current tab down to one
+# pane ourselves (close every sibling pane) before laying it out.
 
 set -euo pipefail
 exec >> "$(dirname "$0")/project-layout.log" 2>&1
@@ -22,11 +24,24 @@ for arg in "$@"; do
   esac
 done
 
-cwd="${HERDR_ACTIVE_PANE_CWD:-$HOME}"
+pane="${HERDR_ACTIVE_PANE_ID:?HERDR_ACTIVE_PANE_ID not set}"
 
 json() { python3 -c "import sys,json;d=json.load(sys.stdin);print(d$1)"; }
+sibling_panes() { python3 -c "
+import sys, json
+d = json.load(sys.stdin)
+tab, keep = sys.argv[1], sys.argv[2]
+for p in d['result']['panes']:
+    if p['tab_id'] == tab and p['pane_id'] != keep:
+        print(p['pane_id'])
+" "$1" "$2"; }
 
-root=$(herdr tab create --cwd "$cwd" --focus | json "['result']['root_pane']['pane_id']")
+tab_id=$(herdr pane get "$pane" | json "['result']['pane']['tab_id']")
+herdr pane list | sibling_panes "$tab_id" "$pane" | while read -r sibling; do
+  herdr pane close "$sibling" >/dev/null
+done
+
+root="$pane"
 
 herdr pane split "$root" --direction down --ratio "$server_ratio" >/dev/null
 
