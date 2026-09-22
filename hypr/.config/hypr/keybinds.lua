@@ -3,7 +3,7 @@ local mainMod = "SUPER"
 local terminal    = "ghostty"
 local fileManager = "nautilus"
 local menu        = "rofi -show drun"
-local browser     = "chromium"
+local browser     = "zen-browser"
 
 hl.bind(mainMod .. " + RETURN", hl.dsp.exec_cmd(terminal), { description = "Open terminal" })
 hl.bind(mainMod .. " + Q", hl.dsp.window.close(), { description = "Close active window" })
