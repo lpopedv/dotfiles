@@ -3,3 +3,4 @@ singleton Icons 1.0 Icons.qml
 singleton SessionState 1.0 SessionState.qml
 singleton NotificationsService 1.0 notifications/NotificationsService.qml
 singleton DockService 1.0 dock/DockService.qml
+singleton UpdatesService 1.0 updates/UpdatesService.qml

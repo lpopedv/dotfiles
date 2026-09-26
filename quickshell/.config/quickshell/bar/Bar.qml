@@ -85,6 +85,10 @@ Variants {
                 collapsible: true
                 revealed: bar.indicatorsRevealed
             }
+            Updates {
+                collapsible: true
+                revealed: bar.indicatorsRevealed
+            }
             Network {}
 
             Battery {}
