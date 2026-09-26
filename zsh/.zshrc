@@ -13,6 +13,12 @@ export PATH=$HOME/.opencode/bin:$PATH
 
 eval "$(mise activate zsh)"
 
+# One kubeconfig per cluster in ~/.kube/*.yaml, merged into KUBECONFIG. They hold credentials,
+# so they live only on the machine and are never stowed or committed here.
+kubeconfigs=(~/.kube/*.yaml(N))
+(( ${#kubeconfigs} )) && export KUBECONFIG=${(j.:.)kubeconfigs}
+unset kubeconfigs
+
 autoload -Uz vcs_info
 autoload -Uz colors && colors
 setopt PROMPT_SUBST
@@ -37,6 +43,7 @@ alias v="nvim ."
 alias lg="lazygit"
 alias t="tmux"
 alias hr="herdr"
+alias k="kubectl"
 
 dotup() {
   git -C ~/Dotfiles pull --ff-only && ~/Dotfiles/system/install/bootstrap.sh "$@"

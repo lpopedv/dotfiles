@@ -27,6 +27,7 @@ QtObject {
     readonly property string brightness: cp(0xF00DF)
     readonly property string charging: cp(0xF0084)
     readonly property string dock: cp(0xF10A9)
+    readonly property string packageUp: cp(0xF03D5)
 
     readonly property string check: cp(0xF012C)
     readonly property string radioOn: cp(0xF0765)

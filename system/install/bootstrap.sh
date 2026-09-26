@@ -141,8 +141,11 @@ run sudo install -Dm644 "$INSTALL/etc/systemd/timesyncd.conf.d/10-cloudflare.con
     /etc/systemd/timesyncd.conf.d/10-cloudflare.conf
 run sudo install -Dm644 "$INSTALL/etc/systemd/resolved.conf.d/10-cloudflare-dot.conf" \
     /etc/systemd/resolved.conf.d/10-cloudflare-dot.conf
+run sudo install -Dm644 "$INSTALL/etc/systemd/resolved.conf.d/20-no-multicast.conf" \
+    /etc/systemd/resolved.conf.d/20-no-multicast.conf
 
-# Belt-and-suspenders: Domains=~. already makes Cloudflare authoritative.
+# Without these, a link's DHCP-advertised DNS (the ISP's) sits next to the
+# global Cloudflare servers and gets queried too - there is no Domains=~.
 for net in /etc/systemd/network/*.network; do
     [[ -e "$net" ]] || continue
     run sudo install -Dm644 "$INSTALL/etc/systemd/network/no-dhcp-dns.conf" \
@@ -194,6 +197,10 @@ run sudo systemd-tmpfiles --clean /etc/tmpfiles.d/zz-coredump.conf
 log "Firewall"
 run sudo install -Dm644 "$INSTALL/etc/nftables.conf" /etc/nftables.conf
 run sudo systemctl enable --now nftables.service
+# Loaded directly, not restarted: --now is a no-op when already running, and
+# the unit's stop flushes the whole ruleset, Docker's tables included. The
+# file's own "destroy table" makes this an atomic swap of just inet filter.
+run sudo nft -f /etc/nftables.conf
 
 log "Kernel hardening"
 run sudo install -Dm644 "$INSTALL/etc/sysctl.d/99-hardening.conf" /etc/sysctl.d/99-hardening.conf
@@ -215,20 +222,34 @@ elif ! command -v sbctl >/dev/null; then
     warn "sbctl is not installed - skipping Secure Boot"
 else
     # root= is machine-specific: derived from the running system, not shipped here.
+    # archinstall's /etc/kernel/cmdline is preferred over /proc/cmdline as the
+    # source, then removed: mkinitcpio concatenates it with /etc/cmdline.d, so
+    # keeping both embeds every parameter twice.
+    rebuild=0
     if [[ -e /etc/cmdline.d/10-root.conf ]]; then
         ok "kernel command line recorded"
+    elif [[ -e /etc/kernel/cmdline ]]; then
+        sudo install -Dm644 /etc/kernel/cmdline /etc/cmdline.d/10-root.conf
+        ok "kernel command line recorded from /etc/kernel/cmdline"
     else
         tr ' ' '\n' < /proc/cmdline \
             | grep -vE '^(initrd|BOOT_IMAGE)=' \
+            | awk '!seen[$0]++' \
             | paste -sd' ' \
             | sudo install -Dm644 /dev/stdin /etc/cmdline.d/10-root.conf
         ok "kernel command line recorded from /proc/cmdline"
+    fi
+    if [[ -e /etc/kernel/cmdline ]]; then
+        sudo rm /etc/kernel/cmdline
+        rebuild=1
+        ok "removed /etc/kernel/cmdline (duplicated /etc/cmdline.d)"
     fi
 
     sudo install -Dm644 "$INSTALL/etc/mkinitcpio.d/linux.preset" /etc/mkinitcpio.d/linux.preset
     sudo install -d -m755 /boot/EFI/Linux
 
-    if sudo test "$UKI" -nt /boot/vmlinuz-linux &&
+    if (( ! rebuild )) &&
+        sudo test "$UKI" -nt /boot/vmlinuz-linux &&
         sudo test "$UKI" -nt /etc/cmdline.d/10-root.conf; then
         ok "unified kernel image is up to date"
     else
@@ -289,6 +310,16 @@ if [[ "$(systemctl is-enabled docker.service 2>/dev/null)" == enabled ]]; then
     ok "docker enabled"
 else
     run sudo systemctl enable --now docker.service
+fi
+
+# Published ports default to 127.0.0.1: Docker DNATs before nftables' input
+# chain, so a bare "5432:5432" would otherwise reach the LAN past the firewall.
+# Only restarted on change - a restart bounces every running container.
+if cmp -s "$INSTALL/etc/docker/daemon.json" /etc/docker/daemon.json; then
+    ok "docker publishes on 127.0.0.1"
+else
+    run sudo install -Dm644 "$INSTALL/etc/docker/daemon.json" /etc/docker/daemon.json
+    run sudo systemctl restart docker.service
 fi
 
 if id -nG "$USER" | grep -qw docker; then
