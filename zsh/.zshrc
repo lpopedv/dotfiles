@@ -43,6 +43,7 @@ alias v="nvim ."
 alias lg="lazygit"
 alias t="tmux"
 alias hr="herdr"
+alias k="kubectl"
 
 dotup() {
   git -C ~/Dotfiles pull --ff-only && ~/Dotfiles/system/install/bootstrap.sh "$@"
