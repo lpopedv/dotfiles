@@ -38,10 +38,18 @@ navigate_workspace_up   = ["k"]
 navigate_workspace_down = ["j"]
 
 [[keys.command]]
-key = "prefix+a"
+key = "prefix+c"
 type = "shell"
 command = "~/.config/herdr/scripts/spawn-pane.sh 'zsh -lc claude'"
 description = "claude (novo pane)"
+
+[[keys.command]]
+key = "prefix+a"
+type = "popup"
+command = "~/.config/herdr/scripts/agent-picker.sh"
+width = "60%"
+height = "40%"
+description = "agents"
 
 [[keys.command]]
 key = "prefix+g"
