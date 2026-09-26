@@ -142,7 +142,8 @@ run sudo install -Dm644 "$INSTALL/etc/systemd/timesyncd.conf.d/10-cloudflare.con
 run sudo install -Dm644 "$INSTALL/etc/systemd/resolved.conf.d/10-cloudflare-dot.conf" \
     /etc/systemd/resolved.conf.d/10-cloudflare-dot.conf
 
-# Belt-and-suspenders: Domains=~. already makes Cloudflare authoritative.
+# Without these, a link's DHCP-advertised DNS (the ISP's) sits next to the
+# global Cloudflare servers and gets queried too - there is no Domains=~.
 for net in /etc/systemd/network/*.network; do
     [[ -e "$net" ]] || continue
     run sudo install -Dm644 "$INSTALL/etc/systemd/network/no-dhcp-dns.conf" \
