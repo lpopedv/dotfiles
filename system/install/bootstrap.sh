@@ -197,6 +197,10 @@ run sudo systemd-tmpfiles --clean /etc/tmpfiles.d/zz-coredump.conf
 log "Firewall"
 run sudo install -Dm644 "$INSTALL/etc/nftables.conf" /etc/nftables.conf
 run sudo systemctl enable --now nftables.service
+# Loaded directly, not restarted: --now is a no-op when already running, and
+# the unit's stop flushes the whole ruleset, Docker's tables included. The
+# file's own "destroy table" makes this an atomic swap of just inet filter.
+run sudo nft -f /etc/nftables.conf
 
 log "Kernel hardening"
 run sudo install -Dm644 "$INSTALL/etc/sysctl.d/99-hardening.conf" /etc/sysctl.d/99-hardening.conf
