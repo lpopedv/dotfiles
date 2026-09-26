@@ -222,20 +222,34 @@ elif ! command -v sbctl >/dev/null; then
     warn "sbctl is not installed - skipping Secure Boot"
 else
     # root= is machine-specific: derived from the running system, not shipped here.
+    # archinstall's /etc/kernel/cmdline is preferred over /proc/cmdline as the
+    # source, then removed: mkinitcpio concatenates it with /etc/cmdline.d, so
+    # keeping both embeds every parameter twice.
+    rebuild=0
     if [[ -e /etc/cmdline.d/10-root.conf ]]; then
         ok "kernel command line recorded"
+    elif [[ -e /etc/kernel/cmdline ]]; then
+        sudo install -Dm644 /etc/kernel/cmdline /etc/cmdline.d/10-root.conf
+        ok "kernel command line recorded from /etc/kernel/cmdline"
     else
         tr ' ' '\n' < /proc/cmdline \
             | grep -vE '^(initrd|BOOT_IMAGE)=' \
+            | awk '!seen[$0]++' \
             | paste -sd' ' \
             | sudo install -Dm644 /dev/stdin /etc/cmdline.d/10-root.conf
         ok "kernel command line recorded from /proc/cmdline"
+    fi
+    if [[ -e /etc/kernel/cmdline ]]; then
+        sudo rm /etc/kernel/cmdline
+        rebuild=1
+        ok "removed /etc/kernel/cmdline (duplicated /etc/cmdline.d)"
     fi
 
     sudo install -Dm644 "$INSTALL/etc/mkinitcpio.d/linux.preset" /etc/mkinitcpio.d/linux.preset
     sudo install -d -m755 /boot/EFI/Linux
 
-    if sudo test "$UKI" -nt /boot/vmlinuz-linux &&
+    if (( ! rebuild )) &&
+        sudo test "$UKI" -nt /boot/vmlinuz-linux &&
         sudo test "$UKI" -nt /etc/cmdline.d/10-root.conf; then
         ok "unified kernel image is up to date"
     else
