@@ -141,6 +141,8 @@ run sudo install -Dm644 "$INSTALL/etc/systemd/timesyncd.conf.d/10-cloudflare.con
     /etc/systemd/timesyncd.conf.d/10-cloudflare.conf
 run sudo install -Dm644 "$INSTALL/etc/systemd/resolved.conf.d/10-cloudflare-dot.conf" \
     /etc/systemd/resolved.conf.d/10-cloudflare-dot.conf
+run sudo install -Dm644 "$INSTALL/etc/systemd/resolved.conf.d/20-no-multicast.conf" \
+    /etc/systemd/resolved.conf.d/20-no-multicast.conf
 
 # Without these, a link's DHCP-advertised DNS (the ISP's) sits next to the
 # global Cloudflare servers and gets queried too - there is no Domains=~.
