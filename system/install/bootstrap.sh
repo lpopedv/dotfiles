@@ -312,6 +312,16 @@ else
     run sudo systemctl enable --now docker.service
 fi
 
+# Published ports default to 127.0.0.1: Docker DNATs before nftables' input
+# chain, so a bare "5432:5432" would otherwise reach the LAN past the firewall.
+# Only restarted on change - a restart bounces every running container.
+if cmp -s "$INSTALL/etc/docker/daemon.json" /etc/docker/daemon.json; then
+    ok "docker publishes on 127.0.0.1"
+else
+    run sudo install -Dm644 "$INSTALL/etc/docker/daemon.json" /etc/docker/daemon.json
+    run sudo systemctl restart docker.service
+fi
+
 if id -nG "$USER" | grep -qw docker; then
     ok "$USER is in the docker group"
 else
