@@ -8,9 +8,11 @@ RowLayout {
     id: root
 
     Layout.alignment: Qt.AlignVCenter
+    // Matches the glyph-to-glyph rhythm of the BarItems beside it: each one
+    // has 11px padding plus a 2px margin per side, so 13 + 13 between glyphs.
     Layout.leftMargin: 4
-    Layout.rightMargin: 10
-    spacing: 8
+    Layout.rightMargin: 13
+    spacing: 26
 
     Repeater {
         model: SystemTray.items
