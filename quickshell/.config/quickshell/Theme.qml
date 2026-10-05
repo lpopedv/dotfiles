@@ -48,7 +48,7 @@ QtObject {
 
     readonly property int barItemInset: 5
 
-    // Anchors to the bar item, already barItemInset above the bar, so
+    // Anchors to the bar item, already barItemInset inside the bar, so
     // clearing the bar means insetting by both.
     readonly property int popupGap: 8
     readonly property int popupInset: popupGap + barItemInset

@@ -15,7 +15,8 @@ Variants {
         screen: modelData
 
         anchors {
-            top: true
+            top: BarService.top
+            bottom: !BarService.top
             left: true
             right: true
         }

@@ -20,8 +20,8 @@ PopupWindow {
     }
 
     anchor.item: root.anchorItem
-    anchor.edges: root.nested ? Edges.Right : Edges.Bottom
-    anchor.gravity: root.nested ? Edges.Right : Edges.Bottom
+    anchor.edges: root.nested ? Edges.Right : BarService.popupEdge
+    anchor.gravity: root.nested ? Edges.Right : BarService.popupEdge
     anchor.adjustment: PopupAdjustment.Slide
 
     implicitWidth: 220
@@ -46,7 +46,8 @@ PopupWindow {
         id: panel
 
         anchors.fill: parent
-        anchors.topMargin: root.nested ? 0 : Theme.popupInset
+        anchors.topMargin: root.nested || !BarService.top ? 0 : Theme.popupInset
+        anchors.bottomMargin: root.nested || BarService.top ? 0 : Theme.popupInset
         color: Theme.glass
         border.width: 1
         border.color: Theme.border

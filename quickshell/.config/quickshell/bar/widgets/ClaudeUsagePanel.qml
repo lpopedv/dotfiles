@@ -37,12 +37,12 @@ PopupWindow {
     readonly property string today: Qt.formatDate(now, "yyyy-MM-dd")
 
     anchor.item: anchorItem
-    anchor.edges: Edges.Bottom
-    anchor.gravity: Edges.Bottom
+    anchor.edges: BarService.popupEdge
+    anchor.gravity: BarService.popupEdge
     anchor.adjustment: PopupAdjustment.SlideX
 
     implicitWidth: 360
-    // Gap under the bar is transparent space inside the popup: the compositor
+    // Gap off the bar is transparent space inside the popup: the compositor
     // clamps an anchored popup to the bar's edge, so anchor.margins can't do it.
     implicitHeight: layout.implicitHeight + 28 + Theme.popupInset
     color: "transparent"
@@ -87,7 +87,8 @@ PopupWindow {
         id: panel
 
         anchors.fill: parent
-        anchors.topMargin: Theme.popupInset
+        anchors.topMargin: BarService.top ? Theme.popupInset : 0
+        anchors.bottomMargin: BarService.top ? 0 : Theme.popupInset
         color: Theme.glass
         border.width: 1
         border.color: Theme.border

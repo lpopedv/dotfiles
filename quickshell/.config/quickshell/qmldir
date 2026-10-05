@@ -4,3 +4,4 @@ singleton SessionState 1.0 SessionState.qml
 singleton NotificationsService 1.0 notifications/NotificationsService.qml
 singleton DockService 1.0 dock/DockService.qml
 singleton UpdatesService 1.0 updates/UpdatesService.qml
+singleton BarService 1.0 bar/BarService.qml

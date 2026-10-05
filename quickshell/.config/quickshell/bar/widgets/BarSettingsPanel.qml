@@ -14,7 +14,7 @@ PopupWindow {
     anchor.gravity: BarService.popupEdge
     anchor.adjustment: PopupAdjustment.SlideX
 
-    implicitWidth: 250
+    implicitWidth: 200
     // Gap off the bar is transparent space inside the popup: the compositor
     // clamps an anchored popup to the bar's edge, so anchor.margins can't do it.
     implicitHeight: layout.implicitHeight + 20 + Theme.popupInset
@@ -56,63 +56,16 @@ PopupWindow {
                 Layout.fillWidth: true
                 Layout.leftMargin: 10
                 Layout.bottomMargin: 4
-                text: "Dock"
+                text: "Bar"
                 color: Theme.fgAct
                 font.weight: Font.DemiBold
-            }
-
-            // Radio circles, not ticks: the three modes are mutually exclusive.
-            Repeater {
-                model: DockService.modes
-
-                MenuRow {
-                    required property var modelData
-
-                    text: modelData.text
-                    gutter: true
-                    mark: DockService.mode === modelData.id
-                        ? Icons.radioOn : Icons.radioOff
-                    onTriggered: DockService.setMode(modelData.id)
-                }
-            }
-
-            Rectangle {
-                Layout.fillWidth: true
-                Layout.topMargin: 5
-                Layout.bottomMargin: 5
-                implicitHeight: 1
-                color: Theme.divider
-            }
-
-            MenuRow {
-                enabled: DockService.mode === "auto"
-                opacity: enabled ? 1 : Theme.dimmedOpacity
-                text: "Show on empty workspace"
-                gutter: true
-                mark: DockService.showOnDesktop ? Icons.check : ""
-                onTriggered: DockService.toggleShowOnDesktop()
-            }
-
-            MenuRow {
-                text: "Only running apps"
-                gutter: true
-                mark: DockService.runningOnly ? Icons.check : ""
-                onTriggered: DockService.toggleRunningOnly()
-            }
-
-            Rectangle {
-                Layout.fillWidth: true
-                Layout.topMargin: 5
-                Layout.bottomMargin: 5
-                implicitHeight: 1
-                color: Theme.divider
             }
 
             ShellText {
                 Layout.fillWidth: true
                 Layout.leftMargin: 10
                 Layout.bottomMargin: 4
-                text: "Icon size"
+                text: "Position"
                 color: Theme.subtle
                 font.pixelSize: Theme.fontSize - 2
             }
@@ -124,15 +77,15 @@ PopupWindow {
                 spacing: 6
 
                 Repeater {
-                    model: DockService.sizes
+                    model: BarService.positions
 
                     Chip {
                         required property var modelData
 
                         Layout.fillWidth: true
                         text: modelData.text
-                        active: DockService.iconSize === modelData.size
-                        onClicked: DockService.setIconSize(modelData.size)
+                        active: BarService.position === modelData.id
+                        onClicked: BarService.setPosition(modelData.id)
                     }
                 }
             }
