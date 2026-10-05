@@ -1,6 +1,7 @@
 import QtQuick
 import QtQuick.Layouts
 import Quickshell
+import Quickshell.Services.SystemTray
 import ".."
 import "widgets"
 import "../ui"
@@ -54,11 +55,19 @@ Variants {
             anchors.rightMargin: 2
             spacing: 0
 
+            Logo {}
+
+            BarDivider {}
+
             Workspaces {}
 
             Item { Layout.fillWidth: true }
 
             Tray {}
+            // Third-party tray icons on one side, the bar's own indicators on the other.
+            BarDivider {
+                visible: SystemTray.items.values.length > 0
+            }
 
             Audio {}
             LaunchButton {
