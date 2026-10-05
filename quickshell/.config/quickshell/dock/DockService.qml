@@ -38,6 +38,7 @@ QtObject {
             property bool showOnDesktop: true
             property bool runningOnly: false
             property int iconSize: 40
+            property string position: "bottom"
         }
     }
 
@@ -72,6 +73,19 @@ QtObject {
     ]
 
     function setIconSize(size) { settings.iconSize = size; }
+
+    readonly property var positions: [
+        { id: "left",   text: "Left" },
+        { id: "bottom", text: "Bottom" },
+        { id: "right",  text: "Right" }
+    ]
+
+    // Validated like iconSize: an unknown value in the file falls back to bottom.
+    readonly property string position: root.positions.some(p => p.id === settings.position)
+        ? settings.position : "bottom"
+    readonly property bool vertical: root.position !== "bottom"
+
+    function setPosition(position) { settings.position = position; }
 
     function isPinned(key) {
         return root.pinned.indexOf(key) >= 0;

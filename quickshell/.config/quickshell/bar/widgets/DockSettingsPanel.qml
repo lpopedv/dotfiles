@@ -112,6 +112,43 @@ PopupWindow {
                 Layout.fillWidth: true
                 Layout.leftMargin: 10
                 Layout.bottomMargin: 4
+                text: "Position"
+                color: Theme.subtle
+                font.pixelSize: Theme.fontSize - 2
+            }
+
+            RowLayout {
+                Layout.fillWidth: true
+                Layout.leftMargin: 10
+                Layout.rightMargin: 10
+                spacing: 6
+
+                Repeater {
+                    model: DockService.positions
+
+                    Chip {
+                        required property var modelData
+
+                        Layout.fillWidth: true
+                        text: modelData.text
+                        active: DockService.position === modelData.id
+                        onClicked: DockService.setPosition(modelData.id)
+                    }
+                }
+            }
+
+            Rectangle {
+                Layout.fillWidth: true
+                Layout.topMargin: 5
+                Layout.bottomMargin: 5
+                implicitHeight: 1
+                color: Theme.divider
+            }
+
+            ShellText {
+                Layout.fillWidth: true
+                Layout.leftMargin: 10
+                Layout.bottomMargin: 4
                 text: "Icon size"
                 color: Theme.subtle
                 font.pixelSize: Theme.fontSize - 2

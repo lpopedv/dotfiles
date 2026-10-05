@@ -8,25 +8,32 @@ PopupWindow {
 
     property var tile: null
     property var anchorItem: null
-    property real centreX: 0
+    // Tile centre along the dock's long axis, in anchorItem coordinates.
+    property real centre: 0
+    readonly property string side: DockService.position
 
     readonly property var windows: root.tile ? root.tile.windows : []
     readonly property bool running: root.windows.length > 0
 
     anchor.item: root.anchorItem
-    // 1px anchor rect: compositor centres the menu on it and grows upward.
-    anchor.rect.x: root.centreX
-    anchor.rect.y: 0
+    // 1px anchor rect: compositor centres the menu on it and grows away from the screen edge.
+    readonly property int away: root.side === "left" ? Edges.Right
+        : root.side === "right" ? Edges.Left
+        : Edges.Top
+    anchor.rect.x: root.side === "left" ? (root.anchorItem ? root.anchorItem.width - 1 : 0)
+        : root.side === "right" ? 0
+        : root.centre
+    anchor.rect.y: DockService.vertical ? root.centre : 0
     anchor.rect.width: 1
     anchor.rect.height: 1
-    anchor.edges: Edges.Top
-    anchor.gravity: Edges.Top
-    anchor.adjustment: PopupAdjustment.SlideX
+    anchor.edges: root.away
+    anchor.gravity: root.away
+    anchor.adjustment: DockService.vertical ? PopupAdjustment.SlideY : PopupAdjustment.SlideX
 
-    implicitWidth: 250
-    // Gap above the dock is transparent space inside the popup: compositor
+    // Gap off the dock is transparent space inside the popup: compositor
     // clamps an anchored popup to its anchor edge, so a margin can't do it.
-    implicitHeight: layout.implicitHeight + 20 + Theme.popupGap
+    implicitWidth: 250 + (DockService.vertical ? Theme.popupGap : 0)
+    implicitHeight: layout.implicitHeight + 20 + (DockService.vertical ? 0 : Theme.popupGap)
     color: "transparent"
 
     function act(action) {
@@ -42,7 +49,9 @@ PopupWindow {
         id: panel
 
         anchors.fill: parent
-        anchors.bottomMargin: Theme.popupGap
+        anchors.bottomMargin: root.side === "bottom" ? Theme.popupGap : 0
+        anchors.leftMargin: root.side === "left" ? Theme.popupGap : 0
+        anchors.rightMargin: root.side === "right" ? Theme.popupGap : 0
         color: Theme.glass
         border.width: 1
         border.color: Theme.border

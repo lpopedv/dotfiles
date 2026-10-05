@@ -21,8 +21,10 @@ Item {
 
     signal menuRequested
 
-    width: DockService.iconSize + Theme.dockIconGap
-    height: parent.height
+    readonly property string side: DockService.position
+
+    width: DockService.vertical ? parent.width : DockService.iconSize + Theme.dockIconGap
+    height: DockService.vertical ? DockService.iconSize + Theme.dockIconGap : parent.height
 
     IconImage {
         id: glyph
@@ -38,7 +40,11 @@ Item {
             NumberAnimation { duration: Theme.animMs }
         }
 
-        transform: Translate { y: -bounce.value }
+        // Bounces away from the screen edge.
+        transform: Translate {
+            x: root.side === "left" ? bounce.value : root.side === "right" ? -bounce.value : 0
+            y: root.side === "bottom" ? -bounce.value : 0
+        }
     }
 
     ShellText {
@@ -77,10 +83,13 @@ Item {
         PauseAnimation { duration: 280 }
     }
 
-    Row {
-        anchors.horizontalCenter: parent.horizontalCenter
-        anchors.top: parent.bottom
-        anchors.topMargin: 5
+    // Window dots sit between the icon and the screen edge.
+    Grid {
+        columns: DockService.vertical ? 1 : 3
+        x: root.side === "left" ? -width - 5
+            : root.side === "right" ? parent.width + 5
+            : (parent.width - width) / 2
+        y: DockService.vertical ? (parent.height - height) / 2 : parent.height + 5
         spacing: 3
 
         Repeater {
