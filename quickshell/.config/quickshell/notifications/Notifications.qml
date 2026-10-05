@@ -20,7 +20,7 @@ Scope {
         implicitWidth: 400
         implicitHeight: Math.max(1, stack.implicitHeight)
         color: "transparent"
-        exclusionMode: ExclusionMode.Ignore
+        exclusionMode: ExclusionMode.Normal
 
         // Repeater counts as a layout child, so check the list, not implicitHeight.
         visible: NotificationsService.popupList.length > 0

@@ -28,27 +28,34 @@ Variants {
         readonly property int floorToBase: 14
         readonly property int plateHeight: dock.padTop + dock.icon + dock.floorToBase
 
-        readonly property int labelRoom: 40
+        readonly property string side: DockService.position
+        readonly property bool vertical: DockService.vertical
+
+        // Depth from the screen edge to the plate's inner face; along is the plate's long axis.
+        readonly property int cross: Theme.dockFloat + dock.plateHeight
+
+        // Beside a vertical dock the label grows sideways, so it needs a full name's width.
+        readonly property int labelRoom: dock.vertical ? 260 : 40
 
         anchors {
+            top: dock.vertical
             bottom: true
-            left: true
-            right: true
+            left: dock.side !== "right"
+            right: dock.side !== "left"
         }
 
-        exclusionMode: DockService.mode === "pinned"
-            ? ExclusionMode.Normal
-            : ExclusionMode.Ignore
+        // Always Normal so the dock sits above the bottom bar instead of over it.
+        exclusionMode: ExclusionMode.Normal
         // Must be 0, not just Ignore: hyprland commits the zone at the first
         // layer-shell surface and only recomputes it when this value changes.
-        exclusiveZone: DockService.mode === "pinned"
-            ? Theme.dockFloat + dock.plateHeight
-            : 0
+        exclusiveZone: DockService.mode === "pinned" ? dock.cross : 0
 
         color: "transparent"
         visible: dock.count > 0 && DockService.mode !== "hidden"
 
-        implicitHeight: Theme.dockFloat + dock.plateHeight + dock.labelRoom
+        // Only the axis not stretched by the anchors takes effect.
+        implicitHeight: dock.cross + dock.labelRoom
+        implicitWidth: dock.cross + dock.labelRoom
 
         // Without this, the full-width window would swallow clicks over its empty space.
         mask: Region {
@@ -108,15 +115,19 @@ Variants {
         Item {
             id: body
 
-            anchors.bottom: parent.bottom
-            anchors.horizontalCenter: parent.horizontalCenter
-            width: dock.plateWidth
-            height: Theme.dockFloat + dock.plateHeight
+            width: dock.vertical ? dock.cross : dock.plateWidth
+            height: dock.vertical ? dock.plateWidth : dock.cross
 
-            // Negative margin hangs it off-screen; mask follows, so hidden gives clicks back too.
-            anchors.bottomMargin: dock.revealed ? 0 : -(height - Theme.dockStrip)
+            // Hangs it off-screen past the edge; mask follows, so hidden gives clicks back too.
+            property real sunk: dock.revealed ? 0 : dock.cross - Theme.dockStrip
 
-            Behavior on anchors.bottomMargin {
+            x: dock.side === "left" ? -body.sunk
+                : dock.side === "right" ? parent.width - width + body.sunk
+                : (parent.width - width) / 2
+            y: dock.vertical ? (parent.height - height) / 2
+                : parent.height - height + body.sunk
+
+            Behavior on sunk {
                 NumberAnimation {
                     duration: dock.revealed ? Theme.dockRevealMs : Theme.dockHideMs
                     easing.type: dock.revealed ? Easing.OutCubic : Easing.InCubic
@@ -132,10 +143,10 @@ Variants {
             Rectangle {
                 id: plate
 
-                anchors.bottom: parent.bottom
-                anchors.bottomMargin: Theme.dockFloat
-                width: parent.width
-                height: dock.plateHeight
+                // The float gap sits on the screen-edge side.
+                x: dock.side === "left" ? Theme.dockFloat : 0
+                width: dock.vertical ? dock.plateHeight : parent.width
+                height: dock.vertical ? parent.height : dock.plateHeight
 
                 color: Theme.glass
                 border.width: 1
@@ -153,14 +164,17 @@ Variants {
                 Item {
                     id: row
 
-                    anchors.bottom: parent.bottom
-                    anchors.bottomMargin: dock.floorToBase
-                    anchors.horizontalCenter: parent.horizontalCenter
-                    width: dock.restRow
-                    height: dock.icon
+                    // floorToBase (room for the window dots) faces the screen edge.
+                    width: dock.vertical ? dock.icon : dock.restRow
+                    height: dock.vertical ? dock.restRow : dock.icon
+                    x: dock.side === "left" ? dock.floorToBase
+                        : dock.side === "right" ? dock.padTop
+                        : (parent.width - width) / 2
+                    y: dock.vertical ? (parent.height - height) / 2 : dock.padTop
 
+                    // Along the dock's long axis, in plate coordinates.
                     function centreOf(index) {
-                        return row.x + (index + 0.5) * dock.slot;
+                        return (dock.vertical ? row.y : row.x) + (index + 0.5) * dock.slot;
                     }
 
                     // One box that slides between slots, never rebuilt or resized.
@@ -169,13 +183,20 @@ Variants {
 
                         width: dock.icon + 8
                         height: dock.icon + 8
-                        x: dock.restingIndex * dock.slot + (dock.slot - width) / 2
-                        y: (parent.height - height) / 2
+                        readonly property real along: dock.restingIndex * dock.slot + (dock.slot - width) / 2
+                        x: dock.vertical ? (parent.width - width) / 2 : along
+                        y: dock.vertical ? along : (parent.height - height) / 2
 
                         color: Theme.hoverFill
                         opacity: dock.hoveredIndex >= 0 ? 1 : 0
 
                         Behavior on x {
+                            NumberAnimation {
+                                duration: Theme.animSlideMs
+                                easing.type: Easing.OutCubic
+                            }
+                        }
+                        Behavior on y {
                             NumberAnimation {
                                 duration: Theme.animSlideMs
                                 easing.type: Easing.OutCubic
@@ -196,7 +217,8 @@ Variants {
                             required property var modelData
 
                             tile: entry.modelData
-                            x: entry.index * dock.slot
+                            x: dock.vertical ? 0 : entry.index * dock.slot
+                            y: dock.vertical ? entry.index * dock.slot : 0
 
                             onHoveredChanged: {
                                 if (entry.hovered) dock.hoveredIndex = entry.index;
@@ -205,7 +227,7 @@ Variants {
 
                             onMenuRequested: {
                                 menu.tile = entry.modelData;
-                                menu.centreX = row.centreOf(entry.index);
+                                menu.centre = row.centreOf(entry.index);
                                 menu.visible = true;
                             }
                         }
@@ -216,10 +238,11 @@ Variants {
                         readonly property int at: DockService.pinnedCount
 
                         visible: at > 0 && dock.count > at
-                        x: at * dock.slot - Theme.dockIconGap / 2
-                        y: (parent.height - height) / 2
-                        width: 1
-                        height: 22
+                        readonly property real along: at * dock.slot - Theme.dockIconGap / 2
+                        x: dock.vertical ? (parent.width - width) / 2 : along
+                        y: dock.vertical ? along : (parent.height - height) / 2
+                        width: dock.vertical ? 22 : 1
+                        height: dock.vertical ? 1 : 22
                         color: Theme.divider
                     }
                 }
@@ -239,11 +262,24 @@ Variants {
                     NumberAnimation { duration: Theme.animMs }
                 }
 
-                x: Math.round(Math.max(0, Math.min(body.width - width,
-                    plate.x + row.centreOf(dock.restingIndex) - width / 2)))
-                y: -height - 6
+                // Sits on the plate's inner side, centred on the tile along the dock.
+                readonly property real along: dock.vertical
+                    ? Math.round(Math.max(0, Math.min(body.height - height,
+                        plate.y + row.centreOf(dock.restingIndex) - height / 2)))
+                    : Math.round(Math.max(0, Math.min(body.width - width,
+                        plate.x + row.centreOf(dock.restingIndex) - width / 2)))
+
+                x: dock.side === "left" ? body.width + 6
+                    : dock.side === "right" ? -width - 6
+                    : label.along
+                y: dock.vertical ? label.along : -height - 6
 
                 Behavior on x {
+                    enabled: !dock.vertical
+                    NumberAnimation { duration: Theme.animSlideMs; easing.type: Easing.OutCubic }
+                }
+                Behavior on y {
+                    enabled: dock.vertical
                     NumberAnimation { duration: Theme.animSlideMs; easing.type: Easing.OutCubic }
                 }
 
@@ -267,10 +303,12 @@ Variants {
         Item {
             id: strip
 
-            anchors.bottom: parent.bottom
-            anchors.horizontalCenter: parent.horizontalCenter
-            width: dock.plateWidth
-            height: Theme.dockStrip
+            width: dock.vertical ? Theme.dockStrip : dock.plateWidth
+            height: dock.vertical ? dock.plateWidth : Theme.dockStrip
+            x: dock.side === "left" ? 0
+                : dock.side === "right" ? parent.width - width
+                : (parent.width - width) / 2
+            y: dock.vertical ? (parent.height - height) / 2 : parent.height - height
 
             HoverHandler {
                 id: stripHover

@@ -12,12 +12,12 @@ PopupWindow {
     readonly property int maxListHeight: 320
 
     anchor.item: root.anchorItem
-    anchor.edges: Edges.Bottom
-    anchor.gravity: Edges.Bottom
+    anchor.edges: BarService.popupEdge
+    anchor.gravity: BarService.popupEdge
     anchor.adjustment: PopupAdjustment.SlideX
 
     implicitWidth: 320
-    // Gap under the bar is transparent space inside the popup: the compositor
+    // Gap off the bar is transparent space inside the popup: the compositor
     // clamps an anchored popup to the bar's edge, so anchor.margins can't do it.
     implicitHeight: layout.implicitHeight + 20 + Theme.popupInset
     color: "transparent"
@@ -85,7 +85,8 @@ PopupWindow {
         id: panel
 
         anchors.fill: parent
-        anchors.topMargin: Theme.popupInset
+        anchors.topMargin: BarService.top ? Theme.popupInset : 0
+        anchors.bottomMargin: BarService.top ? 0 : Theme.popupInset
         color: Theme.glass
         border.width: 1
         border.color: Theme.border

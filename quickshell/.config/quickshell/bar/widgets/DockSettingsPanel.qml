@@ -10,12 +10,12 @@ PopupWindow {
     property var anchorItem: null
 
     anchor.item: root.anchorItem
-    anchor.edges: Edges.Bottom
-    anchor.gravity: Edges.Bottom
+    anchor.edges: BarService.popupEdge
+    anchor.gravity: BarService.popupEdge
     anchor.adjustment: PopupAdjustment.SlideX
 
     implicitWidth: 250
-    // Gap under the bar is transparent space inside the popup: the compositor
+    // Gap off the bar is transparent space inside the popup: the compositor
     // clamps an anchored popup to the bar's edge, so anchor.margins can't do it.
     implicitHeight: layout.implicitHeight + 20 + Theme.popupInset
     color: "transparent"
@@ -27,7 +27,8 @@ PopupWindow {
         id: panel
 
         anchors.fill: parent
-        anchors.topMargin: Theme.popupInset
+        anchors.topMargin: BarService.top ? Theme.popupInset : 0
+        anchors.bottomMargin: BarService.top ? 0 : Theme.popupInset
         color: Theme.glass
         border.width: 1
         border.color: Theme.border
@@ -97,6 +98,43 @@ PopupWindow {
                 gutter: true
                 mark: DockService.runningOnly ? Icons.check : ""
                 onTriggered: DockService.toggleRunningOnly()
+            }
+
+            Rectangle {
+                Layout.fillWidth: true
+                Layout.topMargin: 5
+                Layout.bottomMargin: 5
+                implicitHeight: 1
+                color: Theme.divider
+            }
+
+            ShellText {
+                Layout.fillWidth: true
+                Layout.leftMargin: 10
+                Layout.bottomMargin: 4
+                text: "Position"
+                color: Theme.subtle
+                font.pixelSize: Theme.fontSize - 2
+            }
+
+            RowLayout {
+                Layout.fillWidth: true
+                Layout.leftMargin: 10
+                Layout.rightMargin: 10
+                spacing: 6
+
+                Repeater {
+                    model: DockService.positions
+
+                    Chip {
+                        required property var modelData
+
+                        Layout.fillWidth: true
+                        text: modelData.text
+                        active: DockService.position === modelData.id
+                        onClicked: DockService.setPosition(modelData.id)
+                    }
+                }
             }
 
             Rectangle {
