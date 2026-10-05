@@ -23,13 +23,16 @@ BarItem {
         Behavior on color {
             ColorAnimation { duration: Theme.animMs }
         }
-    }
 
-    ShellText {
-        visible: root.active
-        text: UpdatesService.count
-        color: Theme.red
-        font.weight: Font.DemiBold
+        // Same slow pulse as the Claude usage alert.
+        SequentialAnimation on opacity {
+            running: root.active
+            loops: Animation.Infinite
+            alwaysRunToEnd: true
+
+            NumberAnimation { to: 0.45; duration: 1600; easing.type: Easing.InOutQuad }
+            NumberAnimation { to: 1.0; duration: 1600; easing.type: Easing.InOutQuad }
+        }
     }
 
     UpdatesPanel {

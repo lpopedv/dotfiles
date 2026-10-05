@@ -93,13 +93,8 @@ BarItem {
             loops: Animation.Infinite
             alwaysRunToEnd: true
 
-            NumberAnimation { to: 0.45; duration: 900; easing.type: Easing.InOutQuad }
-            NumberAnimation { to: 1.0; duration: 900; easing.type: Easing.InOutQuad }
+            NumberAnimation { to: 0.45; duration: 1600; easing.type: Easing.InOutQuad }
+            NumberAnimation { to: 1.0; duration: 1600; easing.type: Easing.InOutQuad }
         }
     }
-
-    color: root.hovered ? Theme.hoverFill : "transparent"
-    border.color: root.ready && root.worst / 100 >= Theme.dangerAt
-        ? Qt.rgba(Theme.red.r, Theme.red.g, Theme.red.b, 0.45)
-        : "transparent"
 }
