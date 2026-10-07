@@ -29,6 +29,11 @@ QtObject {
     readonly property string dock: cp(0xF10A9)
     readonly property string packageUp: cp(0xF03D5)
     readonly property string atom: cp(0xF0768)
+    readonly property string music: cp(0xF0387)
+    readonly property string play: cp(0xF040A)
+    readonly property string pause: cp(0xF03E4)
+    readonly property string skipNext: cp(0xF04AD)
+    readonly property string skipPrevious: cp(0xF04AE)
 
     readonly property string check: cp(0xF012C)
     readonly property string radioOn: cp(0xF0765)
