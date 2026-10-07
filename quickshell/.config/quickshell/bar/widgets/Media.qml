@@ -42,27 +42,36 @@ BarItem {
     }
 
     // Clicking the icon toggles playback; the rest of the widget opens the panel.
-    Item {
-        Layout.preferredWidth: 22
-        Layout.preferredHeight: 14
+    Rectangle {
+        Layout.preferredWidth: 26
+        Layout.preferredHeight: 22
+        color: toggle.containsMouse ? Theme.activeFill : "transparent"
+
+        Behavior on color {
+            ColorAnimation { duration: Theme.animMs }
+        }
 
         ShellText {
             anchors.centerIn: parent
             visible: !(root.player && root.player.isPlaying)
             text: Icons.play
-            color: root.hovered || panel.visible ? Theme.fgAct : Theme.fg
+            color: root.hovered || toggle.containsMouse || panel.visible ? Theme.fgAct : Theme.fg
             font.pixelSize: Theme.iconSize
         }
 
         Spectrum {
-            anchors.fill: parent
+            anchors.centerIn: parent
+            width: 22
+            height: 14
             visible: root.player && root.player.isPlaying
             count: 6
             spacing: 2
         }
 
         MouseArea {
+            id: toggle
             anchors.fill: parent
+            hoverEnabled: true
             enabled: root.player !== null && root.player.canTogglePlaying
             acceptedButtons: Qt.LeftButton
             cursorShape: Qt.PointingHandCursor
