@@ -77,6 +77,7 @@ gvfs-smb
 wiremix
 impala
 playerctl
+cava
 brightnessctl
 qt6ct
 
