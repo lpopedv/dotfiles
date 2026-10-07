@@ -41,21 +41,32 @@ BarItem {
         grabFocus: true
     }
 
-    ShellText {
-        visible: !(root.player && root.player.isPlaying)
-        text: Icons.pause
-        color: root.hovered || panel.visible ? Theme.fgAct : Theme.fg
-        font.pixelSize: Theme.iconSize
-    }
-
-    Spectrum {
-        visible: root.player && root.player.isPlaying
-        count: 6
-        spacing: 2
-        implicitWidth: 22
-        implicitHeight: 14
+    // Clicking the icon toggles playback; the rest of the widget opens the panel.
+    Item {
         Layout.preferredWidth: 22
         Layout.preferredHeight: 14
+
+        ShellText {
+            anchors.centerIn: parent
+            visible: !(root.player && root.player.isPlaying)
+            text: Icons.play
+            color: root.hovered || panel.visible ? Theme.fgAct : Theme.fg
+            font.pixelSize: Theme.iconSize
+        }
+
+        Spectrum {
+            anchors.fill: parent
+            visible: root.player && root.player.isPlaying
+            count: 6
+            spacing: 2
+        }
+
+        MouseArea {
+            anchors.fill: parent
+            enabled: root.player !== null && root.player.canTogglePlaying
+            acceptedButtons: Qt.LeftButton
+            onClicked: root.player.togglePlaying()
+        }
     }
 
     ShellText {
