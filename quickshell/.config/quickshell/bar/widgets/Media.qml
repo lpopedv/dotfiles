@@ -65,6 +65,7 @@ BarItem {
             anchors.fill: parent
             enabled: root.player !== null && root.player.canTogglePlaying
             acceptedButtons: Qt.LeftButton
+            cursorShape: Qt.PointingHandCursor
             onClicked: root.player.togglePlaying()
         }
     }
