@@ -5,3 +5,4 @@ singleton NotificationsService 1.0 notifications/NotificationsService.qml
 singleton DockService 1.0 dock/DockService.qml
 singleton UpdatesService 1.0 updates/UpdatesService.qml
 singleton BarService 1.0 bar/BarService.qml
+singleton CavaService 1.0 media/CavaService.qml

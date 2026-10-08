@@ -44,6 +44,8 @@ Rectangle {
 
     RowLayout {
         id: layout
+        // Above the root mouse area so widgets can nest their own click targets.
+        z: 1
         anchors.centerIn: parent
         spacing: 6
     }

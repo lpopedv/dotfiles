@@ -1,3 +1,5 @@
+local maximizeColumn = require("maximize-column")
+
 local mainMod = "SUPER"
 
 local terminal    = "ghostty"
@@ -10,7 +12,7 @@ hl.bind(mainMod .. " + Q", hl.dsp.window.close(), { description = "Close active 
 hl.bind(mainMod .. " + SHIFT + Q",
     hl.dsp.exec_cmd("command -v hyprshutdown >/dev/null 2>&1 && hyprshutdown || hyprctl dispatch 'hl.dsp.exit()'"),
     { description = "Exit Hyprland" })
-hl.bind(mainMod .. " + D", hl.dsp.exec_cmd(fileManager), { description = "Open file manager" })
+hl.bind(mainMod .. " + N", hl.dsp.exec_cmd(fileManager), { description = "Open file manager" })
 hl.bind(mainMod .. " + CTRL + L", hl.dsp.exec_cmd("loginctl lock-session"), { description = "Lock screen" })
 hl.bind(mainMod .. " + T", hl.dsp.window.float(), { description = "Toggle floating" })
 hl.bind(mainMod .. " + SPACE", hl.dsp.exec_cmd(menu), { description = "App launcher" })
@@ -50,6 +52,7 @@ for i = 1, 10 do
         { description = "Move window to workspace " .. i })
 end
 
+hl.bind(mainMod .. " + F", maximizeColumn.toggle, { description = "Toggle maximize column" })
 hl.bind(mainMod .. " + S", hl.dsp.layout("togglesplit"),
     { description = "Toggle split direction (vertical/horizontal)" })
 hl.bind(mainMod .. " + SHIFT + S", hl.dsp.window.move({ workspace = "special:magic" }),

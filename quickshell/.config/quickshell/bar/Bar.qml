@@ -26,6 +26,9 @@ Variants {
         color: "transparent"
 
         property bool indicatorsRevealed: false
+        // The media popup steals the bar's hover, which would collapse the
+        // indicators and shift everything the popup is anchored to.
+        readonly property bool showIndicators: indicatorsRevealed || media.active
 
         Timer {
             id: revealHideTimer
@@ -69,35 +72,36 @@ Variants {
                 visible: SystemTray.items.values.length > 0
             }
 
+            Media { id: media }
             Audio {}
             LaunchButton {
                 icon: Icons.memory
                 command: ["ghostty", "--gtk-single-instance=false",
                           "--class=org.dotfiles.btop", "--title=btop", "-e", "btop"]
                 collapsible: true
-                revealed: bar.indicatorsRevealed
+                revealed: bar.showIndicators
             }
             LaunchButton {
                 icon: Icons.eyedropper
                 command: ["hyprpicker", "-a"]
                 collapsible: true
-                revealed: bar.indicatorsRevealed
+                revealed: bar.showIndicators
             }
             DockToggle {
                 collapsible: true
-                revealed: bar.indicatorsRevealed
+                revealed: bar.showIndicators
             }
             Caffeine {
                 collapsible: true
-                revealed: bar.indicatorsRevealed
+                revealed: bar.showIndicators
             }
             NightLight {
                 collapsible: true
-                revealed: bar.indicatorsRevealed
+                revealed: bar.showIndicators
             }
             Updates {
                 collapsible: true
-                revealed: bar.indicatorsRevealed
+                revealed: bar.showIndicators
             }
             Network {}
 
