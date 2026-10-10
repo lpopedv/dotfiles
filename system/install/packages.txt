@@ -8,6 +8,7 @@ unzip
 inotify-tools
 
 # CLI tools
+aws-cli-v2
 ripgrep
 fd
 fzf
