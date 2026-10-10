@@ -1,1 +1,2 @@
 mullvad-vpn-bin
+zen-browser-bin
