@@ -173,7 +173,11 @@ if systemctl is-active --quiet systemd-networkd; then
     run sudo networkctl reload
 fi
 if systemctl is-active --quiet NetworkManager; then
-    run sudo systemctl reload-or-restart NetworkManager
+    # restart, not reload-or-restart: the dns=none + systemd-resolved=false
+    # change reconfigures the DNS plugin, which only a full restart applies. A
+    # reload silently leaves the link's DHCP-advertised DNS registered in
+    # resolved - the exact leak these drop-ins exist to close.
+    run sudo systemctl restart NetworkManager
 fi
 
 log "Maintenance timers"
@@ -299,7 +303,10 @@ else
     esac
 
     if [[ -n "$(sudo find /boot/loader/entries -maxdepth 1 -name '*.conf' -print -quit 2>/dev/null)" ]]; then
-        booted="$(bootctl status 2>/dev/null | sed -n 's/^[[:space:]]*Current Entry:[[:space:]]*//p')"
+        # sudo, same reason as the sb= read above: a plain bootctl exits non-zero
+        # on the ESP's permission-denied reads and pipefail+set-e kills the script
+        # here, before the Services section below ever runs.
+        booted="$(sudo bootctl status 2>/dev/null | sed -n 's/^[[:space:]]*Current Entry:[[:space:]]*//p')"
         if [[ "$booted" == arch-linux.efi ]]; then
             warn "booted from the UKI - retire the old path: sudo rm /boot/loader/entries/*.conf /boot/initramfs-linux*.img"
         else
