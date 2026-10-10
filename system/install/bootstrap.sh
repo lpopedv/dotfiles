@@ -180,7 +180,7 @@ log "Maintenance timers"
 run sudo install -Dm644 "$INSTALL/etc/systemd/system/paccache.timer.d/override.conf" \
     /etc/systemd/system/paccache.timer.d/override.conf
 run sudo systemctl daemon-reload
-run sudo systemctl enable --now systemd-tmpfiles-clean.timer paccache.timer
+run sudo systemctl enable --now systemd-tmpfiles-clean.timer paccache.timer fstrim.timer
 run systemctl --user daemon-reload
 run systemctl --user enable --now cliphist-wipe.timer zsh-history-wipe.timer
 
@@ -206,6 +206,15 @@ log "Kernel hardening"
 run sudo install -Dm644 "$INSTALL/etc/sysctl.d/99-hardening.conf" /etc/sysctl.d/99-hardening.conf
 run sudo rm -f /etc/sysctl.d/10-hardening.conf
 run sudo sysctl --system
+# Kernel command-line hardening (KSPP memory-hygiene flags) as a drop-in, not
+# an edit: mkinitcpio concatenates /etc/cmdline.d/*.conf into the UKI. Only
+# installed on change - the mtime must stay stable because the Secure Boot
+# section below compares the UKI against it to decide whether to rebuild.
+if cmp -s "$INSTALL/etc/cmdline.d/20-hardening.conf" /etc/cmdline.d/20-hardening.conf; then
+    ok "kernel cmdline hardening up to date"
+else
+    run sudo install -Dm644 "$INSTALL/etc/cmdline.d/20-hardening.conf" /etc/cmdline.d/20-hardening.conf
+fi
 
 log "Secure Boot"
 # vmlinuz-linux is deliberately never signed (would leave the old type-1 entry
@@ -250,7 +259,8 @@ else
 
     if (( ! rebuild )) &&
         sudo test "$UKI" -nt /boot/vmlinuz-linux &&
-        sudo test "$UKI" -nt /etc/cmdline.d/10-root.conf; then
+        sudo test "$UKI" -nt /etc/cmdline.d/10-root.conf &&
+        sudo test "$UKI" -nt /etc/cmdline.d/20-hardening.conf; then
         ok "unified kernel image is up to date"
     else
         sudo mkinitcpio -P

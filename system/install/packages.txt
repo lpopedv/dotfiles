@@ -24,6 +24,10 @@ imagemagick
 
 # Secure Boot
 sbctl
+# CPU microcode, loaded early from the UKI/initramfs - must be present before
+# the first mkinitcpio run to be baked in. Single-machine repo, this box is
+# Intel; swap for amd-ucode on an AMD CPU.
+intel-ucode
 
 # Maintenance (paccache, daily via systemd timer, see bootstrap.sh)
 pacman-contrib

@@ -4,13 +4,14 @@ Description=Wipe zsh history periodically
 [Service]
 Type=oneshot
 # Only guarantees empty at wipe time - SHARE_HISTORY lets an already-open shell rewrite it on exit.
-ExecStart=/usr/bin/truncate -s 0 %h/.zsh_history
+ExecStart=/usr/bin/truncate -s 0 %t/zsh_history
 
-# Sandboxed: read-only filesystem except this one file.
+# Sandboxed: read-only filesystem except this one file (%t is $XDG_RUNTIME_DIR,
+# the same tmpfs the shell writes its history to).
 NoNewPrivileges=yes
 ProtectSystem=strict
 ProtectHome=read-only
-ReadWritePaths=%h/.zsh_history
+ReadWritePaths=%t/zsh_history
 PrivateTmp=yes
 PrivateDevices=yes
 ProtectKernelTunables=yes

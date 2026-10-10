@@ -49,7 +49,10 @@ dotup() {
   git -C ~/Dotfiles pull --ff-only && ~/Dotfiles/system/install/bootstrap.sh "$@"
 }
 
-HISTFILE=~/.zsh_history
+# History lives in tmpfs ($XDG_RUNTIME_DIR is /run/user/$UID), not on disk:
+# reboot = clean slate. The 2-day zsh-history-wipe timer stays as a mid-session
+# safety net. SHARE_HISTORY below lets every shell share this one volatile file.
+HISTFILE=${XDG_RUNTIME_DIR:-/dev/shm}/zsh_history
 HISTSIZE=1000
 SAVEHIST=1000
 setopt HIST_IGNORE_DUPS
