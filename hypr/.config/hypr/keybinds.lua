@@ -16,6 +16,38 @@ hl.bind(mainMod .. " + N", hl.dsp.exec_cmd(fileManager), { description = "Open f
 hl.bind(mainMod .. " + CTRL + L", hl.dsp.exec_cmd("loginctl lock-session"), { description = "Lock screen" })
 hl.bind(mainMod .. " + T", hl.dsp.window.float(), { description = "Toggle floating" })
 hl.bind(mainMod .. " + SPACE", hl.dsp.exec_cmd(menu), { description = "App launcher" })
+-- rofi 2.0 can't detect clicks outside itself on Wayland (upstream issue #2158), so dismiss it
+-- here. The click binds are non-consuming (the click still reaches what was clicked) and only
+-- enabled while a rofi layer surface is open, so they cost nothing the rest of the time.
+local function cursor_outside(layer)
+    local cursor = hl.get_cursor_pos()
+    if not cursor then return false end
+
+    return cursor.x < layer.x or cursor.x > layer.x + layer.w
+        or cursor.y < layer.y or cursor.y > layer.y + layer.h
+end
+
+local function dismiss_rofi_on_outside_click()
+    local rofi = hl.get_layers({ namespace = "rofi" })[1]
+    if rofi and cursor_outside(rofi) then hl.exec_cmd("pkill -x rofi") end
+end
+
+local rofi_click_binds = {}
+for _, button in ipairs({ "mouse:272", "mouse:273" }) do
+    local bind = hl.bind(button, dismiss_rofi_on_outside_click,
+        { non_consuming = true, description = "Close rofi on outside click" })
+    bind:set_enabled(false)
+    table.insert(rofi_click_binds, bind)
+end
+
+local function set_rofi_click_binds(layer, enabled)
+    if layer.namespace ~= "rofi" then return end
+    for _, bind in ipairs(rofi_click_binds) do bind:set_enabled(enabled) end
+end
+
+hl.on("layer.opened", function(layer) set_rofi_click_binds(layer, true) end)
+hl.on("layer.closed", function(layer) set_rofi_click_binds(layer, false) end)
+
 hl.bind(mainMod .. " + SHIFT + F", hl.dsp.window.fullscreen({ mode = "fullscreen" }), { description = "Fullscreen window" })
 hl.bind(mainMod .. " + B", hl.dsp.exec_cmd(browser), { description = "Open browser" })
 hl.bind(mainMod .. " + E", hl.dsp.exec_cmd("emacsclient -c -a 'emacs'"), { description = "Open Emacs" })
