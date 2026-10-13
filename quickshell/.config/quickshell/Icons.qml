@@ -38,6 +38,7 @@ QtObject {
     readonly property string check: cp(0xF012C)
     readonly property string radioOn: cp(0xF0765)
     readonly property string radioOff: cp(0xF0130)
+    readonly property string chevronLeft: cp(0xF0141)
     readonly property string chevronRight: cp(0xF0142)
 
     readonly property string workspaceDot: "●"
