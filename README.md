@@ -23,7 +23,7 @@ Every top-level directory except `system/` is a stow package: its contents mirro
 | `qt6ct`     | Qt6 theming |
 | `quickshell`| Custom status bar, notifications, OSD, and session menu (QML) |
 | `rofi`      | App launcher |
-| `systemd`   | User-level systemd units and timers |
+| `systemd`   | User-level systemd units, timers and login-time trace cleanup (`user-tmpfiles.d`) |
 | `tmux`      | Terminal multiplexer |
 | `zsh`       | Shell config, prompt, aliases |
 

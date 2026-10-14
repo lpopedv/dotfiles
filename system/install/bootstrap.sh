@@ -250,6 +250,13 @@ if [[ -e "$HOME/.bash_history" ]]; then
     run rm -f "$HOME/.bash_history"
 fi
 
+# Applies systemd/.config/user-tmpfiles.d at every user-manager start. Shipped
+# with preset "enabled" but archinstall leaves it disabled.
+if systemctl --user is-enabled --quiet systemd-tmpfiles-setup.service; then
+    ok "user tmpfiles applied at login"
+else
+    run systemctl --user enable systemd-tmpfiles-setup.service
+fi
 
 log "Firewall"
 run sudo install -Dm644 "$INSTALL/etc/nftables.conf" /etc/nftables.conf
