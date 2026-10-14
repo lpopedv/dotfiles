@@ -614,14 +614,28 @@ else
     run sudo systemctl enable --now docker.service
 fi
 
-# Published ports default to 127.0.0.1: Docker DNATs before nftables' input
-# chain, so a bare "5432:5432" would otherwise reach the LAN past the firewall.
-# Only restarted on change - a restart bounces every running container.
+# Published ports default to 127.0.0.1, so a bare "5432:5432" stays on this
+# machine: "ip" covers the default bridge, "default-network-opts" every network
+# created afterwards (compose's per-project ones). Also: no setuid escalation
+# inside containers, containers survive daemon restarts (live-restore), logs to
+# the volatile journal. The firewall's forward chain is the second layer.
 if cmp -s "$INSTALL/etc/docker/daemon.json" /etc/docker/daemon.json; then
-    ok "docker publishes on 127.0.0.1"
+    ok "docker daemon config up to date"
 else
     run sudo install -Dm644 "$INSTALL/etc/docker/daemon.json" /etc/docker/daemon.json
     run sudo systemctl restart docker.service
+fi
+# A network keeps the options it was created with: one from before the default
+# above still publishes on 0.0.0.0 (blocked by the firewall, but not intended).
+# Recreating it means stopping its containers, so that's left to the user.
+if (( ! DRY )) && docker info >/dev/null 2>&1; then
+    while read -r net; do
+        project=$(docker network inspect -f '{{index .Labels "com.docker.compose.project"}}' "$net")
+        warn "docker network $net publishes on 0.0.0.0 - recreate it:" \
+            "${project:+docker compose -p $project down, then docker compose up -d in the project}"
+    done < <(docker network ls -q --filter driver=bridge | xargs -r docker network inspect \
+        -f '{{.Name}}|{{index .Options "com.docker.network.bridge.host_binding_ipv4"}}' \
+        | awk -F'|' '$2 != "127.0.0.1" {print $1}')
 fi
 
 if id -nG "$USER" | grep -qw docker; then
