@@ -4,7 +4,11 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## What this is
 
-Personal dotfiles for a single Arch Linux + Hyprland machine, managed with GNU Stow. There is
+Personal dotfiles for Arch Linux + Hyprland, managed with GNU Stow. The same repo runs on more
+than one machine (an AMD desktop and a laptop), so system config must be hardware-agnostic:
+no CPU-vendor, GPU or driver assumptions - when something only fits some hardware,
+`bootstrap.sh` decides per machine (e.g. kernel lockdown is skipped where out-of-tree modules
+exist). There is
 no build/test/lint pipeline — "correctness" means the shell scripts are safe to re-run and the
 stowed configs are valid for the tool that reads them.
 
@@ -27,6 +31,7 @@ meant to land in `$HOME`.
   - The `dotup` zsh function (in `zsh/.zshrc`) is `git pull --ff-only` + this script — the
     normal way this repo's changes get applied to the live machine.
 - Stow/unstow one package by hand from the repo root: `stow --restow <pkg>` / `stow -D <pkg>`
+  (the root `.stowrc` adds `--no-folding`, so this must run from the repo root)
 - Build a live installer ISO that embeds this repo: `sudo system/iso/build.sh [workdir]`
   (defaults to `/var/tmp/archiso-work`, not `/tmp`, because it needs 10+ GB and `/tmp` is
   tmpfs). Requires a checked-out branch (not detached HEAD) and the `archiso` package.
@@ -39,8 +44,16 @@ There are no app-level build/test/lint commands — verify changes by checking `
 **`system/install/`** is the source of truth for what a freshly-installed machine looks like:
 `archinstall.json` is the initial installer profile, `packages.txt`/`aur.txt` are flat package
 lists (one per line, `#` comments allowed) consumed by `bootstrap.sh`, and `etc/` holds drop-in
-files bootstrap installs verbatim into `/etc` (systemd-resolved/timesyncd Cloudflare DNS-over-TLS
-config, nftables, sysctl hardening, journald/coredump retention limits). Comments in
+files bootstrap installs verbatim into `/etc` (systemd-resolved Cloudflare DNS-over-TLS, chrony with
+NTS-authenticated time, nftables, sysctl hardening, NetworkManager/iwd per-boot MAC identity, volatile journald,
+Docker publishing on 127.0.0.1 by default, no coredumps, and tmpfs mount units for `/var/log`, `/var/lib/lastlog`, `/var/lib/NetworkManager`).
+
+**Amnesia rule:** the disk is an unencrypted SSD, where a deleted file's blocks linger until
+trimmed - so traces are kept off the disk (tmpfs / `Storage=volatile`) rather than written and
+wiped later. System-side that's the tmpfs units above plus `~/.cache`; user-side,
+`systemd/.config/user-tmpfiles.d/traces.conf` turns state paths (nvim, lazygit, sddm session log, the whole Chromium profile,
+Claude Code prompt history, herdr logs) into symlinks into `$XDG_RUNTIME_DIR`, and `zsh/.zshrc`
+points shell/REPL histories there too. New trace sources should follow the same pattern. Comments in
 `bootstrap.sh` explain *why* each of these exists (e.g. why `uwsm` is deliberately not
 installed, why NetworkManager needs its own no-DNS drop-in in addition to systemd-networkd's).
 
@@ -67,8 +80,15 @@ per-plugin under `lua/plugins/`, each `require()`d from `init.lua` after the plu
 
 **`claude/`** stows only `~/.claude/settings.json` (Claude Code's user settings, e.g.
 `cleanupPeriodDays` for transcript retention). The rest of `~/.claude` — transcripts, memory,
-credentials, plugins — is local state and never versioned; `bootstrap.sh` creates `~/.claude` as
-a real directory before stowing so stow can't fold it into a symlink into this repo.
+credentials, plugins — is local state and never versioned.
+
+**Every package is stowed with `--no-folding`** (`.stowrc` + explicit in `bootstrap.sh`): every
+directory under `$HOME` is real and only files are symlinked. With folding, stow would turn a
+directory into one symlink into this repo, and anything a program writes there (herdr's
+sessions/sockets, Claude Code's transcripts, `systemctl --user enable`'s absolute per-user links)
+would land in the repo. `bootstrap.sh` migrates installs that were folded: it moves the
+`.gitignore`d runtime files out to `$HOME`, and warns if a program replaced a stowed symlink with
+a regular file (an atomic save), since its changes would then no longer reach the repo.
 
 ## Gitignore-worthy state
 
