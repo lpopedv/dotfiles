@@ -1,0 +1,15 @@
+# NetworkManager's runtime state: DHCP leases, per-connection last-used
+# timestamps and seen-bssids - the BSSIDs of every access point a profile ever
+# saw, i.e. a location history. Saved profiles (and their passwords) live in
+# /etc/NetworkManager/system-connections and are unaffected.
+[Unit]
+Description=Volatile /var/lib/NetworkManager (tmpfs)
+
+[Mount]
+What=tmpfs
+Where=/var/lib/NetworkManager
+Type=tmpfs
+Options=mode=0700,nosuid,nodev,noexec,size=16M
+
+[Install]
+WantedBy=local-fs.target

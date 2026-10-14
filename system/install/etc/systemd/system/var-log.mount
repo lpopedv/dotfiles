@@ -1,0 +1,16 @@
+# Takes precedence over the fstab-generated var-log.mount (/etc beats
+# /run/systemd/generator), so the @log subvolume archinstall created is simply
+# never mounted again - fstab is left alone. Logs (wtmp/btmp, Xorg, pacman,
+# Mullvad, the installer's) live in RAM and are gone at every reboot;
+# systemd-tmpfiles recreates the expected files and directories at boot.
+[Unit]
+Description=Volatile /var/log (tmpfs)
+
+[Mount]
+What=tmpfs
+Where=/var/log
+Type=tmpfs
+Options=mode=0755,nosuid,nodev,noexec,size=256M
+
+[Install]
+WantedBy=local-fs.target

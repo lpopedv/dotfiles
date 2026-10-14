@@ -245,14 +245,80 @@ run systemctl --user daemon-reload
 run systemctl --user enable --now cliphist-wipe.timer zsh-history-wipe.timer
 
 log "Trace retention"
+# The rule throughout: on an unencrypted SSD a deleted file is only unlinked,
+# its blocks linger until trimmed - so traces go to RAM (tmpfs, volatile) and
+# never reach the disk, rather than being written and wiped later.
 run sudo install -Dm644 "$INSTALL/etc/tmpfiles.d/tmp.conf" /etc/tmpfiles.d/tmp.conf
-run sudo install -Dm644 "$INSTALL/etc/tmpfiles.d/zz-coredump.conf" /etc/tmpfiles.d/zz-coredump.conf
-run sudo install -Dm644 "$INSTALL/etc/systemd/journald.conf.d/10-retention.conf" \
-    /etc/systemd/journald.conf.d/10-retention.conf
+run sudo install -Dm644 "$INSTALL/etc/tmpfiles.d/pacman-log.conf" /etc/tmpfiles.d/pacman-log.conf
+
+# Storage=volatile: the journal lives in /run. Storage= is only read at
+# startup, so a change needs a restart, not a reload.
+if cmp -s "$INSTALL/etc/systemd/journald.conf.d/10-retention.conf" \
+    /etc/systemd/journald.conf.d/10-retention.conf; then
+    ok "journal is volatile"
+else
+    run sudo install -Dm644 "$INSTALL/etc/systemd/journald.conf.d/10-retention.conf" \
+        /etc/systemd/journald.conf.d/10-retention.conf
+    run sudo systemctl restart systemd-journald
+fi
+
+# Storage=none: core dumps are neither kept nor processed. The zz-coredump
+# tmpfiles rule only aged out dumps that are no longer written.
 run sudo install -Dm644 "$INSTALL/etc/systemd/coredump.conf.d/10-retention.conf" \
     /etc/systemd/coredump.conf.d/10-retention.conf
-run sudo systemctl reload-or-restart systemd-journald
-run sudo systemd-tmpfiles --clean /etc/tmpfiles.d/zz-coredump.conf
+run sudo rm -f /etc/tmpfiles.d/zz-coredump.conf
+# The directory is world-readable: no sudo just to look, even in a dry run.
+if [[ -n "$(find /var/lib/systemd/coredump -mindepth 1 -print -quit 2>/dev/null)" ]]; then
+    run sudo find /var/lib/systemd/coredump -mindepth 1 -delete
+fi
+
+# Directories whose whole content is a trace, not state anything needs across
+# a boot: logs, last logins, NetworkManager's leases and seen access points.
+volatile_units=(var-log.mount var-lib-lastlog.mount var-lib-NetworkManager.mount)
+for unit in "${volatile_units[@]}"; do
+    run sudo install -Dm644 "$INSTALL/etc/systemd/system/$unit" "/etc/systemd/system/$unit"
+done
+run sudo systemctl daemon-reload
+for unit in "${volatile_units[@]}"; do
+    dir="$(systemd-escape --unescape --path "${unit%.mount}")"
+    if [[ "$(findmnt -no FSTYPE --mountpoint "$dir" 2>/dev/null)" == tmpfs ]]; then
+        ok "$dir is tmpfs"
+        continue
+    fi
+    # Mounting over the old contents would only hide them, not delete them.
+    run sudo find "$dir" -xdev -mindepth 1 -delete
+    run sudo systemctl enable "$unit"
+    if mountpoint -q "$dir"; then
+        # /var/log: archinstall's @log subvolume is mounted there and can't be
+        # swapped out under running loggers. The unit wins from the next boot.
+        (( DRY )) || warn "$dir becomes tmpfs at the next reboot"
+    else
+        run sudo systemctl start "$unit"
+    fi
+done
+
+# Once /var/log is tmpfs, the subvolume fstab still lists for it is never
+# mounted again - but it keeps whatever was logged between the wipe above and
+# that reboot. Mounted aside to empty it; a no-op on later runs.
+if [[ "$(findmnt -no FSTYPE --mountpoint /var/log 2>/dev/null)" == tmpfs ]] &&
+    read -r src fstype opts < <(findmnt --fstab -no SOURCE,FSTYPE,OPTIONS --mountpoint /var/log 2>/dev/null) &&
+    [[ "$fstype" != tmpfs ]]; then
+    if (( DRY )); then
+        plan "empty the disk-backed /var/log ($src) behind the tmpfs"
+    else
+        aside="$(sudo mktemp -d)"
+        sudo mount -t "$fstype" -o "$opts" "$src" "$aside"
+        if [[ -n "$(sudo find "$aside" -mindepth 1 -print -quit)" ]]; then
+            sudo find "$aside" -mindepth 1 -delete
+            ok "emptied the disk-backed /var/log ($src)"
+        else
+            ok "disk-backed /var/log ($src) is empty"
+        fi
+        sudo umount "$aside"
+        sudo rmdir "$aside"
+    fi
+fi
+
 
 # ~/.cache on tmpfs: thumbnails, browser caches and download caches never touch
 # the disk and are gone on reboot. Installed toolchains (mise, pnpm store,
