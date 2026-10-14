@@ -65,13 +65,22 @@ mkdir -p "$OUT"
 rm -rf "${WORK:?}/mkarchiso"
 mkarchiso -v -w "$WORK/mkarchiso" -o "$OUT" "$profile"
 
+# Checksum the image (not signed: built and used by the same person, there
+# is no one to prove authorship to). It catches a corrupt copy or USB write.
+iso="$(ls -t "$OUT"/*.iso | head -n1)"
+(cd "$OUT" && sha256sum "${iso##*/}" > "${iso##*/}.sha256")
+
 log "Done"
-printf '    %s\n' "$OUT"/*.iso
-cat <<'EOF'
+printf '    %s\n    %s\n' "$iso" "$iso.sha256"
+cat <<EOF
 
     Write it to a USB stick with:
 
-      sudo dd if=<the .iso above> of=/dev/sdX bs=4M status=progress oflag=sync
+      sudo dd if=$iso of=/dev/sdX bs=4M status=progress oflag=sync
 
     Check /dev/sdX with lsblk first. dd overwrites whatever you point it at.
+    Then confirm the stick holds exactly this image (must match the .sha256):
+
+      sudo head -c \$(stat -c %s $iso) /dev/sdX | sha256sum
+      cat $iso.sha256
 EOF
