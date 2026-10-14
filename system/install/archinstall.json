@@ -11,7 +11,7 @@
   "hostname": "archlinux",
   "kernels": ["linux"],
   "locale_config": {
-    "kb_layout": "br",
+    "kb_layout": "br-abnt2",
     "sys_enc": "UTF-8",
     "sys_lang": "en_US"
   },

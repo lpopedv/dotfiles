@@ -645,6 +645,19 @@ else
     esac
 fi
 
+# Console keymap: archinstall used to be given "br" - an XKB layout name, not a
+# console keymap - so systemd-vconsole-setup failed every boot. The console
+# name for Hyprland's "br" (ABNT2) is br-abnt2. No -q on grep: with pipefail,
+# its early exit would SIGPIPE localectl and read as "not found".
+keymap="$(sed -n 's/^KEYMAP=//p' /etc/vconsole.conf 2>/dev/null)"
+if [[ -z "$keymap" ]] || localectl list-keymaps | grep -x -- "$keymap" >/dev/null; then
+    ok "console keymap ${keymap:-default}"
+elif [[ "$keymap" == br ]]; then
+    run sudo localectl set-keymap --no-convert br-abnt2
+else
+    warn "console keymap $keymap doesn't exist - set one with: localectl set-keymap"
+fi
+
 if [[ "$(getent passwd "$USER" | cut -d: -f7)" == */zsh ]]; then
     ok "login shell is zsh"
 else
