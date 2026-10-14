@@ -65,8 +65,10 @@ into a bar widget.
 lazy.nvim/packer — `nvim-pack-lock.json` pins plugin revisions. Plugin config lives one-file-
 per-plugin under `lua/plugins/`, each `require()`d from `init.lua` after the plugin list.
 
-`~/.claude` (Claude Code's own config/state) is deliberately not managed by this repo — it is
-never stowed and never versioned.
+**`claude/`** stows only `~/.claude/settings.json` (Claude Code's user settings, e.g.
+`cleanupPeriodDays` for transcript retention). The rest of `~/.claude` — transcripts, memory,
+credentials, plugins — is local state and never versioned; `bootstrap.sh` creates `~/.claude` as
+a real directory before stowing so stow can't fold it into a symlink into this repo.
 
 ## Gitignore-worthy state
 

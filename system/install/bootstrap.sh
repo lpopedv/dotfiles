@@ -8,7 +8,7 @@ DRY=0
 [[ "${1:-}" == "--dry-run" ]] && DRY=1
 
 STOW_PACKAGES=(
-    doom flameshot ghostty git gtk herdr hypr lazygit mise nvim
+    claude doom flameshot ghostty git gtk herdr hypr lazygit mise nvim
     orca qt6ct quickshell rofi systemd tmux wallpaper zsh
 )
 
@@ -79,6 +79,10 @@ fi
 
 log "Dotfiles"
 cd "$DOTFILES"
+# claude/ only ships settings.json. Without a real ~/.claude, stow would fold
+# the whole directory into a symlink and Claude Code would write its
+# transcripts, credentials and state into this repo.
+run mkdir -p "$HOME/.claude"
 for pkg in "${STOW_PACKAGES[@]}"; do
     if (( DRY )); then
         if stow -n --restow "$pkg" >/dev/null 2>&1; then
@@ -197,6 +201,7 @@ run sudo install -Dm644 "$INSTALL/etc/systemd/coredump.conf.d/10-retention.conf"
     /etc/systemd/coredump.conf.d/10-retention.conf
 run sudo systemctl reload-or-restart systemd-journald
 run sudo systemd-tmpfiles --clean /etc/tmpfiles.d/zz-coredump.conf
+
 
 log "Firewall"
 run sudo install -Dm644 "$INSTALL/etc/nftables.conf" /etc/nftables.conf
