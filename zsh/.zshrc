@@ -59,6 +59,13 @@ setopt HIST_IGNORE_SPACE
 setopt SHARE_HISTORY
 setopt APPEND_HISTORY
 
+# Same for every other REPL's history: tmpfs, gone at reboot.
+export PYTHON_HISTORY=${XDG_RUNTIME_DIR:-/dev/shm}/python_history
+export NODE_REPL_HISTORY=${XDG_RUNTIME_DIR:-/dev/shm}/node_repl_history
+export PSQL_HISTORY=${XDG_RUNTIME_DIR:-/dev/shm}/psql_history
+export SQLITE_HISTORY=${XDG_RUNTIME_DIR:-/dev/shm}/sqlite_history
+export LESSHISTFILE=-
+
 export BUN_INSTALL="$HOME/.bun"
 export PATH="$BUN_INSTALL/bin:$PATH"
 
