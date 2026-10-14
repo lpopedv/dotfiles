@@ -202,6 +202,39 @@ run sudo install -Dm644 "$INSTALL/etc/systemd/coredump.conf.d/10-retention.conf"
 run sudo systemctl reload-or-restart systemd-journald
 run sudo systemd-tmpfiles --clean /etc/tmpfiles.d/zz-coredump.conf
 
+# ~/.cache on tmpfs: thumbnails, browser caches and download caches never touch
+# the disk and are gone on reboot. Installed toolchains (mise, pnpm store,
+# Claude Code) live in ~/.local/share and are untouched. Generated rather than
+# shipped in etc/: the unit name and the uid/gid are derived from this user.
+cache_unit="$(systemd-escape --path --suffix=mount "$HOME/.cache")"
+cache_conf="[Unit]
+Description=Volatile ~/.cache (tmpfs)
+
+[Mount]
+What=tmpfs
+Where=$HOME/.cache
+Type=tmpfs
+Options=nosuid,nodev,size=4G,mode=0700,uid=$(id -u),gid=$(id -g)
+
+[Install]
+WantedBy=local-fs.target"
+if cmp -s <(printf '%s\n' "$cache_conf") "/etc/systemd/system/$cache_unit"; then
+    ok "$cache_unit up to date"
+elif (( DRY )); then
+    plan "install /etc/systemd/system/$cache_unit"
+else
+    printf '%s\n' "$cache_conf" | sudo install -Dm644 /dev/stdin "/etc/systemd/system/$cache_unit"
+    sudo systemctl daemon-reload
+fi
+if [[ "$(findmnt -no FSTYPE "$HOME/.cache" 2>/dev/null)" == tmpfs ]]; then
+    ok "~/.cache is tmpfs"
+else
+    # Mounting over the old directory would only hide it, not delete it.
+    run find "$HOME/.cache" -xdev -mindepth 1 -delete
+    run sudo systemctl enable --now "$cache_unit"
+    (( DRY )) || warn "~/.cache is now tmpfs - restart running apps (or reboot) so they drop the old cache"
+fi
+
 
 log "Firewall"
 run sudo install -Dm644 "$INSTALL/etc/nftables.conf" /etc/nftables.conf
