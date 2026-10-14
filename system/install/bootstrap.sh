@@ -645,6 +645,32 @@ else
     (( DRY )) || warn "log out and back in for the docker group to apply"
 fi
 
+# Always-on Mullvad: lockdown blocks all traffic outside the tunnel (the
+# early-boot unit covers the boot before the daemon is up), auto-connect brings
+# it up at boot. Without an account lockdown would cut all networking, so both
+# wait for a login: "mullvad account login", then re-run this script. DNS needs
+# nothing here: the daemon points resolved at its in-tunnel resolver and turns
+# DoT off on that link only (global DoT stays for when it's down).
+for unit in mullvad-daemon.service mullvad-early-boot-blocking.service; do
+    if [[ "$(systemctl is-enabled "$unit" 2>/dev/null)" == enabled ]]; then
+        ok "$unit enabled"
+    else
+        run sudo systemctl enable --now "$unit"
+    fi
+done
+if ! command -v mullvad >/dev/null || mullvad account get 2>/dev/null | grep -q 'Not logged in'; then
+    warn "mullvad: no account - always-on VPN starts once you log in and re-run this"
+else
+    if mullvad lan get | grep -q ': block'; then ok "mullvad blocks the LAN"
+    else run mullvad lan set block; fi
+    if mullvad auto-connect get | grep -q ': on'; then ok "mullvad auto-connects"
+    else run mullvad auto-connect set on; fi
+    if mullvad lockdown-mode get | grep -q ': on'; then ok "mullvad lockdown on"
+    else run mullvad lockdown-mode set on; fi
+    if mullvad status | grep -q '^Connected'; then ok "mullvad connected"
+    else run mullvad connect; fi
+fi
+
 # A root account with an empty password is a free "su" (Arch's PAM allows
 # nullok). A set password is left alone: locking it would also lock the
 # emergency shell, and with the command line sealed in the signed UKI the only
