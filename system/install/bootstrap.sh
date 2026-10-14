@@ -8,7 +8,7 @@ DRY=0
 [[ "${1:-}" == "--dry-run" ]] && DRY=1
 
 STOW_PACKAGES=(
-    doom flameshot ghostty git gtk herdr hypr lazygit mise nvim
+    claude flameshot ghostty git gtk herdr hypr lazygit mise nvim
     orca qt6ct quickshell rofi systemd tmux wallpaper zsh
 )
 
@@ -79,6 +79,10 @@ fi
 
 log "Dotfiles"
 cd "$DOTFILES"
+# claude/ only ships settings.json. Without a real ~/.claude, stow would fold
+# the whole directory into a symlink and Claude Code would write its
+# transcripts, credentials and state into this repo.
+run mkdir -p "$HOME/.claude"
 for pkg in "${STOW_PACKAGES[@]}"; do
     if (( DRY )); then
         if stow -n --restow "$pkg" >/dev/null 2>&1; then
@@ -197,6 +201,62 @@ run sudo install -Dm644 "$INSTALL/etc/systemd/coredump.conf.d/10-retention.conf"
     /etc/systemd/coredump.conf.d/10-retention.conf
 run sudo systemctl reload-or-restart systemd-journald
 run sudo systemd-tmpfiles --clean /etc/tmpfiles.d/zz-coredump.conf
+
+# ~/.cache on tmpfs: thumbnails, browser caches and download caches never touch
+# the disk and are gone on reboot. Installed toolchains (mise, pnpm store,
+# Claude Code) live in ~/.local/share and are untouched. Generated rather than
+# shipped in etc/: the unit name and the uid/gid are derived from this user.
+cache_unit="$(systemd-escape --path --suffix=mount "$HOME/.cache")"
+cache_conf="[Unit]
+Description=Volatile ~/.cache (tmpfs)
+
+[Mount]
+What=tmpfs
+Where=$HOME/.cache
+Type=tmpfs
+Options=nosuid,nodev,size=4G,mode=0700,uid=$(id -u),gid=$(id -g)
+
+[Install]
+WantedBy=local-fs.target"
+if cmp -s <(printf '%s\n' "$cache_conf") "/etc/systemd/system/$cache_unit"; then
+    ok "$cache_unit up to date"
+elif (( DRY )); then
+    plan "install /etc/systemd/system/$cache_unit"
+else
+    printf '%s\n' "$cache_conf" | sudo install -Dm644 /dev/stdin "/etc/systemd/system/$cache_unit"
+    sudo systemctl daemon-reload
+fi
+if [[ "$(findmnt -no FSTYPE "$HOME/.cache" 2>/dev/null)" == tmpfs ]]; then
+    ok "~/.cache is tmpfs"
+else
+    # Mounting over the old directory would only hide it, not delete it.
+    run find "$HOME/.cache" -xdev -mindepth 1 -delete
+    run sudo systemctl enable --now "$cache_unit"
+    (( DRY )) || warn "~/.cache is now tmpfs - restart running apps (or reboot) so they drop the old cache"
+fi
+
+# Login shell is zsh (history already in tmpfs, see zsh/.zshrc); bash only runs
+# for the first-boot bootstrap and the odd script, so the same rule is enforced
+# in its rc. ~/.bashrc isn't stowed - it's archinstall's skel copy.
+bash_hist='HISTFILE=${XDG_RUNTIME_DIR:-/dev/shm}/bash_history'
+if grep -qxF "$bash_hist" "$HOME/.bashrc" 2>/dev/null; then
+    ok "bash history in tmpfs"
+elif (( DRY )); then
+    plan "point bash HISTFILE at tmpfs in ~/.bashrc"
+else
+    printf '\n%s\n' "$bash_hist" >> "$HOME/.bashrc"
+fi
+if [[ -e "$HOME/.bash_history" ]]; then
+    run rm -f "$HOME/.bash_history"
+fi
+
+# Applies systemd/.config/user-tmpfiles.d at every user-manager start. Shipped
+# with preset "enabled" but archinstall leaves it disabled.
+if systemctl --user is-enabled --quiet systemd-tmpfiles-setup.service; then
+    ok "user tmpfiles applied at login"
+else
+    run systemctl --user enable systemd-tmpfiles-setup.service
+fi
 
 log "Firewall"
 run sudo install -Dm644 "$INSTALL/etc/nftables.conf" /etc/nftables.conf

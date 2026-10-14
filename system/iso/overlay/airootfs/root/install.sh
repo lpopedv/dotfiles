@@ -77,6 +77,14 @@ fi
 HOOK
             chown "$(stat -c %u "$home"):$(stat -c %g "$home")" "$home/.bash_profile"
         fi
+
+        # The first login is a bash shell (it runs bootstrap.sh); keep even that
+        # session's history off the disk. bootstrap.sh enforces the same line.
+        bash_hist='HISTFILE=${XDG_RUNTIME_DIR:-/dev/shm}/bash_history'
+        if ! grep -qxF "$bash_hist" "$home/.bashrc" 2>/dev/null; then
+            printf '\n%s\n' "$bash_hist" >> "$home/.bashrc"
+            chown "$(stat -c %u "$home"):$(stat -c %g "$home")" "$home/.bashrc"
+        fi
     else
         skipped+=("the repo copy")
     fi

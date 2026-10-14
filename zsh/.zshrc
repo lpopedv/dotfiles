@@ -8,7 +8,6 @@ bindkey "^[[1;5C" forward-word
 
 export EDITOR=nvim
 export PATH=$HOME/.local/bin:$PATH
-export PATH=$HOME/.config/emacs/bin:$PATH
 export PATH=$HOME/.opencode/bin:$PATH
 
 eval "$(mise activate zsh)"
