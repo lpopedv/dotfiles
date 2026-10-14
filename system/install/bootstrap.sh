@@ -300,6 +300,9 @@ if systemctl --user is-enabled --quiet systemd-tmpfiles-setup.service; then
 else
     run systemctl --user enable systemd-tmpfiles-setup.service
 fi
+# Applied now too, not just from the next login: turns the state directories
+# it lists into symlinks into RAM (removing what's there) right away.
+run systemd-tmpfiles --user --create
 
 log "Firewall"
 run sudo install -Dm644 "$INSTALL/etc/nftables.conf" /etc/nftables.conf
