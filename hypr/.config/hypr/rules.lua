@@ -49,13 +49,6 @@ hl.window_rule({
 })
 
 hl.window_rule({
-    name    = "emacs-blur",
-    match   = { class = "Emacs" },
-
-    opacity = "0.92 override 0.85 override",
-})
-
-hl.window_rule({
     name  = "flameshot-gui",
     match = { class = "^(flameshot)$" },
 
