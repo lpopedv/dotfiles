@@ -79,23 +79,66 @@ fi
 
 log "Dotfiles"
 cd "$DOTFILES"
-# claude/ only ships settings.json. Without a real ~/.claude, stow would fold
-# the whole directory into a symlink and Claude Code would write its
-# transcripts, credentials and state into this repo.
-run mkdir -p "$HOME/.claude"
+# Every package is stowed with --no-folding. Left to fold, stow turns a
+# directory it fully owns into one symlink into this repo, and whatever a
+# program then writes there lands in the repo: herdr's sessions, logs and
+# sockets, Claude Code's transcripts, `systemctl --user enable`'s absolute,
+# user-specific links. --no-folding keeps every directory real and links only
+# files; on --restow it also unfolds a directory an earlier run folded.
+
+# Enablement links that installs from before --no-folding left in the repo.
+# They hold the absolute path of whichever user created them, so they're
+# dropped, not moved - systemctl --user enable below recreates them in $HOME.
+for wants in "$DOTFILES"/systemd/.config/systemd/user/*.wants; do
+    [[ -d "$wants" ]] && run rm -rf "$wants"
+done
+
 for pkg in "${STOW_PACKAGES[@]}"; do
+    # Anything else programs wrote through a folded directory is named by
+    # .gitignore: moved out to where the program looks for it. mv, not cp - a
+    # same-filesystem rename keeps a running server's socket reachable. When
+    # $HOME already has the path, that one is live and the repo's is stale.
+    mapfile -d '' -t state < <(find "$pkg" ! -type d -print0 | git check-ignore --stdin -z)
+    if (( ${#state[@]} )); then
+        # Unlinked first: while folded, the $HOME path *is* the repo file.
+        run stow -D "$pkg"
+        for f in "${state[@]}"; do
+            target="$HOME/${f#"$pkg"/}"
+            # -ef: never delete what is, through a fold, the very same file.
+            if [[ (-e "$target" || -L "$target") && ! "$target" -ef "$f" ]]; then
+                run rm -f "$f"
+            else
+                run mkdir -p "$(dirname "$target")"
+                run mv "$f" "$target"
+            fi
+        done
+        # git doesn't track empty directories, so none of these are source.
+        run find "$pkg" -mindepth 1 -type d -empty -delete
+        (( DRY )) || ok "$pkg: moved ${#state[@]} runtime files out of the repo"
+    fi
+
     if (( DRY )); then
-        if stow -n --restow "$pkg" >/dev/null 2>&1; then
+        if stow -n --no-folding --restow "$pkg" >/dev/null 2>&1; then
             ok "$pkg"
         else
-            warn "$pkg would conflict - resolve, then: stow --restow $pkg"
+            warn "$pkg would conflict - resolve, then: stow --no-folding --restow $pkg"
         fi
-    elif stow --restow "$pkg" 2>/dev/null; then
+    elif stow --no-folding --restow "$pkg" 2>/dev/null; then
         ok "$pkg"
     else
-        warn "$pkg conflicts with an existing file - resolve, then: stow --restow $pkg"
+        warn "$pkg conflicts with an existing file - resolve, then: stow --no-folding --restow $pkg"
     fi
 done
+
+# A program that saves by writing a new file and renaming it over the old one
+# replaces its symlink with a regular file: its changes stop reaching the repo
+# and stow refuses the package. Named explicitly so it's clear what to merge.
+while IFS= read -r -d '' f; do
+    target="$HOME/${f#*/}"
+    if [[ -f "$target" && "$(readlink -f "$target")" != "$DOTFILES/$f" ]]; then
+        warn "~/${f#*/} is a regular file, not a link into the repo - diff it against $f, keep one, re-run"
+    fi
+done < <(git ls-files -z -- "${STOW_PACKAGES[@]}")
 
 log "Desktop appearance"
 # gtk4/libadwaita apps read theme only via gsettings/the portal, not these
