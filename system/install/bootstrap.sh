@@ -476,6 +476,29 @@ if cmp -s "$INSTALL/etc/cmdline.d/20-hardening.conf" /etc/cmdline.d/20-hardening
 else
     run sudo install -Dm644 "$INSTALL/etc/cmdline.d/20-hardening.conf" /etc/cmdline.d/20-hardening.conf
 fi
+# Lockdown only where every module can still load: Arch signs the modules it
+# ships with the kernel, never out-of-tree ones (packaged into extramodules/,
+# DKMS-built into updates/). Machine-dependent - a laptop may need nvidia.
+unsigned=$(find /usr/lib/modules -name '*.ko*' \( -path '*/extramodules*/*' \
+    -o -path '/usr/lib/modules/*/updates/*' \) -printf '%f\n' | sort -u | paste -sd' ')
+if [[ -n "$unsigned" ]]; then
+    warn "kernel lockdown off: out-of-tree modules can't load under it ($unsigned)"
+    if [[ -e /etc/cmdline.d/30-lockdown.conf ]]; then
+        run sudo rm /etc/cmdline.d/30-lockdown.conf
+    fi
+elif cmp -s "$INSTALL/etc/cmdline.d/30-lockdown.conf" /etc/cmdline.d/30-lockdown.conf; then
+    ok "kernel lockdown (integrity) configured"
+else
+    run sudo install -Dm644 "$INSTALL/etc/cmdline.d/30-lockdown.conf" /etc/cmdline.d/30-lockdown.conf
+fi
+run sudo install -Dm644 "$INSTALL/etc/pacman.d/hooks/90-lockdown-modules.hook" \
+    /etc/pacman.d/hooks/90-lockdown-modules.hook
+# Takes effect only on the next boot: the command line is baked into the UKI.
+# Built the way mkinitcpio builds it (non-comment lines, joined by spaces).
+want_cmdline="$(grep -ha -- '^[^#]' /etc/cmdline.d/*.conf | tr -s '\n' ' ')"
+if [[ "${want_cmdline% }" != "$(tr -d '\n' < /proc/cmdline)" ]]; then
+    warn "kernel command line changed - active after the next reboot"
+fi
 
 log "Secure Boot"
 # vmlinuz-linux is deliberately never signed (would leave the old type-1 entry
@@ -520,8 +543,8 @@ else
 
     if (( ! rebuild )) &&
         sudo test "$UKI" -nt /boot/vmlinuz-linux &&
-        sudo test "$UKI" -nt /etc/cmdline.d/10-root.conf &&
-        sudo test "$UKI" -nt /etc/cmdline.d/20-hardening.conf; then
+        sudo test "$UKI" -nt /etc/cmdline.d &&
+        [[ -z "$(sudo find /etc/cmdline.d -name '*.conf' -newer "$UKI")" ]]; then
         ok "unified kernel image is up to date"
     else
         sudo mkinitcpio -P

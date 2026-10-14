@@ -1,0 +1,15 @@
+# Out-of-tree kernel modules (nvidia, virtualbox, broadcom-wl, DKMS) aren't
+# signed with the kernel's key, so they can't load while lockdown is on - see
+# cmdline.d/30-lockdown.conf. Re-running bootstrap.sh drops lockdown for them.
+[Trigger]
+Operation = Install
+Operation = Upgrade
+Type = Path
+Target = usr/lib/modules/*/extramodules/*
+Target = usr/lib/modules/*/updates/*
+Target = usr/src/*/dkms.conf
+
+[Action]
+Description = Checking out-of-tree modules against kernel lockdown...
+When = PostTransaction
+Exec = /usr/bin/sh -c 'case " $(cat /proc/cmdline) " in *" lockdown="*) echo "WARNING: out-of-tree kernel module installed: it will not load under kernel lockdown. Re-run system/install/bootstrap.sh from the dotfiles repo, then reboot." ;; esac'
