@@ -626,6 +626,20 @@ else
     (( DRY )) || warn "log out and back in for the docker group to apply"
 fi
 
+# A root account with an empty password is a free "su" (Arch's PAM allows
+# nullok). A set password is left alone: locking it would also lock the
+# emergency shell, and with the command line sealed in the signed UKI the only
+# way back in would be a live USB.
+if (( DRY )); then
+    plan "check that root has a password or is locked"
+else
+    case "$(sudo passwd -S root | awk '{print $2}')" in
+        NP) sudo passwd -l root >/dev/null; warn "root had an empty password - locked it" ;;
+        L)  ok "root account is locked" ;;
+        *)  ok "root has a password" ;;
+    esac
+fi
+
 if [[ "$(getent passwd "$USER" | cut -d: -f7)" == */zsh ]]; then
     ok "login shell is zsh"
 else
