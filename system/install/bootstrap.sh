@@ -211,6 +211,17 @@ done
 # Same leak, NetworkManager's side (archinstall's nm_iwd manages links here).
 run sudo install -Dm644 "$INSTALL/etc/NetworkManager/conf.d/10-no-dns.conf" \
     /etc/NetworkManager/conf.d/10-no-dns.conf
+# Per-boot MAC/DHCP/IPv6 identity, no hostname sent. Wired is NetworkManager's
+# (applied by the restart below); Wi-Fi is iwd's, which only reads its config
+# at startup - restarted on change, dropping Wi-Fi for a moment.
+run sudo install -Dm644 "$INSTALL/etc/NetworkManager/conf.d/20-privacy.conf" \
+    /etc/NetworkManager/conf.d/20-privacy.conf
+if cmp -s "$INSTALL/etc/iwd/main.conf" /etc/iwd/main.conf; then
+    ok "iwd randomizes the Wi-Fi MAC"
+else
+    run sudo install -Dm644 "$INSTALL/etc/iwd/main.conf" /etc/iwd/main.conf
+    run sudo systemctl try-restart iwd.service
+fi
 
 run sudo systemctl enable systemd-timesyncd.service systemd-resolved.service
 # restart, not enable --now: --now is a no-op if already running, and the
@@ -234,6 +245,8 @@ if systemctl is-active --quiet NetworkManager; then
     # reload silently leaves the link's DHCP-advertised DNS registered in
     # resolved - the exact leak these drop-ins exist to close.
     run sudo systemctl restart NetworkManager
+    # A restart keeps the already-active wired link's MAC; the per-boot one
+    # from 20-privacy.conf takes over from the next activation (or boot).
 fi
 
 log "Maintenance timers"
