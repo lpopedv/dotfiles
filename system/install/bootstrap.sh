@@ -319,6 +319,51 @@ if [[ "$(findmnt -no FSTYPE --mountpoint /var/log 2>/dev/null)" == tmpfs ]] &&
     fi
 fi
 
+# Chromium is only a fallback browser: its whole profile lives in RAM (see
+# user-tmpfiles.d/traces.conf) and is wiped at exit too. Zen keeps history and
+# bookmarks - they drive URL-bar autocomplete; what goes is form history, at
+# exit. Its disk cache already lives in ~/.cache (tmpfs). Zen can't drop its
+# download list alone: it's part of History in Firefox-based browsers.
+run sudo install -Dm644 "$INSTALL/etc/chromium/policies/managed/amnesic.json" \
+    /etc/chromium/policies/managed/amnesic.json
+# Zen also gets ECH (encrypted SNI: the network sees only the CDN, not the
+# site) via the system resolver's HTTPS records - DNS-over-TLS already - with
+# its own DNS-over-HTTPS kept off, so a VPN's resolver is never bypassed.
+# Zen reads /etc/zen/policies/policies.json *instead of* the policies.json its
+# package ships (the system file wins outright), so the package's own
+# policies (e.g. DisableAppUpdate) are merged in underneath ours. A Zen update
+# that changes them is picked up by the next run.
+zen_pkg_policies=/opt/zen-browser-bin/distribution/policies.json
+if [[ -e "$zen_pkg_policies" ]]; then
+    zen_policies="$(python3 -I - "$zen_pkg_policies" "$INSTALL/etc/zen/policies/policies.json" <<'PY'
+import json, sys
+pkg, ours = (json.load(open(p)) for p in sys.argv[1:])
+merged = pkg.setdefault("policies", {})
+for key, value in ours["policies"].items():
+    if isinstance(value, dict) and isinstance(merged.get(key), dict):
+        merged[key] = {**merged[key], **value}
+    else:
+        merged[key] = value
+print(json.dumps(pkg, indent=2))
+PY
+)"
+    if cmp -s <(printf '%s\n' "$zen_policies") /etc/zen/policies/policies.json; then
+        ok "Zen policies up to date"
+    elif (( DRY )); then
+        plan "install /etc/zen/policies/policies.json"
+    else
+        printf '%s\n' "$zen_policies" | sudo install -Dm644 /dev/stdin /etc/zen/policies/policies.json
+        warn "Zen policies changed - restart Zen to apply them"
+    fi
+fi
+
+# The greeter no longer preselects the last user; drop the one already saved.
+run sudo install -Dm644 "$INSTALL/etc/sddm.conf.d/10-amnesic.conf" /etc/sddm.conf.d/10-amnesic.conf
+if (( DRY )); then
+    plan "drop any saved last user from /var/lib/sddm/state.conf"
+elif sudo grep -q '^User=' /var/lib/sddm/state.conf 2>/dev/null; then
+    sudo sed -i '/^User=/d' /var/lib/sddm/state.conf
+fi
 
 # ~/.cache on tmpfs: thumbnails, browser caches and download caches never touch
 # the disk and are gone on reboot. Installed toolchains (mise, pnpm store,

@@ -1,0 +1,28 @@
+{
+  "policies": {
+    "DisableFormHistory": true,
+    "SanitizeOnShutdown": {
+      "Cache": true,
+      "FormData": true,
+      "Sessions": true,
+      "History": false,
+      "Cookies": false,
+      "SiteSettings": false,
+      "Locked": false
+    },
+    "DNSOverHTTPS": {
+      "Enabled": false,
+      "Locked": false
+    },
+    "Preferences": {
+      "network.dns.echconfig.enabled": {
+        "Value": true,
+        "Status": "default"
+      },
+      "network.dns.native_https_query": {
+        "Value": true,
+        "Status": "default"
+      }
+    }
+  }
+}
