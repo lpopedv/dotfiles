@@ -32,6 +32,9 @@ sbctl
 amd-ucode
 intel-ucode
 
+# Authenticated time (NTS) - replaces systemd-timesyncd, see etc/chrony.conf.
+chrony
+
 # Maintenance (paccache, daily via systemd timer, see bootstrap.sh)
 pacman-contrib
 

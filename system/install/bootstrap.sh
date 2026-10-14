@@ -193,8 +193,6 @@ else
 fi
 
 log "Time and DNS"
-run sudo install -Dm644 "$INSTALL/etc/systemd/timesyncd.conf.d/10-cloudflare.conf" \
-    /etc/systemd/timesyncd.conf.d/10-cloudflare.conf
 run sudo install -Dm644 "$INSTALL/etc/systemd/resolved.conf.d/10-cloudflare-dot.conf" \
     /etc/systemd/resolved.conf.d/10-cloudflare-dot.conf
 run sudo install -Dm644 "$INSTALL/etc/systemd/resolved.conf.d/20-no-multicast.conf" \
@@ -223,11 +221,31 @@ else
     run sudo systemctl try-restart iwd.service
 fi
 
-run sudo systemctl enable systemd-timesyncd.service systemd-resolved.service
+run sudo systemctl enable systemd-resolved.service
 # restart, not enable --now: --now is a no-op if already running, and the
 # drop-ins above would never be read.
-run sudo systemctl restart systemd-timesyncd.service
 run sudo systemctl reload-or-restart systemd-resolved.service
+
+# Time: chrony with NTS instead of timesyncd (no NTS support). The two are
+# declared Conflicts=, so starting chronyd stops timesyncd; disabling it keeps
+# it from coming back at boot.
+if [[ "$(systemctl is-enabled systemd-timesyncd.service 2>/dev/null)" == enabled ]]; then
+    run sudo systemctl disable --now systemd-timesyncd.service
+fi
+if [[ -e /etc/systemd/timesyncd.conf.d/10-cloudflare.conf ]]; then
+    run sudo rm /etc/systemd/timesyncd.conf.d/10-cloudflare.conf
+fi
+if cmp -s "$INSTALL/etc/chrony.conf" /etc/chrony.conf; then
+    ok "chrony uses NTS"
+else
+    run sudo install -Dm644 "$INSTALL/etc/chrony.conf" /etc/chrony.conf
+    run sudo systemctl try-restart chronyd.service
+fi
+if [[ "$(systemctl is-enabled chronyd.service 2>/dev/null)" == enabled ]]; then
+    ok "chronyd enabled"
+else
+    run sudo systemctl enable --now chronyd.service
+fi
 
 # dns=none means nothing writes /etc/resolv.conf; point it at resolved's stub.
 if [[ "$(readlink -f /etc/resolv.conf 2>/dev/null)" == /run/systemd/resolve/stub-resolv.conf ]]; then
