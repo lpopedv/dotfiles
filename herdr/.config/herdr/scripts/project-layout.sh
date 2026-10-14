@@ -9,7 +9,9 @@
 # pane ourselves (close every sibling pane) before laying it out.
 
 set -euo pipefail
-exec >> "$(dirname "$0")/project-layout.log" 2>&1
+# Debug log in RAM ($XDG_RUNTIME_DIR), not next to the script: it records
+# every pane cwd, and is gone at reboot.
+exec >> "${XDG_RUNTIME_DIR:-/tmp}/herdr-project-layout.log" 2>&1
 echo "--- $(date -Iseconds) args=$* pane=${HERDR_ACTIVE_PANE_ID:-unset} cwd=${HERDR_ACTIVE_PANE_CWD:-unset} ---"
 
 editor_cmd="nvim"
