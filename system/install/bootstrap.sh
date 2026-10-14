@@ -235,6 +235,21 @@ else
     (( DRY )) || warn "~/.cache is now tmpfs - restart running apps (or reboot) so they drop the old cache"
 fi
 
+# Login shell is zsh (history already in tmpfs, see zsh/.zshrc); bash only runs
+# for the first-boot bootstrap and the odd script, so the same rule is enforced
+# in its rc. ~/.bashrc isn't stowed - it's archinstall's skel copy.
+bash_hist='HISTFILE=${XDG_RUNTIME_DIR:-/dev/shm}/bash_history'
+if grep -qxF "$bash_hist" "$HOME/.bashrc" 2>/dev/null; then
+    ok "bash history in tmpfs"
+elif (( DRY )); then
+    plan "point bash HISTFILE at tmpfs in ~/.bashrc"
+else
+    printf '\n%s\n' "$bash_hist" >> "$HOME/.bashrc"
+fi
+if [[ -e "$HOME/.bash_history" ]]; then
+    run rm -f "$HOME/.bash_history"
+fi
+
 
 log "Firewall"
 run sudo install -Dm644 "$INSTALL/etc/nftables.conf" /etc/nftables.conf
