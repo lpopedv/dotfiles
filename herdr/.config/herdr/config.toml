@@ -68,3 +68,9 @@ key = "prefix+shift+o"
 type = "shell"
 command = "~/.config/herdr/scripts/project-layout.sh --tools"
 description = "project layout + tools"
+
+[ui.toast]
+delivery = "system"
+
+[ui.sound]
+enabled = true

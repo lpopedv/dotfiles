@@ -3,7 +3,9 @@
 # new pane (not zoomed), like tmux's `split-window -h -c ... "cmd"`.
 
 set -euo pipefail
-exec >> "$(dirname "$0")/spawn-pane.log" 2>&1
+# Debug log in RAM ($XDG_RUNTIME_DIR), not next to the script: it records
+# every pane cwd, and is gone at reboot.
+exec >> "${XDG_RUNTIME_DIR:-/tmp}/herdr-spawn-pane.log" 2>&1
 echo "--- $(date -Iseconds) args=$* pane=${HERDR_ACTIVE_PANE_ID:-unset} cwd=${HERDR_ACTIVE_PANE_CWD:-unset} ---"
 
 pane="${HERDR_ACTIVE_PANE_ID:?HERDR_ACTIVE_PANE_ID not set}"

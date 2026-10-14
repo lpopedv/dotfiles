@@ -13,3 +13,8 @@ herdr/.config/herdr/*.log
 herdr/.config/herdr/session.json
 herdr/.config/herdr/session-snapshots/
 herdr/.config/herdr/.plugins.lock
+herdr/.config/herdr/*.sock
+
+# Written by `systemctl --user enable`: absolute, user-specific symlinks.
+# Stowing with --no-folding (.stowrc) keeps them in $HOME, never here.
+systemd/.config/systemd/user/*.wants/

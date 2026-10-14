@@ -1,0 +1,13 @@
+# lastlog2's database: every user's last login time, terminal and source
+# address. Kept in RAM - "last login" then only ever means "since this boot".
+[Unit]
+Description=Volatile /var/lib/lastlog (tmpfs)
+
+[Mount]
+What=tmpfs
+Where=/var/lib/lastlog
+Type=tmpfs
+Options=mode=0755,nosuid,nodev,noexec,size=8M
+
+[Install]
+WantedBy=local-fs.target

@@ -79,23 +79,66 @@ fi
 
 log "Dotfiles"
 cd "$DOTFILES"
-# claude/ only ships settings.json. Without a real ~/.claude, stow would fold
-# the whole directory into a symlink and Claude Code would write its
-# transcripts, credentials and state into this repo.
-run mkdir -p "$HOME/.claude"
+# Every package is stowed with --no-folding. Left to fold, stow turns a
+# directory it fully owns into one symlink into this repo, and whatever a
+# program then writes there lands in the repo: herdr's sessions, logs and
+# sockets, Claude Code's transcripts, `systemctl --user enable`'s absolute,
+# user-specific links. --no-folding keeps every directory real and links only
+# files; on --restow it also unfolds a directory an earlier run folded.
+
+# Enablement links that installs from before --no-folding left in the repo.
+# They hold the absolute path of whichever user created them, so they're
+# dropped, not moved - systemctl --user enable below recreates them in $HOME.
+for wants in "$DOTFILES"/systemd/.config/systemd/user/*.wants; do
+    [[ -d "$wants" ]] && run rm -rf "$wants"
+done
+
 for pkg in "${STOW_PACKAGES[@]}"; do
+    # Anything else programs wrote through a folded directory is named by
+    # .gitignore: moved out to where the program looks for it. mv, not cp - a
+    # same-filesystem rename keeps a running server's socket reachable. When
+    # $HOME already has the path, that one is live and the repo's is stale.
+    mapfile -d '' -t state < <(find "$pkg" ! -type d -print0 | git check-ignore --stdin -z)
+    if (( ${#state[@]} )); then
+        # Unlinked first: while folded, the $HOME path *is* the repo file.
+        run stow -D "$pkg"
+        for f in "${state[@]}"; do
+            target="$HOME/${f#"$pkg"/}"
+            # -ef: never delete what is, through a fold, the very same file.
+            if [[ (-e "$target" || -L "$target") && ! "$target" -ef "$f" ]]; then
+                run rm -f "$f"
+            else
+                run mkdir -p "$(dirname "$target")"
+                run mv "$f" "$target"
+            fi
+        done
+        # git doesn't track empty directories, so none of these are source.
+        run find "$pkg" -mindepth 1 -type d -empty -delete
+        (( DRY )) || ok "$pkg: moved ${#state[@]} runtime files out of the repo"
+    fi
+
     if (( DRY )); then
-        if stow -n --restow "$pkg" >/dev/null 2>&1; then
+        if stow -n --no-folding --restow "$pkg" >/dev/null 2>&1; then
             ok "$pkg"
         else
-            warn "$pkg would conflict - resolve, then: stow --restow $pkg"
+            warn "$pkg would conflict - resolve, then: stow --no-folding --restow $pkg"
         fi
-    elif stow --restow "$pkg" 2>/dev/null; then
+    elif stow --no-folding --restow "$pkg" 2>/dev/null; then
         ok "$pkg"
     else
-        warn "$pkg conflicts with an existing file - resolve, then: stow --restow $pkg"
+        warn "$pkg conflicts with an existing file - resolve, then: stow --no-folding --restow $pkg"
     fi
 done
+
+# A program that saves by writing a new file and renaming it over the old one
+# replaces its symlink with a regular file: its changes stop reaching the repo
+# and stow refuses the package. Named explicitly so it's clear what to merge.
+while IFS= read -r -d '' f; do
+    target="$HOME/${f#*/}"
+    if [[ -f "$target" && "$(readlink -f "$target")" != "$DOTFILES/$f" ]]; then
+        warn "~/${f#*/} is a regular file, not a link into the repo - diff it against $f, keep one, re-run"
+    fi
+done < <(git ls-files -z -- "${STOW_PACKAGES[@]}")
 
 log "Desktop appearance"
 # gtk4/libadwaita apps read theme only via gsettings/the portal, not these
@@ -118,6 +161,15 @@ if [[ "$(gsettings get org.gnome.desktop.interface icon-theme 2>/dev/null)" == "
 else
     run gsettings set org.gnome.desktop.interface icon-theme 'Papirus-Dark'
 fi
+# Recent files and app-usage stats are a record of what was opened, read by
+# GNOME/gtk4 apps from here. gtk3 apps get the same from settings.ini.
+for key in remember-recent-files remember-app-usage; do
+    if [[ "$(gsettings get org.gnome.desktop.privacy "$key" 2>/dev/null)" == false ]]; then
+        ok "$key = false"
+    else
+        run gsettings set org.gnome.desktop.privacy "$key" false
+    fi
+done
 
 log "Toolchain"
 run mise install --locked
@@ -141,8 +193,6 @@ else
 fi
 
 log "Time and DNS"
-run sudo install -Dm644 "$INSTALL/etc/systemd/timesyncd.conf.d/10-cloudflare.conf" \
-    /etc/systemd/timesyncd.conf.d/10-cloudflare.conf
 run sudo install -Dm644 "$INSTALL/etc/systemd/resolved.conf.d/10-cloudflare-dot.conf" \
     /etc/systemd/resolved.conf.d/10-cloudflare-dot.conf
 run sudo install -Dm644 "$INSTALL/etc/systemd/resolved.conf.d/20-no-multicast.conf" \
@@ -159,12 +209,43 @@ done
 # Same leak, NetworkManager's side (archinstall's nm_iwd manages links here).
 run sudo install -Dm644 "$INSTALL/etc/NetworkManager/conf.d/10-no-dns.conf" \
     /etc/NetworkManager/conf.d/10-no-dns.conf
+# Per-boot MAC/DHCP/IPv6 identity, no hostname sent. Wired is NetworkManager's
+# (applied by the restart below); Wi-Fi is iwd's, which only reads its config
+# at startup - restarted on change, dropping Wi-Fi for a moment.
+run sudo install -Dm644 "$INSTALL/etc/NetworkManager/conf.d/20-privacy.conf" \
+    /etc/NetworkManager/conf.d/20-privacy.conf
+if cmp -s "$INSTALL/etc/iwd/main.conf" /etc/iwd/main.conf; then
+    ok "iwd randomizes the Wi-Fi MAC"
+else
+    run sudo install -Dm644 "$INSTALL/etc/iwd/main.conf" /etc/iwd/main.conf
+    run sudo systemctl try-restart iwd.service
+fi
 
-run sudo systemctl enable systemd-timesyncd.service systemd-resolved.service
+run sudo systemctl enable systemd-resolved.service
 # restart, not enable --now: --now is a no-op if already running, and the
 # drop-ins above would never be read.
-run sudo systemctl restart systemd-timesyncd.service
 run sudo systemctl reload-or-restart systemd-resolved.service
+
+# Time: chrony with NTS instead of timesyncd (no NTS support). The two are
+# declared Conflicts=, so starting chronyd stops timesyncd; disabling it keeps
+# it from coming back at boot.
+if [[ "$(systemctl is-enabled systemd-timesyncd.service 2>/dev/null)" == enabled ]]; then
+    run sudo systemctl disable --now systemd-timesyncd.service
+fi
+if [[ -e /etc/systemd/timesyncd.conf.d/10-cloudflare.conf ]]; then
+    run sudo rm /etc/systemd/timesyncd.conf.d/10-cloudflare.conf
+fi
+if cmp -s "$INSTALL/etc/chrony.conf" /etc/chrony.conf; then
+    ok "chrony uses NTS"
+else
+    run sudo install -Dm644 "$INSTALL/etc/chrony.conf" /etc/chrony.conf
+    run sudo systemctl try-restart chronyd.service
+fi
+if [[ "$(systemctl is-enabled chronyd.service 2>/dev/null)" == enabled ]]; then
+    ok "chronyd enabled"
+else
+    run sudo systemctl enable --now chronyd.service
+fi
 
 # dns=none means nothing writes /etc/resolv.conf; point it at resolved's stub.
 if [[ "$(readlink -f /etc/resolv.conf 2>/dev/null)" == /run/systemd/resolve/stub-resolv.conf ]]; then
@@ -182,6 +263,8 @@ if systemctl is-active --quiet NetworkManager; then
     # reload silently leaves the link's DHCP-advertised DNS registered in
     # resolved - the exact leak these drop-ins exist to close.
     run sudo systemctl restart NetworkManager
+    # A restart keeps the already-active wired link's MAC; the per-boot one
+    # from 20-privacy.conf takes over from the next activation (or boot).
 fi
 
 log "Maintenance timers"
@@ -193,14 +276,125 @@ run systemctl --user daemon-reload
 run systemctl --user enable --now cliphist-wipe.timer zsh-history-wipe.timer
 
 log "Trace retention"
+# The rule throughout: on an unencrypted SSD a deleted file is only unlinked,
+# its blocks linger until trimmed - so traces go to RAM (tmpfs, volatile) and
+# never reach the disk, rather than being written and wiped later.
 run sudo install -Dm644 "$INSTALL/etc/tmpfiles.d/tmp.conf" /etc/tmpfiles.d/tmp.conf
-run sudo install -Dm644 "$INSTALL/etc/tmpfiles.d/zz-coredump.conf" /etc/tmpfiles.d/zz-coredump.conf
-run sudo install -Dm644 "$INSTALL/etc/systemd/journald.conf.d/10-retention.conf" \
-    /etc/systemd/journald.conf.d/10-retention.conf
+run sudo install -Dm644 "$INSTALL/etc/tmpfiles.d/pacman-log.conf" /etc/tmpfiles.d/pacman-log.conf
+
+# Storage=volatile: the journal lives in /run. Storage= is only read at
+# startup, so a change needs a restart, not a reload.
+if cmp -s "$INSTALL/etc/systemd/journald.conf.d/10-retention.conf" \
+    /etc/systemd/journald.conf.d/10-retention.conf; then
+    ok "journal is volatile"
+else
+    run sudo install -Dm644 "$INSTALL/etc/systemd/journald.conf.d/10-retention.conf" \
+        /etc/systemd/journald.conf.d/10-retention.conf
+    run sudo systemctl restart systemd-journald
+fi
+
+# Storage=none: core dumps are neither kept nor processed. The zz-coredump
+# tmpfiles rule only aged out dumps that are no longer written.
 run sudo install -Dm644 "$INSTALL/etc/systemd/coredump.conf.d/10-retention.conf" \
     /etc/systemd/coredump.conf.d/10-retention.conf
-run sudo systemctl reload-or-restart systemd-journald
-run sudo systemd-tmpfiles --clean /etc/tmpfiles.d/zz-coredump.conf
+run sudo rm -f /etc/tmpfiles.d/zz-coredump.conf
+# The directory is world-readable: no sudo just to look, even in a dry run.
+if [[ -n "$(find /var/lib/systemd/coredump -mindepth 1 -print -quit 2>/dev/null)" ]]; then
+    run sudo find /var/lib/systemd/coredump -mindepth 1 -delete
+fi
+
+# Directories whose whole content is a trace, not state anything needs across
+# a boot: logs, last logins, NetworkManager's leases and seen access points.
+volatile_units=(var-log.mount var-lib-lastlog.mount var-lib-NetworkManager.mount)
+for unit in "${volatile_units[@]}"; do
+    run sudo install -Dm644 "$INSTALL/etc/systemd/system/$unit" "/etc/systemd/system/$unit"
+done
+run sudo systemctl daemon-reload
+for unit in "${volatile_units[@]}"; do
+    dir="$(systemd-escape --unescape --path "${unit%.mount}")"
+    if [[ "$(findmnt -no FSTYPE --mountpoint "$dir" 2>/dev/null)" == tmpfs ]]; then
+        ok "$dir is tmpfs"
+        continue
+    fi
+    # Mounting over the old contents would only hide them, not delete them.
+    run sudo find "$dir" -xdev -mindepth 1 -delete
+    run sudo systemctl enable "$unit"
+    if mountpoint -q "$dir"; then
+        # /var/log: archinstall's @log subvolume is mounted there and can't be
+        # swapped out under running loggers. The unit wins from the next boot.
+        (( DRY )) || warn "$dir becomes tmpfs at the next reboot"
+    else
+        run sudo systemctl start "$unit"
+    fi
+done
+
+# Once /var/log is tmpfs, the subvolume fstab still lists for it is never
+# mounted again - but it keeps whatever was logged between the wipe above and
+# that reboot. Mounted aside to empty it; a no-op on later runs.
+if [[ "$(findmnt -no FSTYPE --mountpoint /var/log 2>/dev/null)" == tmpfs ]] &&
+    read -r src fstype opts < <(findmnt --fstab -no SOURCE,FSTYPE,OPTIONS --mountpoint /var/log 2>/dev/null) &&
+    [[ "$fstype" != tmpfs ]]; then
+    if (( DRY )); then
+        plan "empty the disk-backed /var/log ($src) behind the tmpfs"
+    else
+        aside="$(sudo mktemp -d)"
+        sudo mount -t "$fstype" -o "$opts" "$src" "$aside"
+        if [[ -n "$(sudo find "$aside" -mindepth 1 -print -quit)" ]]; then
+            sudo find "$aside" -mindepth 1 -delete
+            ok "emptied the disk-backed /var/log ($src)"
+        else
+            ok "disk-backed /var/log ($src) is empty"
+        fi
+        sudo umount "$aside"
+        sudo rmdir "$aside"
+    fi
+fi
+
+# Chromium is only a fallback browser: its whole profile lives in RAM (see
+# user-tmpfiles.d/traces.conf) and is wiped at exit too. Zen keeps history and
+# bookmarks - they drive URL-bar autocomplete; what goes is form history, at
+# exit. Its disk cache already lives in ~/.cache (tmpfs). Zen can't drop its
+# download list alone: it's part of History in Firefox-based browsers.
+run sudo install -Dm644 "$INSTALL/etc/chromium/policies/managed/amnesic.json" \
+    /etc/chromium/policies/managed/amnesic.json
+# Zen also gets ECH (encrypted SNI: the network sees only the CDN, not the
+# site) via the system resolver's HTTPS records - DNS-over-TLS already - with
+# its own DNS-over-HTTPS kept off, so a VPN's resolver is never bypassed.
+# Zen reads /etc/zen/policies/policies.json *instead of* the policies.json its
+# package ships (the system file wins outright), so the package's own
+# policies (e.g. DisableAppUpdate) are merged in underneath ours. A Zen update
+# that changes them is picked up by the next run.
+zen_pkg_policies=/opt/zen-browser-bin/distribution/policies.json
+if [[ -e "$zen_pkg_policies" ]]; then
+    zen_policies="$(python3 -I - "$zen_pkg_policies" "$INSTALL/etc/zen/policies/policies.json" <<'PY'
+import json, sys
+pkg, ours = (json.load(open(p)) for p in sys.argv[1:])
+merged = pkg.setdefault("policies", {})
+for key, value in ours["policies"].items():
+    if isinstance(value, dict) and isinstance(merged.get(key), dict):
+        merged[key] = {**merged[key], **value}
+    else:
+        merged[key] = value
+print(json.dumps(pkg, indent=2))
+PY
+)"
+    if cmp -s <(printf '%s\n' "$zen_policies") /etc/zen/policies/policies.json; then
+        ok "Zen policies up to date"
+    elif (( DRY )); then
+        plan "install /etc/zen/policies/policies.json"
+    else
+        printf '%s\n' "$zen_policies" | sudo install -Dm644 /dev/stdin /etc/zen/policies/policies.json
+        warn "Zen policies changed - restart Zen to apply them"
+    fi
+fi
+
+# The greeter no longer preselects the last user; drop the one already saved.
+run sudo install -Dm644 "$INSTALL/etc/sddm.conf.d/10-amnesic.conf" /etc/sddm.conf.d/10-amnesic.conf
+if (( DRY )); then
+    plan "drop any saved last user from /var/lib/sddm/state.conf"
+elif sudo grep -q '^User=' /var/lib/sddm/state.conf 2>/dev/null; then
+    sudo sed -i '/^User=/d' /var/lib/sddm/state.conf
+fi
 
 # ~/.cache on tmpfs: thumbnails, browser caches and download caches never touch
 # the disk and are gone on reboot. Installed toolchains (mise, pnpm store,
@@ -257,6 +451,9 @@ if systemctl --user is-enabled --quiet systemd-tmpfiles-setup.service; then
 else
     run systemctl --user enable systemd-tmpfiles-setup.service
 fi
+# Applied now too, not just from the next login: turns the state directories
+# it lists into symlinks into RAM (removing what's there) right away.
+run systemd-tmpfiles --user --create
 
 log "Firewall"
 run sudo install -Dm644 "$INSTALL/etc/nftables.conf" /etc/nftables.conf
@@ -278,6 +475,34 @@ if cmp -s "$INSTALL/etc/cmdline.d/20-hardening.conf" /etc/cmdline.d/20-hardening
     ok "kernel cmdline hardening up to date"
 else
     run sudo install -Dm644 "$INSTALL/etc/cmdline.d/20-hardening.conf" /etc/cmdline.d/20-hardening.conf
+fi
+if cmp -s "$INSTALL/etc/cmdline.d/40-tpm.conf" /etc/cmdline.d/40-tpm.conf; then
+    ok "TPM measured-OS mode off (systemd 262 NvPCR failures)"
+else
+    run sudo install -Dm644 "$INSTALL/etc/cmdline.d/40-tpm.conf" /etc/cmdline.d/40-tpm.conf
+fi
+# Lockdown only where every module can still load: Arch signs the modules it
+# ships with the kernel, never out-of-tree ones (packaged into extramodules/,
+# DKMS-built into updates/). Machine-dependent - a laptop may need nvidia.
+unsigned=$(find /usr/lib/modules -name '*.ko*' \( -path '*/extramodules*/*' \
+    -o -path '/usr/lib/modules/*/updates/*' \) -printf '%f\n' | sort -u | paste -sd' ')
+if [[ -n "$unsigned" ]]; then
+    warn "kernel lockdown off: out-of-tree modules can't load under it ($unsigned)"
+    if [[ -e /etc/cmdline.d/30-lockdown.conf ]]; then
+        run sudo rm /etc/cmdline.d/30-lockdown.conf
+    fi
+elif cmp -s "$INSTALL/etc/cmdline.d/30-lockdown.conf" /etc/cmdline.d/30-lockdown.conf; then
+    ok "kernel lockdown (integrity) configured"
+else
+    run sudo install -Dm644 "$INSTALL/etc/cmdline.d/30-lockdown.conf" /etc/cmdline.d/30-lockdown.conf
+fi
+run sudo install -Dm644 "$INSTALL/etc/pacman.d/hooks/90-lockdown-modules.hook" \
+    /etc/pacman.d/hooks/90-lockdown-modules.hook
+# Takes effect only on the next boot: the command line is baked into the UKI.
+# Built the way mkinitcpio builds it (non-comment lines, joined by spaces).
+want_cmdline="$(grep -ha -- '^[^#]' /etc/cmdline.d/*.conf | tr -s '\n' ' ')"
+if [[ "${want_cmdline% }" != "$(tr -d '\n' < /proc/cmdline)" ]]; then
+    warn "kernel command line changed - active after the next reboot"
 fi
 
 log "Secure Boot"
@@ -323,8 +548,8 @@ else
 
     if (( ! rebuild )) &&
         sudo test "$UKI" -nt /boot/vmlinuz-linux &&
-        sudo test "$UKI" -nt /etc/cmdline.d/10-root.conf &&
-        sudo test "$UKI" -nt /etc/cmdline.d/20-hardening.conf; then
+        sudo test "$UKI" -nt /etc/cmdline.d &&
+        [[ -z "$(sudo find /etc/cmdline.d -name '*.conf' -newer "$UKI")" ]]; then
         ok "unified kernel image is up to date"
     else
         sudo mkinitcpio -P
@@ -389,14 +614,28 @@ else
     run sudo systemctl enable --now docker.service
 fi
 
-# Published ports default to 127.0.0.1: Docker DNATs before nftables' input
-# chain, so a bare "5432:5432" would otherwise reach the LAN past the firewall.
-# Only restarted on change - a restart bounces every running container.
+# Published ports default to 127.0.0.1, so a bare "5432:5432" stays on this
+# machine: "ip" covers the default bridge, "default-network-opts" every network
+# created afterwards (compose's per-project ones). Also: no setuid escalation
+# inside containers, containers survive daemon restarts (live-restore), logs to
+# the volatile journal. The firewall's forward chain is the second layer.
 if cmp -s "$INSTALL/etc/docker/daemon.json" /etc/docker/daemon.json; then
-    ok "docker publishes on 127.0.0.1"
+    ok "docker daemon config up to date"
 else
     run sudo install -Dm644 "$INSTALL/etc/docker/daemon.json" /etc/docker/daemon.json
     run sudo systemctl restart docker.service
+fi
+# A network keeps the options it was created with: one from before the default
+# above still publishes on 0.0.0.0 (blocked by the firewall, but not intended).
+# Recreating it means stopping its containers, so that's left to the user.
+if (( ! DRY )) && docker info >/dev/null 2>&1; then
+    while read -r net; do
+        project=$(docker network inspect -f '{{index .Labels "com.docker.compose.project"}}' "$net")
+        warn "docker network $net publishes on 0.0.0.0 - recreate it:" \
+            "${project:+docker compose -p $project down, then docker compose up -d in the project}"
+    done < <(docker network ls -q --filter driver=bridge | xargs -r docker network inspect \
+        -f '{{.Name}}|{{index .Options "com.docker.network.bridge.host_binding_ipv4"}}' \
+        | awk -F'|' '$2 != "127.0.0.1" {print $1}')
 fi
 
 if id -nG "$USER" | grep -qw docker; then
@@ -404,6 +643,59 @@ if id -nG "$USER" | grep -qw docker; then
 else
     run sudo usermod -aG docker "$USER"
     (( DRY )) || warn "log out and back in for the docker group to apply"
+fi
+
+# Always-on Mullvad: lockdown blocks all traffic outside the tunnel (the
+# early-boot unit covers the boot before the daemon is up), auto-connect brings
+# it up at boot. Without an account lockdown would cut all networking, so both
+# wait for a login: "mullvad account login", then re-run this script. DNS needs
+# nothing here: the daemon points resolved at its in-tunnel resolver and turns
+# DoT off on that link only (global DoT stays for when it's down).
+for unit in mullvad-daemon.service mullvad-early-boot-blocking.service; do
+    if [[ "$(systemctl is-enabled "$unit" 2>/dev/null)" == enabled ]]; then
+        ok "$unit enabled"
+    else
+        run sudo systemctl enable --now "$unit"
+    fi
+done
+if ! command -v mullvad >/dev/null || mullvad account get 2>/dev/null | grep -q 'Not logged in'; then
+    warn "mullvad: no account - always-on VPN starts once you log in and re-run this"
+else
+    if mullvad lan get | grep -q ': block'; then ok "mullvad blocks the LAN"
+    else run mullvad lan set block; fi
+    if mullvad auto-connect get | grep -q ': on'; then ok "mullvad auto-connects"
+    else run mullvad auto-connect set on; fi
+    if mullvad lockdown-mode get | grep -q ': on'; then ok "mullvad lockdown on"
+    else run mullvad lockdown-mode set on; fi
+    if mullvad status | grep -q '^Connected'; then ok "mullvad connected"
+    else run mullvad connect; fi
+fi
+
+# A root account with an empty password is a free "su" (Arch's PAM allows
+# nullok). A set password is left alone: locking it would also lock the
+# emergency shell, and with the command line sealed in the signed UKI the only
+# way back in would be a live USB.
+if (( DRY )); then
+    plan "check that root has a password or is locked"
+else
+    case "$(sudo passwd -S root | awk '{print $2}')" in
+        NP) sudo passwd -l root >/dev/null; warn "root had an empty password - locked it" ;;
+        L)  ok "root account is locked" ;;
+        *)  ok "root has a password" ;;
+    esac
+fi
+
+# Console keymap: archinstall used to be given "br" - an XKB layout name, not a
+# console keymap - so systemd-vconsole-setup failed every boot. The console
+# name for Hyprland's "br" (ABNT2) is br-abnt2. No -q on grep: with pipefail,
+# its early exit would SIGPIPE localectl and read as "not found".
+keymap="$(sed -n 's/^KEYMAP=//p' /etc/vconsole.conf 2>/dev/null)"
+if [[ -z "$keymap" ]] || localectl list-keymaps | grep -x -- "$keymap" >/dev/null; then
+    ok "console keymap ${keymap:-default}"
+elif [[ "$keymap" == br ]]; then
+    run sudo localectl set-keymap --no-convert br-abnt2
+else
+    warn "console keymap $keymap doesn't exist - set one with: localectl set-keymap"
 fi
 
 if [[ "$(getent passwd "$USER" | cut -d: -f7)" == */zsh ]]; then
