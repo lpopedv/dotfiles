@@ -476,6 +476,11 @@ if cmp -s "$INSTALL/etc/cmdline.d/20-hardening.conf" /etc/cmdline.d/20-hardening
 else
     run sudo install -Dm644 "$INSTALL/etc/cmdline.d/20-hardening.conf" /etc/cmdline.d/20-hardening.conf
 fi
+if cmp -s "$INSTALL/etc/cmdline.d/40-tpm.conf" /etc/cmdline.d/40-tpm.conf; then
+    ok "TPM measured-OS mode off (systemd 262 NvPCR failures)"
+else
+    run sudo install -Dm644 "$INSTALL/etc/cmdline.d/40-tpm.conf" /etc/cmdline.d/40-tpm.conf
+fi
 # Lockdown only where every module can still load: Arch signs the modules it
 # ships with the kernel, never out-of-tree ones (packaged into extramodules/,
 # DKMS-built into updates/). Machine-dependent - a laptop may need nvidia.
