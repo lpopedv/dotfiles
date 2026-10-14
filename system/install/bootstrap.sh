@@ -161,6 +161,15 @@ if [[ "$(gsettings get org.gnome.desktop.interface icon-theme 2>/dev/null)" == "
 else
     run gsettings set org.gnome.desktop.interface icon-theme 'Papirus-Dark'
 fi
+# Recent files and app-usage stats are a record of what was opened, read by
+# GNOME/gtk4 apps from here. gtk3 apps get the same from settings.ini.
+for key in remember-recent-files remember-app-usage; do
+    if [[ "$(gsettings get org.gnome.desktop.privacy "$key" 2>/dev/null)" == false ]]; then
+        ok "$key = false"
+    else
+        run gsettings set org.gnome.desktop.privacy "$key" false
+    fi
+done
 
 log "Toolchain"
 run mise install --locked
