@@ -78,9 +78,15 @@ into a bar widget.
 lazy.nvim/packer — `nvim-pack-lock.json` pins plugin revisions. Plugin config lives one-file-
 per-plugin under `lua/plugins/`, each `require()`d from `init.lua` after the plugin list.
 
-**`claude/`** stows only `~/.claude/settings.json` (Claude Code's user settings, e.g.
-`cleanupPeriodDays` for transcript retention). The rest of `~/.claude` — transcripts, memory,
-credentials, plugins — is local state and never versioned.
+**`claude/`** stows Claude Code's user config: `~/.claude/settings.json` (e.g. `cleanupPeriodDays`
+for transcript retention, hooks), the `mono` theme, and an English-learning setup — the `en`,
+`en-review` and `en-interview` skills, `hooks/en-auto.py` (a `UserPromptSubmit` hook that runs `en`
+whenever a prompt is written in English) and `english/README.md`. The learning *data* the skills
+write to `~/.claude/english/` (`log.jsonl`, `vocab.jsonl`, `reviews/`) is personal and never
+versioned — this repo is public. The rest of `~/.claude` — transcripts, memory, credentials,
+plugins — is local state and never versioned either. Claude Code rewrites `settings.json`
+atomically when settings change from inside it, which replaces the stowed symlink with a regular
+file; copy any wanted change back into the repo and restow.
 
 **Every package is stowed with `--no-folding`** (`.stowrc` + explicit in `bootstrap.sh`): every
 directory under `$HOME` is real and only files are symlinked. With folding, stow would turn a
