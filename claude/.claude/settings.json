@@ -1,5 +1,31 @@
 {
   "model": "opus",
-  "theme": "dark",
-  "cleanupPeriodDays": 3
+  "theme": "custom:mono",
+  "effortLevel": "high",
+  "cleanupPeriodDays": 3,
+  "hooks": {
+    "SessionStart": [
+      {
+        "matcher": "*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash '/home/tux/.claude/hooks/herdr-agent-state.sh' session",
+            "timeout": 10
+          }
+        ]
+      }
+    ],
+    "UserPromptSubmit": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 \"$HOME/.claude/hooks/en-auto.py\"",
+            "timeout": 5
+          }
+        ]
+      }
+    ]
+  }
 }
