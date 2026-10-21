@@ -39,12 +39,12 @@ PopupWindow {
     anchor.item: anchorItem
     anchor.edges: BarService.popupEdge
     anchor.gravity: BarService.popupEdge
-    anchor.adjustment: PopupAdjustment.SlideX
+    anchor.adjustment: BarService.popupAdjustment
 
-    implicitWidth: 360
+    implicitWidth: 360 + BarService.insetX
     // Gap off the bar is transparent space inside the popup: the compositor
     // clamps an anchored popup to the bar's edge, so anchor.margins can't do it.
-    implicitHeight: layout.implicitHeight + 28 + Theme.popupInset
+    implicitHeight: layout.implicitHeight + 28 + BarService.insetY
     color: "transparent"
 
     // Resets the fade-in for next open; can close via focus grab too, not just the button.
@@ -87,8 +87,10 @@ PopupWindow {
         id: panel
 
         anchors.fill: parent
-        anchors.topMargin: BarService.top ? Theme.popupInset : 0
-        anchors.bottomMargin: BarService.top ? 0 : Theme.popupInset
+        anchors.topMargin: BarService.insetTop
+        anchors.bottomMargin: BarService.insetBottom
+        anchors.leftMargin: BarService.insetLeft
+        anchors.rightMargin: BarService.insetRight
         color: Theme.glass
         border.width: 1
         border.color: Theme.border

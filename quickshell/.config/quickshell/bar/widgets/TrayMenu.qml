@@ -20,12 +20,15 @@ PopupWindow {
     }
 
     anchor.item: root.anchorItem
-    anchor.edges: root.nested ? Edges.Right : BarService.popupEdge
-    anchor.gravity: root.nested ? Edges.Right : BarService.popupEdge
+    // Submenus open to the right of their parent, except off a right bar, where that would run off-screen.
+    readonly property int nestedEdge: BarService.right ? Edges.Left : Edges.Right
+
+    anchor.edges: root.nested ? root.nestedEdge : BarService.popupEdge
+    anchor.gravity: root.nested ? root.nestedEdge : BarService.popupEdge
     anchor.adjustment: PopupAdjustment.Slide
 
-    implicitWidth: 220
-    implicitHeight: layout.implicitHeight + 20 + (root.nested ? 0 : Theme.popupInset)
+    implicitWidth: 220 + (root.nested ? 0 : BarService.insetX)
+    implicitHeight: layout.implicitHeight + 20 + (root.nested ? 0 : BarService.insetY)
     color: "transparent"
 
     property var openRow: null
@@ -46,8 +49,10 @@ PopupWindow {
         id: panel
 
         anchors.fill: parent
-        anchors.topMargin: root.nested || !BarService.top ? 0 : Theme.popupInset
-        anchors.bottomMargin: root.nested || BarService.top ? 0 : Theme.popupInset
+        anchors.topMargin: root.nested ? 0 : BarService.insetTop
+        anchors.bottomMargin: root.nested ? 0 : BarService.insetBottom
+        anchors.leftMargin: root.nested ? 0 : BarService.insetLeft
+        anchors.rightMargin: root.nested ? 0 : BarService.insetRight
         color: Theme.glass
         border.width: 1
         border.color: Theme.border

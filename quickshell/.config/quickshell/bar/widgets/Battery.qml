@@ -19,11 +19,13 @@ BarItem {
     readonly property bool alerting: present && Theme.isAlert(drained)
 
     visible: present
-    Layout.leftMargin: 12
+    leadGap: 10
 
     ShellText {
+        // Stacked on a side bar: icon and percentage side by side would overflow it.
         text: (root.charging ? Icons.charging : Icons.batteryIcon(root.level))
-            + " " + root.percent + "%"
+            + (root.vertical ? "\n" : " ") + root.percent + "%"
+        horizontalAlignment: Text.AlignHCenter
         color: Theme.alertColor(root.drained,
             root.hovered || root.charging ? Theme.fgAct : Theme.fg)
         font.weight: root.charging || root.alerting ? Font.DemiBold : Font.Normal

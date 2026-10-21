@@ -4,15 +4,25 @@ import Quickshell
 import Quickshell.Services.SystemTray
 import "../.."
 
-RowLayout {
+GridLayout {
     id: root
 
-    Layout.alignment: Qt.AlignVCenter
-    // Matches the glyph-to-glyph rhythm of the BarItems beside it: each one
-    // has 11px padding plus a 2px margin per side, so 13 + 13 between glyphs.
-    Layout.leftMargin: 4
-    Layout.rightMargin: 13
-    spacing: 26
+    readonly property bool vertical: BarService.vertical
+
+    Layout.alignment: BarService.crossAlign
+    // Matches the glyph-to-glyph rhythm of the BarItems beside it: along a top/bottom
+    // bar each one has 11px padding plus a 2px margin per side, so 13 + 13 between
+    // glyphs; along a side bar the items are squarer, so the gap is tighter.
+    Layout.leftMargin: root.vertical ? 0 : 4
+    Layout.rightMargin: root.vertical ? 0 : 13
+    Layout.topMargin: root.vertical ? 4 : 0
+    Layout.bottomMargin: root.vertical ? 13 : 0
+
+    flow: root.vertical ? GridLayout.LeftToRight : GridLayout.TopToBottom
+    columns: root.vertical ? 1 : -1
+    rows: root.vertical ? -1 : 1
+    columnSpacing: 26
+    rowSpacing: 22
 
     Repeater {
         model: SystemTray.items
@@ -22,7 +32,7 @@ RowLayout {
 
             required property var modelData
 
-            Layout.alignment: Qt.AlignVCenter
+            Layout.alignment: BarService.crossAlign
             implicitWidth: 16
             implicitHeight: 16
 

@@ -22,10 +22,10 @@ PopupWindow {
     anchor.item: anchorItem
     anchor.edges: BarService.popupEdge
     anchor.gravity: BarService.popupEdge
-    anchor.adjustment: PopupAdjustment.SlideX
+    anchor.adjustment: BarService.popupAdjustment
 
-    implicitWidth: 340
-    implicitHeight: layout.implicitHeight + 28 + Theme.popupInset
+    implicitWidth: 340 + BarService.insetX
+    implicitHeight: layout.implicitHeight + 28 + BarService.insetY
     color: "transparent"
 
     onVisibleChanged: if (!root.visible) panel.opacity = 0
@@ -67,8 +67,10 @@ PopupWindow {
         id: panel
 
         anchors.fill: parent
-        anchors.topMargin: BarService.top ? Theme.popupInset : 0
-        anchors.bottomMargin: BarService.top ? 0 : Theme.popupInset
+        anchors.topMargin: BarService.insetTop
+        anchors.bottomMargin: BarService.insetBottom
+        anchors.leftMargin: BarService.insetLeft
+        anchors.rightMargin: BarService.insetRight
         color: Theme.glass
         border.width: 1
         border.color: Theme.border

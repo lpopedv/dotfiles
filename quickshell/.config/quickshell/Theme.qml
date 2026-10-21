@@ -32,7 +32,9 @@ QtObject {
         return used >= warnAt;
     }
 
+    // A side bar is thicker than a top/bottom one: stacked text (clock, battery) needs the room.
     readonly property int barHeight: 34
+    readonly property int barWidth: 44
 
     // Must clear hyprland's ignore_alpha (0.2) or the compositor skips
     // blurring it and it becomes a hole in the desktop.
@@ -45,6 +47,21 @@ QtObject {
 
     readonly property int animMs: 90
     readonly property int animSlideMs: 140
+
+    // Curves are [cx1, cy1, cx2, cy2, 1, 1] for `easing.type: Easing.BezierSpline`.
+    // Reveal/collapse of the bar's items: one long, decelerating curve (ease-out-quint)
+    // on a single progress value, so width, fade and scale all move as one gesture.
+    readonly property int revealMs: 340
+    readonly property var revealCurve: [0.22, 1, 0.36, 1, 1, 1]
+    // Neighbours follow each other this far apart, so a reveal ripples instead of snapping.
+    readonly property int revealStaggerMs: 22
+    // Collapsing is quicker and all at once: a long decelerating tail reads as a hitch
+    // on the way out, and a ripple leaves the last item lagging behind the rest.
+    readonly property int collapseMs: 220
+    // Symmetric ease-in-out (sine): no long tail at the end.
+    readonly property var collapseCurve: [0.45, 0, 0.55, 1, 1, 1]
+    // Fading out when the bar changes side: accelerates away, nothing to linger.
+    readonly property var leaveCurve: [0.4, 0, 1, 1, 1, 1]
 
     readonly property int barItemInset: 5
 
