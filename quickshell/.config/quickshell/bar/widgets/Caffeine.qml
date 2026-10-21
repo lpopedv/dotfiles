@@ -1,40 +1,12 @@
 import QtQuick
-import Quickshell
-import Quickshell.Io
 import "../.."
 import "../../ui"
 
 BarItem {
     id: root
 
-    // Must outlive a config reload, or the inhibitor drops and the machine locks mid-use.
-    property PersistentProperties persist: PersistentProperties {
-        reloadableId: "caffeine"
-        property bool enabled: false
-    }
-
-    active: root.persist.enabled
-    onClicked: root.persist.enabled = !root.persist.enabled
-
-    IpcHandler {
-        target: "caffeine"
-
-        function toggle(): void { root.persist.enabled = !root.persist.enabled; }
-        function on(): void { root.persist.enabled = true; }
-        function off(): void { root.persist.enabled = false; }
-        function status(): bool { return root.persist.enabled; }
-    }
-
-    Process {
-        command: [
-            "systemd-inhibit",
-            "--what=idle",
-            "--who=quickshell",
-            "--why=Caffeine mode (manual)",
-            "sleep", "infinity"
-        ]
-        running: root.active
-    }
+    active: CaffeineService.enabled
+    onClicked: CaffeineService.toggle()
 
     ShellText {
         text: Icons.coffee
