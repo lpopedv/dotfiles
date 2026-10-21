@@ -32,14 +32,54 @@ BarItem {
             ? Theme.subtle
             : root.active || root.hovered ? Theme.fgAct : Theme.fg
         font.pixelSize: Theme.iconSize
-    }
 
-    // Count, not a bare dot: no tooltip to hover for in the bar.
-    ShellText {
-        visible: NotificationsService.unread > 0
-        text: NotificationsService.unread
-        color: NotificationsService.urgent ? Theme.red : Theme.fgAct
-        font.weight: Font.DemiBold
+        // Unread dot on the bell's corner, with a soft halo pulsing out of it.
+        Item {
+            id: badge
+            readonly property int size: 6
+
+            visible: NotificationsService.unread > 0
+            width: badge.size
+            height: badge.size
+            anchors.right: parent.right
+            anchors.top: parent.top
+            anchors.rightMargin: -1
+            anchors.topMargin: 1
+
+            Rectangle {
+                id: halo
+                anchors.centerIn: parent
+                width: badge.size
+                height: badge.size
+                radius: width / 2
+                color: Theme.red
+
+                SequentialAnimation {
+                    running: badge.visible
+                    loops: Animation.Infinite
+
+                    ParallelAnimation {
+                        NumberAnimation {
+                            target: halo; property: "scale"
+                            from: 1; to: 2.4; duration: 1400
+                            easing.type: Easing.OutCubic
+                        }
+                        NumberAnimation {
+                            target: halo; property: "opacity"
+                            from: 0.5; to: 0; duration: 1400
+                            easing.type: Easing.OutCubic
+                        }
+                    }
+                    PauseAnimation { duration: 600 }
+                }
+            }
+
+            Rectangle {
+                anchors.fill: parent
+                radius: width / 2
+                color: Theme.red
+            }
+        }
     }
 
     NotificationHistoryPanel {

@@ -41,7 +41,8 @@ Variants {
                 property bool indicatorsRevealed: false
                 // The media popup steals the bar's hover, which would collapse the
                 // indicators and shift everything the popup is anchored to.
-                readonly property bool showIndicators: (indicatorsRevealed && bar.roomToReveal) || media.active
+                readonly property bool showIndicators: ((indicatorsRevealed || BarService.pinned) && bar.roomToReveal)
+                    || media.active
 
                 // A side bar runs out of length long before a top/bottom one runs out of width,
                 // so only reveal the collapsed indicators if everything fits at full size. Sums each
