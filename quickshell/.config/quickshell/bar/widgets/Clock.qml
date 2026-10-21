@@ -1,4 +1,5 @@
 import QtQuick
+import QtQuick.Layouts
 import Quickshell
 import "../.."
 import "../../ui"
@@ -8,7 +9,7 @@ BarItem {
 
     property bool showDate: false
 
-    horizontalPadding: 12
+    padding: BarService.vertical ? 8 : 12
     active: panel.visible
 
     onClicked: button => {
@@ -30,11 +31,42 @@ BarItem {
         grabFocus: true
     }
 
+    readonly property color tone: root.hovered || panel.visible ? Theme.fgAct : Theme.fg
+
+    // Top/bottom bars: one line.
     ShellText {
+        visible: !root.vertical
         text: root.showDate
             ? Qt.formatDateTime(clock.date, "dddd, dd 'de' MMMM 'de' yyyy")
-            : Icons.clock + "  " + Qt.formatDateTime(clock.date, "HH:mm")
-        color: root.hovered || panel.visible ? Theme.fgAct : Theme.fg
+            : Icons.clock + "  " + Qt.formatDateTime(clock.date, "dd MMM  HH:mm")
+        color: root.tone
         font.weight: Font.DemiBold
+    }
+
+    // Side bars: a line of text won't fit, so the time becomes a small lockup, the
+    // hour (or day) as the headline and the minutes (or month) as its quieter caption.
+    ShellText {
+        visible: root.vertical
+        Layout.alignment: Qt.AlignHCenter
+        text: Qt.formatDateTime(clock.date, root.showDate ? "dd" : "HH")
+        color: root.hovered || panel.visible ? Theme.fgAct : Qt.lighter(Theme.fg, 1.35)
+        font.pixelSize: Theme.fontSize + 3
+        font.weight: Font.DemiBold
+    }
+
+    Rectangle {
+        visible: root.vertical
+        Layout.alignment: Qt.AlignHCenter
+        implicitWidth: 10
+        implicitHeight: 1
+        color: root.hovered || panel.visible ? Theme.accentLine : Theme.divider
+    }
+
+    ShellText {
+        visible: root.vertical
+        Layout.alignment: Qt.AlignHCenter
+        text: Qt.formatDateTime(clock.date, root.showDate ? "MMM" : "mm").replace(".", "")
+        color: root.hovered || panel.visible ? Theme.fg : Theme.subtle
+        font.pixelSize: Theme.fontSize - 1
     }
 }

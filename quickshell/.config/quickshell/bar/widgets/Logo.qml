@@ -9,7 +9,7 @@ import "../../ui"
 BarItem {
     id: root
 
-    horizontalPadding: 10
+    padding: BarService.vertical ? 8 : 10
     // The ring is the hover cue; BarItem's square fill would fight it.
     color: "transparent"
     onClicked: button => {
@@ -47,6 +47,8 @@ BarItem {
         readonly property real radius: Math.max(0, Math.min(width / 2, height / Math.sqrt(3)) - 0.5)
         readonly property real perimeter: 6 * orbit.radius
         readonly property real streak: 14
+        // Progress round one lap, 0 to 1; see streakPoints.
+        property real phase: 0
 
         // Six corners plus the first again to close it, starting at the top-left
         // corner so the streak starts its lap along the top edge.
@@ -69,24 +71,44 @@ BarItem {
             PathPolyline { path: orbit.corners }
         }
 
-        // One dash the length of the streak, one gap the rest of the way round.
+        // Point `distance` along the outline from its first corner; each side is one radius long.
+        function pointAt(distance) {
+            const along = ((distance % orbit.perimeter) + orbit.perimeter) % orbit.perimeter;
+            const side = Math.min(5, Math.floor(along / orbit.radius));
+            const t = along / orbit.radius - side;
+            const from = orbit.corners[side];
+            const to = orbit.corners[side + 1];
+            return Qt.point(from.x + (to.x - from.x) * t, from.y + (to.y - from.y) * t);
+        }
+
+        // The streak as its own short polyline (turning any corner it spans), recomputed
+        // from the live size and phase. Not a dash on the outline: CurveRenderer's dashing
+        // drew nothing in a bar rebuilt while hidden (after a change of side).
+        readonly property var streakPoints: {
+            if (orbit.radius <= 0) return [];
+            const start = orbit.phase * orbit.perimeter;
+            const end = start + orbit.streak;
+            const points = [orbit.pointAt(start)];
+            for (let k = Math.floor(start / orbit.radius) + 1; k * orbit.radius < end; k++)
+                points.push(orbit.corners[k % 6]);
+            points.push(orbit.pointAt(end));
+            return points;
+        }
+
         ShapePath {
             strokeColor: Theme.fgAct
             strokeWidth: 1
             fillColor: "transparent"
             joinStyle: ShapePath.MiterJoin
-            strokeStyle: ShapePath.DashLine
-            dashPattern: [orbit.streak, Math.max(1, orbit.perimeter - orbit.streak)]
             capStyle: ShapePath.FlatCap
-            PathPolyline { path: orbit.corners }
+            PathPolyline { path: orbit.streakPoints }
+        }
 
-            NumberAnimation on dashOffset {
-                from: orbit.perimeter
-                to: 0
-                duration: 3000
-                loops: Animation.Infinite
-                running: orbit.perimeter > 0
-            }
+        NumberAnimation on phase {
+            from: 0
+            to: 1
+            duration: 3000
+            loops: Animation.Infinite
         }
     }
 }

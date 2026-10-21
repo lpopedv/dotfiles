@@ -86,6 +86,7 @@ BarItem {
         color: root.hovered || panel.visible ? Theme.fgAct : Theme.fg
         elide: Text.ElideRight
         Layout.maximumWidth: 180
-        visible: text.length > 0
+        // No room for a title beside a side bar's icon; the panel has it.
+        visible: text.length > 0 && !root.vertical
     }
 }
