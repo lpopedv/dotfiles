@@ -44,29 +44,45 @@ BarItem {
     }
 
     // Side bars: a line of text won't fit, so the time becomes a small lockup, the
-    // hour (or day) as the headline and the minutes (or month) as its quieter caption.
-    ShellText {
+    // hour (or day) as the headline and the minutes (or month) as its quieter caption,
+    // each set in its own ring.
+    readonly property int ringSize: 26
+    readonly property color ringColor: root.hovered || panel.visible ? Theme.accentLine : Theme.border
+
+    Rectangle {
         visible: root.vertical
         Layout.alignment: Qt.AlignHCenter
-        text: Qt.formatDateTime(clock.date, root.showDate ? "dd" : "HH")
-        color: root.hovered || panel.visible ? Theme.fgAct : Qt.lighter(Theme.fg, 1.35)
-        font.pixelSize: Theme.fontSize + 3
-        font.weight: Font.DemiBold
+        implicitWidth: root.ringSize
+        implicitHeight: root.ringSize
+        radius: width / 2
+        color: "transparent"
+        border.width: 1
+        border.color: root.ringColor
+
+        ShellText {
+            anchors.centerIn: parent
+            text: Qt.formatDateTime(clock.date, root.showDate ? "dd" : "HH")
+            color: root.hovered || panel.visible ? Theme.fgAct : Qt.lighter(Theme.fg, 1.35)
+            font.pixelSize: Theme.fontSize + 1
+            font.weight: Font.DemiBold
+        }
     }
 
     Rectangle {
         visible: root.vertical
         Layout.alignment: Qt.AlignHCenter
-        implicitWidth: 10
-        implicitHeight: 1
-        color: root.hovered || panel.visible ? Theme.accentLine : Theme.divider
-    }
+        implicitWidth: root.ringSize
+        implicitHeight: root.ringSize
+        radius: width / 2
+        color: "transparent"
+        border.width: 1
+        border.color: root.ringColor
 
-    ShellText {
-        visible: root.vertical
-        Layout.alignment: Qt.AlignHCenter
-        text: Qt.formatDateTime(clock.date, root.showDate ? "MMM" : "mm").replace(".", "")
-        color: root.hovered || panel.visible ? Theme.fg : Theme.subtle
-        font.pixelSize: Theme.fontSize - 1
+        ShellText {
+            anchors.centerIn: parent
+            text: Qt.formatDateTime(clock.date, root.showDate ? "MMM" : "mm").replace(".", "")
+            color: root.hovered || panel.visible ? Theme.fg : Theme.subtle
+            font.pixelSize: Theme.fontSize - 1
+        }
     }
 }
