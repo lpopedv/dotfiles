@@ -25,7 +25,16 @@ QtObject {
             id: settings
 
             property string position: "bottom"
+            property bool pinned: false
         }
+    }
+
+    // Keeps the collapsed indicators out as if the bar were hovered, e.g. to glance at
+    // which workspaces are in use without reaching for the mouse.
+    readonly property bool pinned: settings.pinned
+
+    function togglePinned() {
+        settings.pinned = !settings.pinned;
     }
 
     readonly property var positions: [
@@ -114,6 +123,7 @@ QtObject {
             if (root.positions.some(p => p.id === edge)) root.setPosition(edge);
         }
         function current(): string { return root.position; }
+        function pin(): void { root.togglePinned(); }
     }
 
     function setPosition(position) {
