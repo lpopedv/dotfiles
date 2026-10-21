@@ -83,6 +83,9 @@ for i = 1, 10 do
         { description = "Move window to workspace " .. i })
 end
 
+hl.bind(mainMod .. " + W", hl.dsp.exec_cmd("qs ipc call bar pin"),
+    { description = "Pin bar indicators open" })
+
 hl.bind(mainMod .. " + F", maximizeColumn.toggle, { description = "Toggle maximize column" })
 hl.bind(mainMod .. " + S", hl.dsp.layout("togglesplit"),
     { description = "Toggle split direction (vertical/horizontal)" })
