@@ -1,4 +1,5 @@
 import QtQuick
+import Quickshell
 import Quickshell.Io
 import qs
 import qs.services
@@ -7,11 +8,11 @@ import qs.ui
 BarItem {
     id: root
 
-    active: panel.visible
+    active: panel.active
 
     function togglePanel() {
-        panel.visible = !panel.visible;
-        if (panel.visible) NotificationsService.markAllRead();
+        panel.active = !panel.active;
+        if (panel.active) NotificationsService.markAllRead();
     }
 
     onClicked: button => {
@@ -99,10 +100,14 @@ BarItem {
         }
     }
 
-    NotificationHistoryPanel {
+    // Built on open, destroyed on close: a hidden popup still runs all its bindings.
+    LazyLoader {
         id: panel
-        anchorItem: root
-        visible: false
-        grabFocus: true
+
+        NotificationHistoryPanel {
+            anchorItem: root
+            visible: true
+            onDismissed: panel.active = false
+        }
     }
 }

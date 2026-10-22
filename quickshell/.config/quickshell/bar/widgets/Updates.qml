@@ -1,4 +1,5 @@
 import QtQuick
+import Quickshell
 import qs
 import qs.services
 import qs.ui
@@ -12,7 +13,7 @@ BarItem {
 
     onClicked: button => {
         if (button === Qt.RightButton) UpdatesService.refresh();
-        else panel.visible = !panel.visible;
+        else panel.active = !panel.active;
     }
 
     ShellText {
@@ -20,7 +21,7 @@ BarItem {
 
         text: Icons.packageUp
         color: root.active ? Theme.red
-            : root.hovered || panel.visible ? Theme.fgAct : Theme.fg
+            : root.hovered || panel.active ? Theme.fgAct : Theme.fg
         font.pixelSize: Theme.iconSize
 
         Behavior on color {
@@ -35,10 +36,14 @@ BarItem {
         }
     }
 
-    UpdatesPanel {
+    // Built on open, destroyed on close: a hidden popup still runs all its bindings.
+    LazyLoader {
         id: panel
-        anchorItem: root
-        visible: false
-        grabFocus: true
+
+        UpdatesPanel {
+            anchorItem: root
+            visible: true
+            onDismissed: panel.active = false
+        }
     }
 }

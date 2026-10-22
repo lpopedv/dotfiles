@@ -11,11 +11,11 @@ BarItem {
     property bool showDate: false
 
     padding: BarService.vertical ? 8 : 12
-    active: panel.visible
+    active: panel.active
 
     onClicked: button => {
         if (button === Qt.RightButton) root.showDate = !root.showDate;
-        else panel.visible = !panel.visible;
+        else panel.active = !panel.active;
     }
 
     SystemClock {
@@ -24,15 +24,19 @@ BarItem {
         precision: SystemClock.Minutes
     }
 
-    CalendarPanel {
+    // Built on open, destroyed on close: a hidden popup still runs all its bindings.
+    LazyLoader {
         id: panel
-        anchorItem: root
-        today: clock.date
-        visible: false
-        grabFocus: true
+
+        CalendarPanel {
+            anchorItem: root
+            today: clock.date
+            visible: true
+            onDismissed: panel.active = false
+        }
     }
 
-    readonly property color tone: root.hovered || panel.visible ? Theme.fgAct : Theme.fg
+    readonly property color tone: root.hovered || panel.active ? Theme.fgAct : Theme.fg
 
     // Top/bottom bars: one line.
     ShellText {
@@ -48,7 +52,7 @@ BarItem {
     // hour (or day) as the headline and the minutes (or month) as its quieter caption,
     // each set in its own ring.
     readonly property int ringSize: 26
-    readonly property color ringColor: root.hovered || panel.visible ? Theme.accentLine : Theme.border
+    readonly property color ringColor: root.hovered || panel.active ? Theme.accentLine : Theme.border
 
     Rectangle {
         visible: root.vertical
@@ -63,7 +67,7 @@ BarItem {
         ShellText {
             anchors.centerIn: parent
             text: Qt.formatDateTime(clock.date, root.showDate ? "dd" : "HH")
-            color: root.hovered || panel.visible ? Theme.fgAct : Qt.lighter(Theme.fg, 1.35)
+            color: root.hovered || panel.active ? Theme.fgAct : Qt.lighter(Theme.fg, 1.35)
             font.pixelSize: Theme.fontSize + 1
             font.weight: Font.DemiBold
         }
@@ -82,7 +86,7 @@ BarItem {
         ShellText {
             anchors.centerIn: parent
             text: Qt.formatDateTime(clock.date, root.showDate ? "MMM" : "mm").replace(".", "")
-            color: root.hovered || panel.visible ? Theme.fg : Theme.subtle
+            color: root.hovered || panel.active ? Theme.fg : Theme.subtle
             font.pixelSize: Theme.fontSize - 1
         }
     }

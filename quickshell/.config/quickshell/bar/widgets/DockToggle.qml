@@ -1,4 +1,5 @@
 import QtQuick
+import Quickshell
 import Quickshell.Io
 import qs
 import qs.services
@@ -10,7 +11,7 @@ BarItem {
     active: DockService.mode === "pinned"
 
     onClicked: button => {
-        if (button === Qt.RightButton) panel.visible = !panel.visible;
+        if (button === Qt.RightButton) panel.active = !panel.active;
         else DockService.toggleMode();
     }
 
@@ -41,10 +42,14 @@ BarItem {
         }
     }
 
-    DockSettingsPanel {
+    // Built on open, destroyed on close: a hidden popup still runs all its bindings.
+    LazyLoader {
         id: panel
-        anchorItem: root
-        visible: false
-        grabFocus: true
+
+        DockSettingsPanel {
+            anchorItem: root
+            visible: true
+            onDismissed: panel.active = false
+        }
     }
 }

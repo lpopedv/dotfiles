@@ -1,4 +1,5 @@
 import QtQuick
+import Quickshell
 import QtQuick.Layouts
 import Quickshell.Services.Mpris
 import qs
@@ -24,22 +25,26 @@ BarItem {
         property: "enabled"
         value: root.player !== null && root.player.isPlaying
     }
-    active: panel.visible
+    active: panel.active
 
     onClicked: button => {
-        if (button === Qt.LeftButton) panel.visible = !panel.visible;
+        if (button === Qt.LeftButton) panel.active = !panel.active;
         else if (button === Qt.RightButton && player && player.canTogglePlaying)
             player.togglePlaying();
         else if (button === Qt.MiddleButton && player && player.canGoNext)
             player.next();
     }
 
-    MediaPanel {
+    // Built on open, destroyed on close: a hidden popup still runs all its bindings.
+    LazyLoader {
         id: panel
-        player: root.player
-        anchorItem: root
-        visible: false
-        grabFocus: true
+
+        MediaPanel {
+            player: root.player
+            anchorItem: root
+            visible: true
+            onDismissed: panel.active = false
+        }
     }
 
     // Clicking the icon toggles playback; the rest of the widget opens the panel.
@@ -56,7 +61,7 @@ BarItem {
             anchors.centerIn: parent
             visible: !(root.player && root.player.isPlaying)
             text: Icons.play
-            color: root.hovered || toggle.containsMouse || panel.visible ? Theme.fgAct : Theme.fg
+            color: root.hovered || toggle.containsMouse || panel.active ? Theme.fgAct : Theme.fg
             font.pixelSize: Theme.iconSize
         }
 
@@ -84,7 +89,7 @@ BarItem {
         text: root.player
             ? (root.player.trackTitle || root.player.identity || "")
             : ""
-        color: root.hovered || panel.visible ? Theme.fgAct : Theme.fg
+        color: root.hovered || panel.active ? Theme.fgAct : Theme.fg
         elide: Text.ElideRight
         Layout.maximumWidth: 180
         // No room for a title beside a side bar's icon; the panel has it.

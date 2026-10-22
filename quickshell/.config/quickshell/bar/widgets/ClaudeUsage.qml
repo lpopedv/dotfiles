@@ -39,8 +39,8 @@ BarItem {
         if (button === Qt.RightButton) {
             root.refresh(true);
         } else {
-            panel.visible = !panel.visible;
-            if (panel.visible) root.refresh(false);
+            panel.active = !panel.active;
+            if (panel.active) root.refresh(false);
         }
     }
 
@@ -66,12 +66,16 @@ BarItem {
         }
     }
 
-    ClaudeUsagePanel {
+    // Built on open, destroyed on close: a hidden popup still runs all its bindings.
+    LazyLoader {
         id: panel
-        record: root.record
-        anchorItem: root
-        visible: false
-        grabFocus: true
+
+        ClaudeUsagePanel {
+            record: root.record
+            anchorItem: root
+            visible: true
+            onDismissed: panel.active = false
+        }
     }
 
     IpcHandler {
@@ -87,7 +91,7 @@ BarItem {
         color: !root.ready
             ? Theme.border
             : Theme.alertColor(root.worst / 100,
-                root.hovered || panel.visible ? Theme.fgAct : Theme.fg)
+                root.hovered || panel.active ? Theme.fgAct : Theme.fg)
         font.weight: Theme.isAlert(root.worst / 100) ? Font.DemiBold : Font.Normal
 
         Pulse {

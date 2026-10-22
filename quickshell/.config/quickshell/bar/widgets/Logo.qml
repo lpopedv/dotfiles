@@ -15,15 +15,19 @@ BarItem {
     // The ring is the hover cue; BarItem's square fill would fight it.
     color: "transparent"
     onClicked: button => {
-        if (button === Qt.RightButton) panel.visible = !panel.visible;
+        if (button === Qt.RightButton) panel.active = !panel.active;
         else Quickshell.execDetached(["rofi", "-show", "drun"]);
     }
 
-    BarSettingsPanel {
+    // Built on open, destroyed on close: a hidden popup still runs all its bindings.
+    LazyLoader {
         id: panel
-        anchorItem: root
-        visible: false
-        grabFocus: true
+
+        BarSettingsPanel {
+            anchorItem: root
+            visible: true
+            onDismissed: panel.active = false
+        }
     }
 
     ShellText {
