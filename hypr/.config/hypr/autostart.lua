@@ -11,8 +11,9 @@ hl.on("hyprland.start", function()
     hl.exec_cmd("wl-paste --type image --watch cliphist store -max-items 50 -min-store-length 5")
     hl.exec_cmd("flameshot")
 
-    -- launched via wait-for-tray.sh, not Mullvad's own autostart, to avoid a tray-registration race
-    hl.exec_cmd("$HOME/.config/hypr/scripts/wait-for-tray.sh && \"/opt/Mullvad VPN/mullvad-vpn\"")
+    -- launched via wait-for-tray.sh, not Mullvad's own autostart, to avoid a tray-registration race;
+    -- only where it is installed (owner machines, see system/install/aur-owner.txt)
+    hl.exec_cmd("[ -x \"/opt/Mullvad VPN/mullvad-vpn\" ] && $HOME/.config/hypr/scripts/wait-for-tray.sh && \"/opt/Mullvad VPN/mullvad-vpn\"")
 end)
 
 hl.on("hyprland.shutdown", function()
