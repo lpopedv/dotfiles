@@ -1,0 +1,229 @@
+#!/usr/bin/env bash
+# dotfiles - keeps this machine on the dotfiles repo's releases.
+#
+# Two channels, stored in the repo's own (unversioned) .git/config:
+#   stable  the newest signed release tag - the default, and what installs get
+#   edge    the tip of main, as it is pushed - for the owner
+#
+# Release tags must be signed by a key in .github/allowed_signers, read from
+# the version this machine already runs: a compromised GitHub account can't
+# swap the key and ship a release in the same move.
+set -euo pipefail
+
+# The script is a stowed symlink into the repo; the repo is three levels up.
+REPO="$(cd "$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")/../../.." && pwd)"
+BOOTSTRAP="$REPO/system/install/bootstrap.sh"
+SIGNERS="$REPO/.github/allowed_signers"
+
+bold() { printf '\033[1m%s\033[0m\n' "$*"; }
+info() { printf '    %s\n' "$*"; }
+die()  { printf '\033[31merror:\033[0m %s\n' "$*" >&2; exit 1; }
+
+g() { git -C "$REPO" "$@"; }
+
+channel() { g config --get dotfiles.channel || echo stable; }
+is_owner() { [[ "$(g config --type=bool --get dotfiles.owner 2>/dev/null)" == true ]]; }
+
+# Stable releases only: a tag with a suffix (v1.2.0-rc1) is a pre-release.
+# No tags at all is an empty answer, not an error.
+newest() { { grep -E '^v[0-9]+\.[0-9]+\.[0-9]+$' || :; } | sort -V | tail -n1; }
+newest_local()  { g tag -l 'v*' | newest; }
+newest_remote() {
+    g ls-remote --tags --refs origin 'v*' | sed 's|.*refs/tags/||' | newest
+}
+
+current() {
+    g describe --tags --exact-match --match 'v*' HEAD 2>/dev/null ||
+        g describe --tags --match 'v*' HEAD 2>/dev/null ||
+        g rev-parse --short HEAD
+}
+
+# a is older than b, as versions.
+older() { [[ "$1" != "$2" && "$(printf '%s\n%s\n' "$1" "$2" | sort -V | head -n1)" == "$1" ]]; }
+
+require_clean() {
+    [[ -z "$(g status --porcelain --untracked-files=no)" ]] && return 0
+    g status --short --untracked-files=no >&2
+    die "~/Dotfiles has local changes, which an update would fight with.
+       Per-machine tweaks belong outside the repo (e.g. ~/.config/hypr/local.lua).
+       To set them aside: git -C ~/Dotfiles stash"
+}
+
+verify() {
+    [[ -r "$SIGNERS" ]] || die "no $SIGNERS - this version can't check release signatures"
+    g -c gpg.format=ssh -c gpg.ssh.allowedSignersFile="$SIGNERS" verify-tag "$1" >/dev/null 2>&1 ||
+        die "$1 is not signed by a trusted key - refusing to install it"
+}
+
+confirm() {
+    (( yes )) && return 0
+    local reply
+    read -rp "    $1 [Y/n] " reply
+    [[ -z "$reply" || "$reply" == [yY]* ]]
+}
+
+cmd_update() {
+    yes=0
+    [[ "${1:-}" == -y ]] && yes=1
+    require_clean
+
+    if [[ "$(channel)" == edge ]]; then
+        bold "Updating to the tip of main"
+        g switch --quiet main 2>/dev/null || g switch --quiet --track origin/main
+        g pull --ff-only
+        exec "$BOOTSTRAP"
+    fi
+
+    bold "Checking for a new release"
+    # --prune-tags: a tag withdrawn upstream must not linger here as "newest".
+    g fetch --quiet --tags --force --prune --prune-tags origin
+    local from to
+    from="$(current)"
+    to="$(newest_local)"
+    [[ -n "$to" ]] || die "the repo has no releases yet"
+    if [[ "$(g rev-parse HEAD)" == "$(g rev-parse "$to^{commit}")" ]]; then
+        info "already on $to"
+        return 0
+    fi
+    if g describe --exact-match --tags --match 'v*' HEAD >/dev/null 2>&1 && ! older "$from" "$to"; then
+        info "on $from, newer than the latest release $to - nothing to do"
+        return 0
+    fi
+    verify "$to"
+
+    bold "$from -> $to"
+    g log --oneline --no-decorate --no-merges "HEAD..$to" | sed 's/^/    /' | head -n 40
+    echo
+    info "Release notes: $(release_url)/tag/$to"
+    confirm "Install $to?" || exit 0
+
+    g -c advice.detachedHead=false checkout --quiet --detach "$to"
+    exec "$BOOTSTRAP"
+}
+
+# For the bar: one `name from -> to` line when something newer is published,
+# nothing when up to date, non-zero when the remote can't be reached.
+cmd_status() {
+    local porcelain=0 from to=""
+    [[ "${1:-}" == --porcelain ]] && porcelain=1
+
+    if [[ "$(channel)" == edge ]]; then
+        local tip
+        tip="$(g ls-remote origin refs/heads/main | cut -f1)"
+        [[ -n "$tip" ]] || return 1
+        from="$(g rev-parse --short HEAD)"
+        g merge-base --is-ancestor "$tip" HEAD 2>/dev/null || to="${tip:0:7}"
+    else
+        local newest
+        newest="$(newest_remote)" || return 1
+        from="$(current)"
+        [[ -n "$newest" ]] && older "$from" "$newest" && to="$newest"
+    fi
+
+    if (( porcelain )); then
+        [[ -z "$to" ]] || printf 'dotfiles %s -> %s\n' "$from" "$to"
+        return 0
+    fi
+    printf '%s (%s channel%s)\n' "$(current)" "$(channel)" "$(is_owner && echo ', owner')"
+    if [[ -n "$to" ]]; then
+        info "update available: $to - run 'dotfiles update'"
+    else
+        info "up to date"
+    fi
+}
+
+cmd_channel() {
+    case "${1:-}" in
+        "") channel ;;
+        stable)
+            g config dotfiles.channel stable
+            info "on the stable channel - 'dotfiles update' moves to the newest release" ;;
+        edge)
+            require_clean
+            g config dotfiles.channel edge
+            g fetch --quiet origin main
+            g switch --quiet main 2>/dev/null || g switch --quiet --track origin/main
+            info "on the edge channel (main) - 'dotfiles update' pulls and applies it" ;;
+        *) die "channel is stable or edge" ;;
+    esac
+}
+
+cmd_owner() {
+    case "${1:-}" in
+        "") is_owner && echo on || echo off ;;
+        on|off)
+            g config --type=bool dotfiles.owner "$([[ $1 == on ]] && echo true || echo false)"
+            info "owner $1 - run 'dotfiles apply' to apply it" ;;
+        *) die "owner is on or off" ;;
+    esac
+}
+
+release_url() {
+    local url
+    url="$(g remote get-url origin)"
+    url="${url%.git}"
+    [[ "$url" == git@github.com:* ]] && url="https://github.com/${url#git@github.com:}"
+    printf '%s/releases' "$url"
+}
+
+# Owner only: tag the current main, signed, and push it - CI builds the ISO.
+cmd_release() {
+    local version="${1:-}"
+    is_owner || die "releases are cut by the owner (dotfiles owner on)"
+    [[ "$version" =~ ^v[0-9]+\.[0-9]+\.[0-9]+(-[0-9A-Za-z.]+)?$ ]] ||
+        die "usage: dotfiles release vMAJOR.MINOR.PATCH[-pre]"
+    [[ "$(g config --get gpg.format)" == ssh && -n "$(g config --get user.signingkey)" ]] ||
+        die "set up SSH tag signing first (gpg.format=ssh, user.signingkey) - see README"
+    [[ "$(g symbolic-ref --quiet --short HEAD)" == main ]] || die "release from main"
+    require_clean
+    g fetch --quiet --tags origin main
+    [[ "$(g rev-parse HEAD)" == "$(g rev-parse origin/main)" ]] ||
+        die "main differs from origin/main - push or pull first"
+    g rev-parse --quiet --verify "refs/tags/$version" >/dev/null && die "$version already exists"
+
+    local previous
+    previous="$(newest_local)"
+    bold "Releasing $version${previous:+ (previous: $previous)}"
+    [[ -n "$previous" ]] &&
+        g log --oneline --no-decorate --no-merges "$previous..HEAD" | sed 's/^/    /' | head -n 40
+    yes=0
+    confirm "Tag and push $version?" || exit 0
+
+    g tag -s -m "$version" "$version"
+    g -c gpg.format=ssh -c gpg.ssh.allowedSignersFile="$SIGNERS" verify-tag "$version" >/dev/null 2>&1 || {
+        g tag -d "$version" >/dev/null
+        die "the new tag doesn't verify against .github/allowed_signers - is your key in it?"
+    }
+    g push --quiet origin "$version"
+    info "pushed - CI is building the ISO: $(release_url)/tag/$version"
+}
+
+usage() {
+    cat <<EOF
+usage: dotfiles <command>
+
+  update [-y]          install the newest release (or main, on edge) and apply it
+  status [--porcelain] this machine's version, and whether a newer one exists
+  apply [--dry-run]    re-run bootstrap.sh without updating
+  channel [stable|edge]
+  owner [on|off]       owner machines also get the owner-only packages
+  release vX.Y.Z       (owner) sign and push a release tag
+EOF
+}
+
+main() {
+    case "${1:-}" in
+        update)  shift; cmd_update "$@" ;;
+        status)  shift; cmd_status "$@" ;;
+        apply)   shift; exec "$BOOTSTRAP" "$@" ;;
+        channel) shift; cmd_channel "$@" ;;
+        owner)   shift; cmd_owner "$@" ;;
+        release) shift; cmd_release "$@" ;;
+        -h|--help|help|"") usage ;;
+        *) usage >&2; exit 2 ;;
+    esac
+}
+
+# Everything runs from inside main, parsed in full before it starts: an update
+# checks out a new copy of this very file while it is running.
+main "$@"
