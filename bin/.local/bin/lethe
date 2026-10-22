@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# dotfiles - keeps this machine on the dotfiles repo's releases.
+# lethe - keeps this machine on Lethe's releases (signed tags of this repo).
 #
 # Two channels, stored in the repo's own (unversioned) .git/config:
 #   stable  the newest signed release tag - the default, and what installs get
@@ -21,8 +21,8 @@ die()  { printf '\033[31merror:\033[0m %s\n' "$*" >&2; exit 1; }
 
 g() { git -C "$REPO" "$@"; }
 
-channel() { g config --get dotfiles.channel || echo stable; }
-is_owner() { [[ "$(g config --type=bool --get dotfiles.owner 2>/dev/null)" == true ]]; }
+channel() { g config --get lethe.channel || echo stable; }
+is_owner() { [[ "$(g config --type=bool --get lethe.owner 2>/dev/null)" == true ]]; }
 
 # Stable releases only: a tag with a suffix (v1.2.0-rc1) is a pre-release.
 # No tags at all is an empty answer, not an error.
@@ -121,12 +121,12 @@ cmd_status() {
     fi
 
     if (( porcelain )); then
-        [[ -z "$to" ]] || printf 'dotfiles %s -> %s\n' "$from" "$to"
+        [[ -z "$to" ]] || printf 'lethe %s -> %s\n' "$from" "$to"
         return 0
     fi
-    printf '%s (%s channel%s)\n' "$(current)" "$(channel)" "$(is_owner && echo ', owner')"
+    printf 'lethe %s (%s channel%s)\n' "$(current)" "$(channel)" "$(is_owner && echo ', owner')"
     if [[ -n "$to" ]]; then
-        info "update available: $to - run 'dotfiles update'"
+        info "update available: $to - run 'lethe update'"
     else
         info "up to date"
     fi
@@ -136,14 +136,14 @@ cmd_channel() {
     case "${1:-}" in
         "") channel ;;
         stable)
-            g config dotfiles.channel stable
-            info "on the stable channel - 'dotfiles update' moves to the newest release" ;;
+            g config lethe.channel stable
+            info "on the stable channel - 'lethe update' moves to the newest release" ;;
         edge)
             require_clean
-            g config dotfiles.channel edge
+            g config lethe.channel edge
             g fetch --quiet origin main
             g switch --quiet main 2>/dev/null || g switch --quiet --track origin/main
-            info "on the edge channel (main) - 'dotfiles update' pulls and applies it" ;;
+            info "on the edge channel (main) - 'lethe update' pulls and applies it" ;;
         *) die "channel is stable or edge" ;;
     esac
 }
@@ -152,8 +152,8 @@ cmd_owner() {
     case "${1:-}" in
         "") is_owner && echo on || echo off ;;
         on|off)
-            g config --type=bool dotfiles.owner "$([[ $1 == on ]] && echo true || echo false)"
-            info "owner $1 - run 'dotfiles apply' to apply it" ;;
+            g config --type=bool lethe.owner "$([[ $1 == on ]] && echo true || echo false)"
+            info "owner $1 - run 'lethe apply' to apply it" ;;
         *) die "owner is on or off" ;;
     esac
 }
@@ -169,9 +169,9 @@ release_url() {
 # Owner only: tag the current main, signed, and push it - CI builds the ISO.
 cmd_release() {
     local version="${1:-}"
-    is_owner || die "releases are cut by the owner (dotfiles owner on)"
+    is_owner || die "releases are cut by the owner (lethe owner on)"
     [[ "$version" =~ ^v[0-9]+\.[0-9]+\.[0-9]+(-[0-9A-Za-z.]+)?$ ]] ||
-        die "usage: dotfiles release vMAJOR.MINOR.PATCH[-pre]"
+        die "usage: lethe release vMAJOR.MINOR.PATCH[-pre]"
     [[ "$(g config --get gpg.format)" == ssh && -n "$(g config --get user.signingkey)" ]] ||
         die "set up SSH tag signing first (gpg.format=ssh, user.signingkey) - see README"
     [[ "$(g symbolic-ref --quiet --short HEAD)" == main ]] || die "release from main"
@@ -200,7 +200,7 @@ cmd_release() {
 
 usage() {
     cat <<EOF
-usage: dotfiles <command>
+usage: lethe <command>
 
   update [-y]          install the newest release (or main, on edge) and apply it
   status [--porcelain] this machine's version, and whether a newer one exists

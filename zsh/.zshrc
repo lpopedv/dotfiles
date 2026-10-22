@@ -45,9 +45,9 @@ alias hr="herdr"
 alias k="kubectl"
 
 # Kept for muscle memory: updates to the newest release (or main, on the edge
-# channel) and applies it. See `dotfiles help`.
+# channel) and applies it. See `lethe help`.
 dotup() {
-  dotfiles update "$@"
+  lethe update "$@"
 }
 
 # History lives in tmpfs ($XDG_RUNTIME_DIR is /run/user/$UID), not on disk:
