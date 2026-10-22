@@ -1,2 +1,5 @@
 git
 stow
+# The installer wizard (root/install.sh): its UI, and building archinstall configs.
+gum
+jq
