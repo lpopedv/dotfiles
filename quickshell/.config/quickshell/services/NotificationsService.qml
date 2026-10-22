@@ -45,11 +45,6 @@ Singleton {
         // Bumped on replace; the toast's cue to restart its countdown.
         property int generation: 0
 
-        // popupList is a plain array: any change rebuilds every card, so the
-        // countdown reads from here instead of restarting each rebuild.
-        property double popupAt: Date.now()
-        onPopupChanged: if (wrapper.popup) wrapper.popupAt = Date.now();
-
         // Timed here, not in the card: a card destroyed mid-fade would never clear `popup`.
         property Timer exit: Timer {
             interval: wrapper.service.leaveMs + 20
@@ -93,8 +88,6 @@ Singleton {
             if (!wrapper.settled) return;
             wrapper.time = Date.now();
             wrapper.read = false;
-            // Set by hand: if popup was already true, its onPopupChanged won't refire.
-            wrapper.popupAt = Date.now();
             wrapper.generation++;
             if (wrapper.service.wantsPopup(wrapper.urgency)) {
                 wrapper.closing = false;

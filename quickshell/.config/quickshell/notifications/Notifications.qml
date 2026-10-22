@@ -31,8 +31,13 @@ Scope {
             width: parent.width
             spacing: 8
 
+            // Identity-keyed, so a toast arriving or leaving touches only its own card; a plain
+            // array model would rebuild every card, restarting their animations and countdowns.
             Repeater {
-                model: NotificationsService.popupList
+                model: ScriptModel {
+                    values: NotificationsService.popupList
+                    comparisonMode: ObjectComparison.Identity
+                }
 
                 Item {
                     id: slot
@@ -53,7 +58,7 @@ Scope {
                         x: (1 - slot.reveal) * 26
                     }
 
-                    // Driven off `closing`, not started by hand, so a rebuilt card resumes mid-exit.
+                    // Driven off `closing`, not started by hand, so the two can never both run.
                     NumberAnimation on reveal {
                         to: 1
                         duration: Theme.animSlideMs
@@ -81,18 +86,14 @@ Scope {
                         anchors.top: parent.top
                     }
 
-                    // Nonzero only when a stack rebuild reconstructs an already-aging toast.
-                    readonly property int spent: Math.min(slot.modelData.timeout,
-                        Date.now() - slot.modelData.popupAt)
-
                     // timeout of 0 = no expiry or critical: stays until dismissed.
                     NumberAnimation {
                         id: countdown
                         target: slot
                         property: "remaining"
-                        from: 1 - slot.spent / Math.max(1, slot.modelData.timeout)
+                        from: 1
                         to: 0
-                        duration: Math.max(1, slot.modelData.timeout - slot.spent)
+                        duration: Math.max(1, slot.modelData.timeout)
                         easing.type: Easing.Linear
                         running: slot.modelData.timeout > 0 && !slot.modelData.closing
                         // Guards against pausing an animation that never started.
@@ -103,7 +104,7 @@ Scope {
                     Connections {
                         target: slot.modelData
 
-                        // Sender replaced the notification; from/duration already re-read, just needs a restart.
+                        // Sender replaced the notification: its time starts over.
                         function onGenerationChanged() {
                             if (countdown.running) countdown.restart();
                         }

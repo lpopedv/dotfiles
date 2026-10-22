@@ -124,7 +124,10 @@ PopupWindow {
                     clip: true
                     spacing: 6
                     boundsBehavior: Flickable.StopAtBounds
-                    model: NotificationsService.history
+                    model: ScriptModel {
+                        values: Array.from(NotificationsService.history)
+                        comparisonMode: ObjectComparison.Identity
+                    }
 
                     delegate: NotificationCard {
                         required property var modelData
