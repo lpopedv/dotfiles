@@ -18,6 +18,7 @@ Scope {
             right: 14
         }
 
+        screen: ScreenService.focused
         implicitWidth: 400
         implicitHeight: Math.max(1, stack.implicitHeight)
         color: "transparent"

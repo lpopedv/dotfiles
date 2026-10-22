@@ -4,6 +4,7 @@ import Quickshell
 import Quickshell.Io
 import Quickshell.Services.Pipewire
 import qs
+import qs.services
 import qs.ui
 
 Scope {
@@ -100,6 +101,7 @@ Scope {
 
         // Layer surface can't be faded, so it stays mapped until the panel's own fade finishes.
         visible: root.shown || panel.opacity > 0
+        screen: ScreenService.focused
         anchors.bottom: true
         margins.bottom: 120
 
