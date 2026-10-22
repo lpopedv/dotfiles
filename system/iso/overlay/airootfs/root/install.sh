@@ -73,7 +73,7 @@ keyboard_label="Portuguese (Brazil)"
 username="" password="" full_name="" email=""
 hostname="$(jq -r '.hostname // "archlinux"' "$BASE_CONFIG")"
 timezone="$(jq -r '.timezone // "UTC"' "$BASE_CONFIG")"
-disk="" encrypt=yes wifi_ssid="" wifi_passphrase=""
+disk="" encrypt=yes wifi_ssid="" wifi_passphrase="" gpu_driver=""
 unattended=0
 
 # ---------------------------------------------------------------- look
@@ -296,6 +296,7 @@ load_answers() {
             ENCRYPT)         encrypt="$value" ;;
             WIFI_SSID)       wifi_ssid="$value" ;;
             WIFI_PASSPHRASE) wifi_passphrase="$value" ;;
+            GPU_DRIVER)      gpu_driver="$value" ;;
             *) echo "unknown answer: $key" >&2; exit 1 ;;
         esac
     done < "$ANSWERS"
@@ -304,6 +305,8 @@ load_answers() {
     done
     [[ -n "$(keyboard_field 2)" ]] || { echo "unknown KEYBOARD: $keyboard_label" >&2; exit 1; }
     [[ "$encrypt" == yes || "$encrypt" == no ]] || { echo "ENCRYPT must be yes or no" >&2; exit 1; }
+    [[ -z "$gpu_driver" || "$gpu_driver" == nvidia || "$gpu_driver" == open ]] ||
+        { echo "GPU_DRIVER must be nvidia or open" >&2; exit 1; }
     unattended=1
 }
 
@@ -485,6 +488,50 @@ step_machine() {
     answered "Computer name" "$hostname"
     ask timezone filter --header "Time zone" --placeholder "type a city" --value "$timezone" \
         --select-if-one < <(timedatectl list-timezones) || return 1
+    answered "Time zone" "$timezone"
+    step_graphics
+}
+
+# ---------------------------------------------------------------- graphics
+
+# AMD, Intel and virtual GPUs are covered by the base config's open-source
+# drivers. An NVIDIA card gets a choice, and the person installing makes it:
+# NVIDIA's own driver (nvidia-open) or the open-source one (nouveau, already
+# in the base config). Detection only picks which answer starts selected.
+NVIDIA_PACKAGES=(nvidia-open nvidia-utils libva-nvidia-driver)
+
+# lspci's device name for the first NVIDIA display or 3D controller (laptops
+# list their discrete GPU as 3D), e.g. "GA104 [GeForce RTX 3070]".
+nvidia_gpu() {
+    lspci -mm -d 10de: 2>/dev/null | awk -F'"' '$2 ~ /VGA|3D/ { print $6; exit }'
+}
+
+# nvidia-open runs on Turing and newer: chips named TU, GA, AD, GB, GH...
+nvidia_modern() { [[ "$(nvidia_gpu)" =~ ^(TU|GA|AD|GB|GH)[0-9] ]]; }
+
+default_gpu_driver() {
+    if [[ -n "$(nvidia_gpu)" ]] && nvidia_modern; then echo nvidia; else echo open; fi
+}
+
+step_graphics() {
+    local gpu name choice nv="NVIDIA's driver" open="Open-source driver (nouveau)"
+    gpu="$(nvidia_gpu)"
+    [[ -n "$gpu" ]] || return 0
+    name="${gpu#*\[}"
+    name="${name%\]*}"
+    : "${gpu_driver:=$(default_gpu_driver)}"
+
+    echo
+    col "$C_FG" "Found an NVIDIA card: $name."
+    if nvidia_modern; then
+        col "$C_SUBTLE" "NVIDIA's driver is the faster one for it; the open-source one works too."
+    else
+        col "$C_SUBTLE" "It predates NVIDIA's current driver, so the open-source one is what runs well."
+    fi
+    echo
+    ask choice choose --selected "$([[ $gpu_driver == nvidia ]] && echo "$nv" || echo "$open")" \
+        "$nv" "$open" || return 1
+    if [[ "$choice" == "$nv" ]]; then gpu_driver=nvidia; else gpu_driver=open; fi
 }
 
 # The disk the live system booted from must never be offered.
@@ -554,6 +601,8 @@ step_confirm() {
         printf '%s%-14s%s%s\n' "$s" Computer "$v" "$hostname"
         printf '%s%-14s%s%s\n' "$s" "Time zone" "$v" "$timezone"
         printf '%s%-14s%s%s\n' "$s" Disk "$v" "$(disk_label "$disk")"
+        [[ -n "$(nvidia_gpu)" ]] && printf '%s%-14s%s%s\n' "$s" Graphics "$v" \
+            "$([[ $gpu_driver == nvidia ]] && echo "NVIDIA's driver" || echo 'open-source')"
         printf '%s%-14s%s%s' "$s" Encryption "$v" "$([[ $encrypt == yes ]] && echo 'on, with your password' || echo off)"
     } | gum style --border "$BORDER" --border-foreground "$C_LINE" --padding "1 3" \
         --margin "0 0 0 $PAD" --width "$W"
@@ -598,7 +647,9 @@ write_config() {
 
     jq --arg disk "$disk" --argjson sector "$sector" --argjson root_mib "$root_mib" \
         --arg esp_id "$esp_id" --arg root_id "$root_id" --arg encrypt "$encrypt" \
-        --arg hostname "$hostname" --arg timezone "$timezone" --arg keymap "$(keyboard_field 2)" '
+        --arg hostname "$hostname" --arg timezone "$timezone" --arg keymap "$(keyboard_field 2)" \
+        --argjson gpu_packages "$([[ ${gpu_driver:-$(default_gpu_driver)} == nvidia ]] &&
+            printf '%s\n' "${NVIDIA_PACKAGES[@]}" | jq -R . | jq -s . || echo '[]')" '
         def size($unit; $value): { sector_size: { unit: "B", value: $sector }, unit: $unit, value: $value };
         def part($id; $start; $len; $fs; $mnt; $flags; $opts; $subvols): {
             obj_id: $id, status: "create", type: "primary", dev_path: null,
@@ -608,6 +659,7 @@ write_config() {
         . + {
             hostname: $hostname,
             timezone: $timezone,
+            packages: ((.packages // []) + $gpu_packages),
             locale_config: (.locale_config + { kb_layout: $keymap }),
             disk_config: ({
                 config_type: "default_layout",
