@@ -28,13 +28,18 @@ meant to land in `$HOME`.
     maintenance timers → trace retention → firewall/sysctl hardening → Secure Boot →
     service enablement.
     Every step checks its own state before acting, so it's fine to run repeatedly.
-  - The `dotup` zsh function (in `zsh/.zshrc`) is `git pull --ff-only` + this script — the
-    normal way this repo's changes get applied to the live machine.
+  - `dotfiles update` (`bin/.local/bin/dotfiles`; `dotup` in `zsh/.zshrc` is an alias) is the
+    normal way changes reach a machine: on the `stable` channel it checks out the newest
+    *signed* release tag, on `edge` it pulls `main`, then runs this script.
+    `dotfiles apply` re-runs it alone.
+- Cut a release (owner, from a clean `main` matching origin): `dotfiles release vX.Y.Z` —
+  SSH-signed tag, pushed; `.github/workflows/release.yml` builds and publishes the ISO.
 - Stow/unstow one package by hand from the repo root: `stow --restow <pkg>` / `stow -D <pkg>`
   (the root `.stowrc` adds `--no-folding`, so this must run from the repo root)
 - Build a live installer ISO that embeds this repo: `sudo system/iso/build.sh [workdir]`
   (defaults to `/var/tmp/archiso-work`, not `/tmp`, because it needs 10+ GB and `/tmp` is
-  tmpfs). Requires a checked-out branch (not detached HEAD) and the `archiso` package.
+  tmpfs). Requires a checked-out branch or tag (not a bare detached HEAD) and the `archiso`
+  package.
 
 There are no app-level build/test/lint commands — verify changes by checking `stow -n --restow
 <pkg>` doesn't conflict, or by re-reading the target application's own config-loading rules.
@@ -59,8 +64,26 @@ installed, why NetworkManager needs its own no-DNS drop-in in addition to system
 
 **`system/iso/`** builds a custom archiso by copying the installed system's `releng` profile
 (not vendored — archiso updates arrive for free) and layering `overlay/` on top, then
-`git clone`s this repo's current branch (committed objects only — no stray local/untracked
-changes ever ship) into the ISO's `airootfs/root/Dotfiles`.
+`git clone`s this repo's current branch or release tag (committed objects only — no stray
+local/untracked changes ever ship) into the ISO's `airootfs/root/Dotfiles`, with an HTTPS origin.
+`overlay/airootfs/root/install.sh` is the installer `.zlogin` starts on tty1: a `gum` wizard
+(network, keyboard, account, disk, encryption) that builds an archinstall config from
+`system/install/archinstall.json` plus the answers, validates it with archinstall `--dry-run`,
+installs with `--silent`, then copies the repo into the new home and writes the per-machine
+files (`~/.config/hypr/local.lua`, `~/.config/git/identity`). Its UI patterns and validation
+rules come from Omarchy's installer (MIT). It must keep working with the archinstall version
+releng ships — check archinstall's config schema when bumping anything disk-related.
+
+**Releases and trust:** machines on the `stable` channel only install tags signed by a key in
+`.github/allowed_signers`, read from the version they already run (CI checks a new tag against
+the previous release's copy). So a new signing key ships in a release signed by an old one.
+`dotfiles status --porcelain` feeds the bar's update indicator (`quickshell/.../UpdatesService.qml`).
+
+**Owner vs. everyone:** this repo is installed by other people too. `dotfiles.owner` in the
+repo's local `.git/config` (`dotfiles owner on`) adds the owner-only extras in `bootstrap.sh`:
+`OWNER_STOW_PACKAGES` (`claude`) and `aur-owner.txt` (Mullvad). Personal data never goes in
+tracked files: git identity is `~/.config/git/identity` (included by `git/.gitconfig`), and
+per-machine Hyprland settings are `~/.config/hypr/local.lua` (loaded last by `hyprland.lua`).
 
 **`hypr/`** — Hyprland config is written in **Lua**, loaded natively (Hyprland 0.56 / hyprlang
 0.6.8 support Lua config directly — this is not a custom preprocessor). `hyprland.lua` is just a
@@ -78,7 +101,7 @@ into a bar widget.
 lazy.nvim/packer — `nvim-pack-lock.json` pins plugin revisions. Plugin config lives one-file-
 per-plugin under `lua/plugins/`, each `require()`d from `init.lua` after the plugin list.
 
-**`claude/`** stows Claude Code's user config: `~/.claude/settings.json` (e.g. `cleanupPeriodDays`
+**`claude/`** (owner machines only) stows Claude Code's user config: `~/.claude/settings.json` (e.g. `cleanupPeriodDays`
 for transcript retention, hooks), the `mono` theme, and an English-learning setup — the `en`,
 `en-review` and `en-interview` skills, `hooks/en-auto.py` (a `UserPromptSubmit` hook that runs `en`
 whenever a prompt is written in English) and `english/README.md`. The learning *data* the skills
