@@ -8,7 +8,7 @@
     "uki": true,
     "removable": false
   },
-  "hostname": "archlinux",
+  "hostname": "lethe",
   "kernels": ["linux"],
   "locale_config": {
     "kb_layout": "br-abnt2",
