@@ -171,8 +171,8 @@ PopupWindow {
                     }
 
                     PackageSection {
-                        title: "Dotfiles"
-                        packages: UpdatesService.dotfiles
+                        title: "Lethe"
+                        packages: UpdatesService.lethe
                     }
                 }
             }

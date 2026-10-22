@@ -18,14 +18,14 @@ QtObject {
     // Each entry: { name, from, to }.
     property var repo: []
     property var aur: []
-    // At most one entry: a newer release of the dotfiles repo itself.
-    property var dotfiles: []
+    // At most one entry: a newer release of Lethe itself.
+    property var lethe: []
     property bool failed: false
     property date lastChecked
 
-    readonly property int count: repo.length + aur.length + dotfiles.length
+    readonly property int count: repo.length + aur.length + lethe.length
     readonly property bool available: count > 0
-    readonly property bool checking: repoCheck.running || aurCheck.running || dotfilesCheck.running
+    readonly property bool checking: repoCheck.running || aurCheck.running || letheCheck.running
     readonly property bool checked: !isNaN(lastChecked.getTime())
 
     // Not in onExited: a Process still reports running inside its own handler.
@@ -36,21 +36,21 @@ QtObject {
         root.failed = false;
         repoCheck.running = true;
         aurCheck.running = true;
-        dotfilesCheck.running = true;
+        letheCheck.running = true;
     }
 
-    // Packages first, then the dotfiles: a release may expect packages the
-    // system doesn't have yet. `dotfiles update` is a no-op when up to date.
+    // Packages first, then Lethe: a release may expect packages the
+    // system doesn't have yet. `lethe update` is a no-op when up to date.
     function upgrade() {
         Quickshell.execDetached([
             "ghostty", "--gtk-single-instance=false",
             "--class=org.dotfiles.updates", "--title=System update",
-            "--wait-after-command=true", "-e", "sh", "-c", "paru && " + root.dotfilesCli + " update"
+            "--wait-after-command=true", "-e", "sh", "-c", "paru && " + root.letheCli + " update"
         ]);
     }
 
     // By path: the session's PATH (from the display manager) lacks ~/.local/bin.
-    readonly property string dotfilesCli: Quickshell.env("HOME") + "/.local/bin/dotfiles"
+    readonly property string letheCli: Quickshell.env("HOME") + "/.local/bin/lethe"
 
     // Both checkers print `name old -> new`; paru may append ` [ignored]`.
     function parse(text) {
@@ -93,17 +93,17 @@ QtObject {
         }
     }
 
-    // Prints `dotfiles vA -> vB` when a newer release (or, on the edge channel,
+    // Prints `lethe vA -> vB` when a newer release (or, on the edge channel,
     // a newer main) is published, nothing when up to date. ls-remote only: no
     // fetch, nothing changes in the repo.
-    property Process dotfilesCheck: Process {
-        id: dotfilesCheck
+    property Process letheCheck: Process {
+        id: letheCheck
 
-        command: [root.dotfilesCli, "status", "--porcelain"]
-        stdout: StdioCollector { id: dotfilesOut }
+        command: [root.letheCli, "status", "--porcelain"]
+        stdout: StdioCollector { id: letheOut }
 
         onExited: code => {
-            if (code === 0) root.dotfiles = root.parse(dotfilesOut.text);
+            if (code === 0) root.lethe = root.parse(letheOut.text);
             else root.failed = true;
         }
     }
