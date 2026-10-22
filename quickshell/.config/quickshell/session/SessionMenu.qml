@@ -45,6 +45,15 @@ LazyLoader {
             Quickshell.execDetached(entry.action);
         }
 
+        // A third way out after Esc and a click: if neither reaches the menu (input stuck
+        // elsewhere, a half-broken reload), it gives the keyboard back on its own.
+        Timer {
+            id: idle
+            interval: 30000
+            running: true
+            onTriggered: SessionService.close()
+        }
+
         Item {
             anchors.fill: parent
             focus: true
@@ -55,7 +64,13 @@ LazyLoader {
                 onClicked: SessionService.close()
             }
 
+            // A handler, not the MouseArea above: it sees the pointer over the buttons too.
+            HoverHandler {
+                onPointChanged: idle.restart()
+            }
+
             Keys.onPressed: event => {
+                idle.restart();
                 if (event.key === Qt.Key_Escape) {
                     SessionService.close();
                     event.accepted = true;
