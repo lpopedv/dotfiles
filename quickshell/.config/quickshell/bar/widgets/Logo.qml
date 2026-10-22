@@ -1,8 +1,9 @@
 import QtQuick
 import QtQuick.Shapes
 import Quickshell
-import "../.."
-import "../../ui"
+import qs
+import qs.services
+import qs.ui
 
 // The bar's "apple": waves by default, for Lethe's river; the glyph is picked
 // in the bar settings. Left click opens the launcher (same as Super+Space),

@@ -1,8 +1,8 @@
 import QtQuick
 import QtQuick.Layouts
 import Quickshell.Services.UPower
-import "../.."
-import "../../ui"
+import qs
+import qs.ui
 
 BarItem {
     id: root

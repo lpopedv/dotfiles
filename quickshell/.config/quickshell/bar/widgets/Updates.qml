@@ -1,6 +1,7 @@
 import QtQuick
-import "../.."
-import "../../ui"
+import qs
+import qs.services
+import qs.ui
 
 // Pending updates count as "active", so the item stays pinned in red even
 // while its collapsible neighbours are tucked away.

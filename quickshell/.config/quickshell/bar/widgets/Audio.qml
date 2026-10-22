@@ -1,8 +1,8 @@
 import QtQuick
 import Quickshell
 import Quickshell.Services.Pipewire
-import "../.."
-import "../../ui"
+import qs
+import qs.ui
 
 BarItem {
     id: root

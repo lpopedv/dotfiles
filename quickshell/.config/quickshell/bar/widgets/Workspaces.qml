@@ -1,8 +1,9 @@
 import QtQuick
 import QtQuick.Layouts
 import Quickshell.Hyprland
-import "../.."
-import "../../ui"
+import qs
+import qs.services
+import qs.ui
 
 GridLayout {
     id: root

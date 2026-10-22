@@ -1,8 +1,9 @@
 import QtQuick
 import QtQuick.Layouts
 import Quickshell
-import "../.."
-import "../../ui"
+import qs
+import qs.services
+import qs.ui
 
 // Hand-built grid, not QtQuick.Controls MonthGrid: avoids pulling in a
 // Controls style, and MonthGrid's `today` role never updates past midnight.

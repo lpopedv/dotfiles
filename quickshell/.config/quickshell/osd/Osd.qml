@@ -3,8 +3,8 @@ import QtQuick.Layouts
 import Quickshell
 import Quickshell.Io
 import Quickshell.Services.Pipewire
-import ".."
-import "../ui"
+import qs
+import qs.ui
 
 Scope {
     id: root

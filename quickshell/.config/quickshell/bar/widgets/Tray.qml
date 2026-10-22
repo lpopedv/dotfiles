@@ -2,7 +2,8 @@ import QtQuick
 import QtQuick.Layouts
 import Quickshell
 import Quickshell.Services.SystemTray
-import "../.."
+import qs
+import qs.services
 
 GridLayout {
     id: root

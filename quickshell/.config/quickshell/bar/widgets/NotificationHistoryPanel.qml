@@ -1,9 +1,10 @@
 import QtQuick
 import QtQuick.Layouts
 import Quickshell
-import "../.."
-import "../../notifications"
-import "../../ui"
+import qs
+import qs.notifications
+import qs.services
+import qs.ui
 
 PopupWindow {
     id: root

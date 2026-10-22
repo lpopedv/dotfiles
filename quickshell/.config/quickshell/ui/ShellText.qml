@@ -1,5 +1,5 @@
 import QtQuick
-import ".."
+import qs
 
 Text {
     // NativeRendering, not Qt's default: QtRendering puts colour fringes on

@@ -1,6 +1,7 @@
 import QtQuick
 import QtQuick.Layouts
-import "../.."
+import qs
+import qs.services
 
 // Short and faint: separates groups on the bar without boxing anything in.
 Rectangle {

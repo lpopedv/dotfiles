@@ -1,10 +1,10 @@
 //@ pragma UseQApplication
 import Quickshell
-import "bar"
-import "dock"
-import "notifications"
-import "osd"
-import "session"
+import qs.bar
+import qs.dock
+import qs.notifications
+import qs.osd
+import qs.session
 
 ShellRoot {
     Bar {}

@@ -1,8 +1,9 @@
 import QtQuick
 import Quickshell
 import Quickshell.Wayland
-import ".."
-import "../ui"
+import qs
+import qs.services
+import qs.ui
 
 Variants {
     model: Quickshell.screens

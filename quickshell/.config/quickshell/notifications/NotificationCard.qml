@@ -2,8 +2,9 @@ import QtQuick
 import QtQuick.Layouts
 import Quickshell.Services.Notifications
 import Quickshell.Widgets
-import ".."
-import "../ui"
+import qs
+import qs.services
+import qs.ui
 
 Rectangle {
     id: root

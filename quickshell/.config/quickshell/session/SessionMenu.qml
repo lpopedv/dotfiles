@@ -3,8 +3,9 @@ import QtQuick.Layouts
 import Quickshell
 import Quickshell.Io
 import Quickshell.Wayland
-import ".."
-import "../ui"
+import qs
+import qs.services
+import qs.ui
 
 PanelWindow {
     id: root
@@ -21,7 +22,7 @@ PanelWindow {
 
     readonly property int columns: 3
 
-    visible: SessionState.open
+    visible: SessionService.open
 
     anchors {
         top: true
@@ -38,13 +39,13 @@ PanelWindow {
     IpcHandler {
         target: "session"
 
-        function toggle(): void { SessionState.toggle(); }
-        function open(): void { SessionState.open = true; }
-        function close(): void { SessionState.open = false; }
+        function toggle(): void { SessionService.toggle(); }
+        function open(): void { SessionService.open = true; }
+        function close(): void { SessionService.open = false; }
     }
 
     function run(entry) {
-        SessionState.open = false;
+        SessionService.open = false;
         Quickshell.execDetached(entry.action);
     }
 
@@ -55,12 +56,12 @@ PanelWindow {
         // Backstop: a keyboard-only exit is a trap if focus ever fails to arrive.
         MouseArea {
             anchors.fill: parent
-            onClicked: SessionState.open = false
+            onClicked: SessionService.open = false
         }
 
         Keys.onPressed: event => {
             if (event.key === Qt.Key_Escape) {
-                SessionState.open = false;
+                SessionService.open = false;
                 event.accepted = true;
                 return;
             }

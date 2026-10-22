@@ -2,8 +2,9 @@ import QtQuick
 import Quickshell
 import Quickshell.Wayland
 import Quickshell.Widgets
-import ".."
-import "../ui"
+import qs
+import qs.services
+import qs.ui
 
 Item {
     id: root

@@ -2,9 +2,10 @@ import QtQuick
 import QtQuick.Layouts
 import Quickshell
 import Quickshell.Services.SystemTray
-import ".."
-import "widgets"
-import "../ui"
+import qs
+import qs.bar.widgets
+import qs.services
+import qs.ui
 
 Variants {
     model: Quickshell.screens
@@ -172,12 +173,12 @@ Variants {
                         Clock {}
 
                         BarItem {
-                            onClicked: SessionState.toggle()
-                            active: SessionState.open
+                            onClicked: SessionService.toggle()
+                            active: SessionService.open
 
                             ShellText {
                                 text: Icons.power
-                                color: parent.hovered || SessionState.open ? Theme.fgAct : Theme.fg
+                                color: parent.hovered || SessionService.open ? Theme.fgAct : Theme.fg
                                 font.pixelSize: Theme.iconSize
                             }
                         }
