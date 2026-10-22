@@ -102,7 +102,7 @@ BarPopup {
                     Layout.fillWidth: true
                     text: root.hasPlayer ? (root.player.trackTitle || "Unknown") : ""
                     color: Theme.fgAct
-                    font.weight: Font.DemiBold
+                    font.weight: Theme.weightMedium
                     elide: Text.ElideRight
                 }
 

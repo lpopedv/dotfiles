@@ -203,7 +203,7 @@ BarPopup {
                         text: root.locale.toString(root.today, "d MMMM")
                         color: Theme.fgAct
                         font.pixelSize: Theme.fontSize + 9
-                        font.weight: Font.DemiBold
+                        font.weight: Theme.weightStrong
                     }
 
                     ShellText {
@@ -251,7 +251,7 @@ BarPopup {
                 ShellText {
                     text: root.locale.standaloneMonthName(root.viewMonth, Locale.LongFormat)
                     color: Theme.fgAct
-                    font.weight: Font.DemiBold
+                    font.weight: Theme.weightMedium
                 }
 
                 ShellText {
@@ -367,7 +367,7 @@ BarPopup {
                                 : !cell.modelData.inMonth ? Theme.border
                                 : cell.modelData.weekend ? Theme.subtle
                                 : Theme.fg
-                            font.weight: cell.isToday || cell.isSelected ? Font.DemiBold : Font.Normal
+                            font.weight: cell.isToday || cell.isSelected ? Theme.weightMedium : Font.Normal
                         }
 
                         MouseArea {

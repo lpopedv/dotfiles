@@ -145,7 +145,7 @@ Scope {
                     ShellText {
                         text: root.muted ? "Muted" : Math.round(root.fraction * 100) + "%"
                         color: root.muted ? Theme.fg : Theme.fgAct
-                        font.weight: Font.DemiBold
+                        font.weight: Theme.weightMedium
                     }
                 }
 

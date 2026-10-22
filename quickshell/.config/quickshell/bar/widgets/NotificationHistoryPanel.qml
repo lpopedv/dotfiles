@@ -32,7 +32,7 @@ BarPopup {
             ShellText {
                 text: "Notifications"
                 color: Theme.fgAct
-                font.weight: Font.DemiBold
+                font.weight: Theme.weightMedium
             }
 
             ShellText {

@@ -45,6 +45,10 @@ Singleton {
     readonly property string fontFamily: "JetBrainsMono Nerd Font"
     readonly property int fontSize: 13
     readonly property int iconSize: 15
+    // A monospace face goes heavy fast at UI sizes: emphasis is Medium, and the strong weight
+    // is kept for large display figures.
+    readonly property int weightMedium: Font.Medium
+    readonly property int weightStrong: Font.DemiBold
 
     readonly property int animMs: 90
     readonly property int animSlideMs: 140

@@ -26,7 +26,7 @@ BarPopup {
             Layout.bottomMargin: 4
             text: "Bar"
             color: Theme.fgAct
-            font.weight: Font.DemiBold
+            font.weight: Theme.weightMedium
         }
 
         ShellText {

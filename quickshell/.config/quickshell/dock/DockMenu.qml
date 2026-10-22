@@ -86,7 +86,7 @@ PopupWindow {
                 Layout.bottomMargin: 4
                 text: root.tile ? root.tile.name : ""
                 color: Theme.fgAct
-                font.weight: Font.DemiBold
+                font.weight: Theme.weightMedium
                 elide: Text.ElideRight
             }
 

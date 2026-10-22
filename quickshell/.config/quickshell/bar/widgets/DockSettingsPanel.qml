@@ -26,7 +26,7 @@ BarPopup {
             Layout.bottomMargin: 4
             text: "Dock"
             color: Theme.fgAct
-            font.weight: Font.DemiBold
+            font.weight: Theme.weightMedium
         }
 
         // Radio circles, not ticks: the three modes are mutually exclusive.

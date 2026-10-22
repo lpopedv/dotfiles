@@ -33,7 +33,7 @@ BarItem {
         horizontalAlignment: Text.AlignHCenter
         color: Theme.alertColor(root.drained,
             root.hovered || root.charging ? Theme.fgAct : Theme.fg)
-        font.weight: root.charging || root.alerting ? Font.DemiBold : Font.Normal
+        font.weight: root.charging || root.alerting ? Theme.weightMedium : Font.Normal
 
         Pulse {
             id: pulse

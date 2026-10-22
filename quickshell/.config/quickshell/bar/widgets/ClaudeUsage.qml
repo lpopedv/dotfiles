@@ -39,7 +39,7 @@ BarItem {
         color: !ClaudeUsageService.ready
             ? Theme.border
             : Theme.alertColor(root.worst, root.hovered || panel.active ? Theme.fgAct : Theme.fg)
-        font.weight: Theme.isAlert(root.worst) ? Font.DemiBold : Font.Normal
+        font.weight: Theme.isAlert(root.worst) ? Theme.weightMedium : Font.Normal
 
         Pulse {
             target: glyph

@@ -56,7 +56,7 @@ Item {
         text: (root.tile.name || root.tile.key).charAt(0).toUpperCase()
         color: root.focused ? Theme.fgAct : Theme.fg
         font.pixelSize: Math.round(DockService.iconSize * 0.42)
-        font.weight: Font.DemiBold
+        font.weight: Theme.weightMedium
     }
 
     QtObject {

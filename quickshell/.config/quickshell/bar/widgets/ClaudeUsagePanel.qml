@@ -86,7 +86,7 @@ BarPopup {
                 + (root.record && root.record.tierLabel
                     ? "   ·   " + root.record.tierLabel : "")
             color: Theme.fgAct
-            font.weight: Font.DemiBold
+            font.weight: Theme.weightMedium
         }
 
         ColumnLayout {
@@ -165,7 +165,7 @@ BarPopup {
                     ShellText {
                         text: new Date(dayRow.modelData.date).toLocaleDateString(Qt.locale("en_US"), "ddd dd")
                         color: dayRow.isToday ? Theme.fgAct : Theme.fg
-                        font.weight: dayRow.isToday ? Font.DemiBold : Font.Normal
+                        font.weight: dayRow.isToday ? Theme.weightMedium : Font.Normal
                         Layout.preferredWidth: 54
                     }
 
@@ -177,7 +177,7 @@ BarPopup {
                     ShellText {
                         text: root.humanize(dayRow.tokens)
                         color: dayRow.isToday ? Theme.fgAct : Theme.fg
-                        font.weight: dayRow.isToday ? Font.DemiBold : Font.Normal
+                        font.weight: dayRow.isToday ? Theme.weightMedium : Font.Normal
                         horizontalAlignment: Text.AlignRight
                         Layout.preferredWidth: 58
                     }

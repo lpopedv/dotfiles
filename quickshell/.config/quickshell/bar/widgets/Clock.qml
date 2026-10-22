@@ -47,7 +47,7 @@ BarItem {
             ? clock.date.toLocaleDateString(Qt.locale(), Locale.LongFormat)
             : Icons.clock + "  " + Qt.formatDateTime(clock.date, "dd MMM  HH:mm")
         color: root.tone
-        font.weight: Font.DemiBold
+        font.weight: Theme.weightMedium
     }
 
     // Side bars: a line of text won't fit, so the time becomes a small lockup, the
@@ -71,7 +71,7 @@ BarItem {
             text: Qt.formatDateTime(clock.date, root.showDate ? "dd" : "HH")
             color: root.hovered || panel.active ? Theme.fgAct : Qt.lighter(Theme.fg, 1.35)
             font.pixelSize: Theme.fontSize + 1
-            font.weight: Font.DemiBold
+            font.weight: Theme.weightMedium
         }
     }
 

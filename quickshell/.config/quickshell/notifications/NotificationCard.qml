@@ -174,7 +174,7 @@ Rectangle {
                 visible: text !== ""
                 text: root.notif.summary
                 color: root.low ? Theme.fg : Theme.fgAct
-                font.weight: Font.DemiBold
+                font.weight: Theme.weightMedium
                 elide: Text.ElideRight
             }
 
