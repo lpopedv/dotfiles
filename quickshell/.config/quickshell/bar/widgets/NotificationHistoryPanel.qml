@@ -2,155 +2,119 @@ import QtQuick
 import QtQuick.Layouts
 import Quickshell
 import qs
+import qs.bar
 import qs.notifications
 import qs.services
 import qs.ui
 
-PopupWindow {
+BarPopup {
     id: root
 
-    property var anchorItem: null
+    panelWidth: 400
+    contentHeight: layout.implicitHeight
+    padding: 14
 
-    anchor.item: anchorItem
-    anchor.edges: BarService.popupEdge
-    anchor.gravity: BarService.popupEdge
-    anchor.adjustment: BarService.popupAdjustment
+    // Keeps the shared age ticker running while the list is on screen.
+    onVisibleChanged: NotificationsService.historyOpen = root.visible
+    Component.onDestruction: NotificationsService.historyOpen = false
 
-    implicitWidth: 400 + BarService.insetX
-    // Gap off the bar is transparent space inside the popup: the compositor
-    // clamps an anchored popup to the bar's edge, so anchor.margins can't do it.
-    implicitHeight: layout.implicitHeight + 28 + BarService.insetY
-    color: "transparent"
-
-    onVisibleChanged: {
-        NotificationsService.historyOpen = root.visible;
-        // Resets the fade-in for next open; can close via focus grab too, not just the button.
-        if (!root.visible) panel.opacity = 0;
-    }
-
-    Rectangle {
-        id: panel
-
+    ColumnLayout {
+        id: layout
         anchors.fill: parent
-        anchors.topMargin: BarService.insetTop
-        anchors.bottomMargin: BarService.insetBottom
-        anchors.leftMargin: BarService.insetLeft
-        anchors.rightMargin: BarService.insetRight
-        color: Theme.glass
-        border.width: 1
-        border.color: Theme.border
+        spacing: 10
 
-        opacity: 0
+        RowLayout {
+            Layout.fillWidth: true
+            spacing: 8
 
-        NumberAnimation on opacity {
-            to: 1
-            duration: Theme.animMs
-            easing.type: Easing.OutCubic
-            running: root.visible
-        }
-
-        focus: true
-        Keys.onEscapePressed: root.visible = false
-
-        ColumnLayout {
-            id: layout
-            anchors.fill: parent
-            anchors.margins: 14
-            spacing: 10
-
-            RowLayout {
-                Layout.fillWidth: true
-                spacing: 8
-
-                ShellText {
-                    text: "Notifications"
-                    color: Theme.fgAct
-                    font.weight: Font.DemiBold
-                }
-
-                ShellText {
-                    visible: NotificationsService.history.length > 0
-                    text: NotificationsService.history.length
-                    color: Theme.subtle
-                }
-
-                Item { Layout.fillWidth: true }
-
-                Chip {
-                    text: "Do not disturb"
-                    quiet: true
-                    active: NotificationsService.silent
-                    onClicked: NotificationsService.toggleSilent()
-                }
-
-                Chip {
-                    visible: NotificationsService.history.length > 0
-                    text: "Clear all"
-                    quiet: true
-                    onClicked: NotificationsService.clearAll()
-                }
-            }
-
-            Rectangle {
-                Layout.fillWidth: true
-                implicitHeight: 1
-                color: Theme.divider
+            ShellText {
+                text: "Notifications"
+                color: Theme.fgAct
+                font.weight: Font.DemiBold
             }
 
             ShellText {
-                Layout.fillWidth: true
-                Layout.topMargin: 22
-                Layout.bottomMargin: 22
-                visible: NotificationsService.history.length === 0
-                horizontalAlignment: Text.AlignHCenter
-                text: NotificationsService.silent
-                    ? "Do not disturb is on"
-                    : "No notifications"
+                visible: NotificationsService.history.length > 0
+                text: NotificationsService.history.length
                 color: Theme.subtle
             }
 
-            // Indicator must be a sibling of the list: as a Flickable child it'd scroll away too.
-            Item {
-                Layout.fillWidth: true
-                Layout.preferredHeight: Math.min(520, list.contentHeight)
+            Item { Layout.fillWidth: true }
+
+            Chip {
+                text: "Do not disturb"
+                quiet: true
+                active: NotificationsService.silent
+                onClicked: NotificationsService.toggleSilent()
+            }
+
+            Chip {
                 visible: NotificationsService.history.length > 0
+                text: "Clear all"
+                quiet: true
+                onClicked: NotificationsService.clearAll()
+            }
+        }
 
-                ListView {
-                    id: list
+        Rectangle {
+            Layout.fillWidth: true
+            implicitHeight: 1
+            color: Theme.divider
+        }
 
-                    anchors.fill: parent
-                    // Fixed gutter: sizing to actual overflow would loop (card height depends on wrap width).
-                    anchors.rightMargin: 8
-                    clip: true
-                    spacing: 6
-                    boundsBehavior: Flickable.StopAtBounds
-                    model: ScriptModel {
-                        values: Array.from(NotificationsService.history)
-                        comparisonMode: ObjectComparison.Identity
-                    }
+        ShellText {
+            Layout.fillWidth: true
+            Layout.topMargin: 22
+            Layout.bottomMargin: 22
+            visible: NotificationsService.history.length === 0
+            horizontalAlignment: Text.AlignHCenter
+            text: NotificationsService.silent
+                ? "Do not disturb is on"
+                : "No notifications"
+            color: Theme.subtle
+        }
 
-                    delegate: NotificationCard {
-                        required property var modelData
+        // Indicator must be a sibling of the list: as a Flickable child it'd scroll away too.
+        Item {
+            Layout.fillWidth: true
+            Layout.preferredHeight: Math.min(520, list.contentHeight)
+            visible: NotificationsService.history.length > 0
 
-                        notif: modelData
-                        compact: true
-                        width: list.width
-                    }
+            ListView {
+                id: list
+
+                anchors.fill: parent
+                // Fixed gutter: sizing to actual overflow would loop (card height depends on wrap width).
+                anchors.rightMargin: 8
+                clip: true
+                spacing: 6
+                boundsBehavior: Flickable.StopAtBounds
+                model: ScriptModel {
+                    values: Array.from(NotificationsService.history)
+                    comparisonMode: ObjectComparison.Identity
                 }
 
-                // Hand-drawn, not QtQuick.Controls ScrollBar: avoids pulling in a Controls style for one rectangle.
-                Rectangle {
-                    anchors.right: parent.right
-                    width: 3
-                    y: list.visibleArea.yPosition * list.height
-                    height: Math.max(24, list.visibleArea.heightRatio * list.height)
-                    visible: list.contentHeight > list.height
-                    color: Theme.subtle
-                    opacity: list.moving ? 1 : 0.5
+                delegate: NotificationCard {
+                    required property var modelData
 
-                    Behavior on opacity {
-                        NumberAnimation { duration: Theme.animMs }
-                    }
+                    notif: modelData
+                    compact: true
+                    width: list.width
+                }
+            }
+
+            // Hand-drawn, not QtQuick.Controls ScrollBar: avoids pulling in a Controls style for one rectangle.
+            Rectangle {
+                anchors.right: parent.right
+                width: 3
+                y: list.visibleArea.yPosition * list.height
+                height: Math.max(24, list.visibleArea.heightRatio * list.height)
+                visible: list.contentHeight > list.height
+                color: Theme.subtle
+                opacity: list.moving ? 1 : 0.5
+
+                Behavior on opacity {
+                    NumberAnimation { duration: Theme.animMs }
                 }
             }
         }
