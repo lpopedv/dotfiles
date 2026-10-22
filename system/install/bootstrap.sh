@@ -8,9 +8,17 @@ DRY=0
 [[ "${1:-}" == "--dry-run" ]] && DRY=1
 
 STOW_PACKAGES=(
-    claude flameshot ghostty git gtk herdr hypr lazygit mise nvim
+    bin flameshot ghostty git gtk herdr hypr lazygit mise nvim
     orca qt6ct quickshell rofi systemd tmux wallpaper zsh
 )
+
+# The repo's owner gets a few personal extras on top (Claude Code setup,
+# always-on Mullvad); everyone else who installs it doesn't. Kept in the repo's
+# own .git/config, so it is per machine: `dotfiles owner on`.
+OWNER=0
+[[ "$(git -C "$DOTFILES" config --type=bool --get dotfiles.owner 2>/dev/null)" == true ]] && OWNER=1
+OWNER_STOW_PACKAGES=(claude)
+(( OWNER )) && STOW_PACKAGES+=("${OWNER_STOW_PACKAGES[@]}")
 
 log()  { printf '\n\033[1m==> %s\033[0m\n' "$*"; }
 ok()   { printf '    \033[32mok\033[0m %s\n' "$*"; }
@@ -64,7 +72,7 @@ fi
 
 log "AUR packages"
 if command -v paru >/dev/null; then
-    mapfile -t aur < <(read_list "$INSTALL/aur.txt")
+    mapfile -t aur < <(read_list "$INSTALL/aur.txt"; (( ! OWNER )) || read_list "$INSTALL/aur-owner.txt")
     mapfile -t aur_missing < <(comm -23 \
         <(printf '%s\n' "${aur[@]}" | sort -u) \
         <(pacman -Qq | sort -u))
@@ -651,24 +659,30 @@ fi
 # wait for a login: "mullvad account login", then re-run this script. DNS needs
 # nothing here: the daemon points resolved at its in-tunnel resolver and turns
 # DoT off on that link only (global DoT stays for when it's down).
-for unit in mullvad-daemon.service mullvad-early-boot-blocking.service; do
-    if [[ "$(systemctl is-enabled "$unit" 2>/dev/null)" == enabled ]]; then
-        ok "$unit enabled"
-    else
-        run sudo systemctl enable --now "$unit"
-    fi
-done
-if ! command -v mullvad >/dev/null || mullvad account get 2>/dev/null | grep -q 'Not logged in'; then
-    warn "mullvad: no account - always-on VPN starts once you log in and re-run this"
+# Installed for the owner only (aur-owner.txt), but configured wherever it is
+# installed: someone who adds Mullvad themselves gets the same hardening.
+if ! command -v mullvad >/dev/null; then
+    ok "mullvad not installed - skipped"
 else
-    if mullvad lan get | grep -q ': block'; then ok "mullvad blocks the LAN"
-    else run mullvad lan set block; fi
-    if mullvad auto-connect get | grep -q ': on'; then ok "mullvad auto-connects"
-    else run mullvad auto-connect set on; fi
-    if mullvad lockdown-mode get | grep -q ': on'; then ok "mullvad lockdown on"
-    else run mullvad lockdown-mode set on; fi
-    if mullvad status | grep -q '^Connected'; then ok "mullvad connected"
-    else run mullvad connect; fi
+    for unit in mullvad-daemon.service mullvad-early-boot-blocking.service; do
+        if [[ "$(systemctl is-enabled "$unit" 2>/dev/null)" == enabled ]]; then
+            ok "$unit enabled"
+        else
+            run sudo systemctl enable --now "$unit"
+        fi
+    done
+    if mullvad account get 2>/dev/null | grep -q 'Not logged in'; then
+        warn "mullvad: no account - always-on VPN starts once you log in and re-run this"
+    else
+        if mullvad lan get | grep -q ': block'; then ok "mullvad blocks the LAN"
+        else run mullvad lan set block; fi
+        if mullvad auto-connect get | grep -q ': on'; then ok "mullvad auto-connects"
+        else run mullvad auto-connect set on; fi
+        if mullvad lockdown-mode get | grep -q ': on'; then ok "mullvad lockdown on"
+        else run mullvad lockdown-mode set on; fi
+        if mullvad status | grep -q '^Connected'; then ok "mullvad connected"
+        else run mullvad connect; fi
+    fi
 fi
 
 # A root account with an empty password is a free "su" (Arch's PAM allows
