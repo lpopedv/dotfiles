@@ -101,6 +101,7 @@ Item {
             Rectangle {
                 implicitWidth: Theme.dockDot
                 implicitHeight: Theme.dockDot
+                radius: Theme.pill(width)
                 color: root.focused ? Theme.fgAct : Theme.subtle
                 opacity: root.focused ? 1 : 0.75
 

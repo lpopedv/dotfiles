@@ -110,6 +110,8 @@ LazyLoader {
                         required property var modelData
                         readonly property bool available: root.available(modelData)
 
+                        radius: Theme.radiusCard
+
                         Layout.fillWidth: true
                         Layout.fillHeight: true
                         Layout.margins: 6

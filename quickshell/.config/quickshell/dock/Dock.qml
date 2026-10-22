@@ -146,6 +146,8 @@ Variants {
             Rectangle {
                 id: plate
 
+                radius: Theme.radiusDock
+
                 // The float gap sits on the screen-edge side.
                 x: dock.side === "left" ? Theme.dockFloat : 0
                 width: dock.vertical ? dock.plateHeight : parent.width
@@ -184,6 +186,7 @@ Variants {
                     Rectangle {
                         id: highlight
 
+                        radius: Theme.inner(Theme.radiusDock, dock.padTop - 4)
                         width: dock.icon + 8
                         height: dock.icon + 8
                         readonly property real along: dock.restingIndex * dock.slot + (dock.slot - width) / 2
@@ -258,6 +261,8 @@ Variants {
             // Outside the mask (drawn above body), so its empty space never eats a click.
             Rectangle {
                 id: label
+
+                radius: Theme.radiusMenu
 
                 // Named off restingIndex so it keeps the last tile's name while fading out.
                 readonly property var tile: dock.tiles[dock.restingIndex] ?? null

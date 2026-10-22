@@ -51,6 +51,8 @@ PopupWindow {
     Rectangle {
         id: panel
 
+        radius: Theme.radiusMenu
+
         anchors.fill: parent
         anchors.topMargin: root.nested ? 0 : BarService.insetTop
         anchors.bottomMargin: root.nested ? 0 : BarService.insetBottom

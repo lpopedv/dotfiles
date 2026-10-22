@@ -85,5 +85,31 @@ BarPopup {
                 }
             }
         }
+
+        SectionLabel {
+            text: "Corners"
+        }
+
+        // Applies to the whole shell at once, this panel included, so the choice shows itself.
+        GridLayout {
+            Layout.fillWidth: true
+            Layout.leftMargin: 10
+            Layout.rightMargin: 10
+            columns: Theme.cornerStyles.length
+            columnSpacing: 6
+
+            Repeater {
+                model: Theme.cornerStyles
+
+                Chip {
+                    required property var modelData
+
+                    Layout.fillWidth: true
+                    text: modelData.text
+                    active: Theme.corners === modelData.id
+                    onClicked: Theme.setCorners(modelData.id)
+                }
+            }
+        }
     }
 }

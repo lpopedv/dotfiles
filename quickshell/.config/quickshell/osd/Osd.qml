@@ -114,6 +114,8 @@ Scope {
         Rectangle {
             id: panel
 
+            radius: Theme.radiusCard
+
             anchors.fill: parent
             color: Theme.glass
             border.width: 1

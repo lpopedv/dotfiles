@@ -132,6 +132,8 @@ BarPopup {
     component NavButton: Rectangle {
         id: nav
 
+        radius: Theme.radiusItem
+
         property string icon
         signal clicked
 
@@ -348,6 +350,7 @@ BarPopup {
 
                         width: root.cellWidth
                         height: root.cellHeight
+                        radius: Theme.radiusItem
                         color: isToday ? Theme.fgAct
                             : isSelected ? Theme.activeFill
                             : cellMouse.containsMouse ? Theme.hoverFill

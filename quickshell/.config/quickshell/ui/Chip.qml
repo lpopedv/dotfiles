@@ -16,6 +16,7 @@ Rectangle {
 
     implicitWidth: label.implicitWidth + (root.quiet ? 14 : 20)
     implicitHeight: label.implicitHeight + 10
+    radius: Theme.radiusItem
 
     color: mouse.pressed ? Theme.pressFill
         : root.active ? Theme.activeFill

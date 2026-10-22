@@ -53,6 +53,7 @@ BarItem {
     Rectangle {
         Layout.preferredWidth: 26
         Layout.preferredHeight: 22
+        radius: Theme.radiusItem
         color: toggle.containsMouse ? Theme.activeFill : "transparent"
 
         Behavior on color {

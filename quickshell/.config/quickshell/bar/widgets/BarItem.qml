@@ -56,6 +56,7 @@ Rectangle {
     opacity: root.shown * root.shown * root.emphasis
 
     color: mouse.pressed ? Theme.pressFill : mouse.containsMouse ? Theme.hoverFill : "transparent"
+    radius: Theme.radiusItem
     border.width: 1
     border.color: "transparent"
 

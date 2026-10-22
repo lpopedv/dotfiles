@@ -53,6 +53,8 @@ PopupWindow {
     Rectangle {
         id: panel
 
+        radius: Theme.radiusMenu
+
         anchors.fill: parent
         anchors.bottomMargin: root.side === "bottom" ? Theme.popupGap : 0
         anchors.leftMargin: root.side === "left" ? Theme.popupGap : 0

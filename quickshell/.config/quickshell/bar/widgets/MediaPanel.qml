@@ -194,6 +194,7 @@ BarPopup {
 
                     implicitWidth: 40
                     implicitHeight: 32
+                    radius: Theme.radiusItem
                     color: btnMouse.containsMouse && usable ? Theme.hoverFill : "transparent"
                     opacity: usable ? 1 : Theme.dimmedOpacity
 

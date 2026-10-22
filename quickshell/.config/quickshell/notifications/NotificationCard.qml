@@ -29,6 +29,7 @@ Rectangle {
     readonly property int iconSize: root.compact ? 26 : 38
 
     implicitHeight: body.implicitHeight + root.inset * 2
+    radius: root.compact ? Theme.radiusItem : Theme.radiusCard
 
     color: root.compact
         ? (root.hovered ? Theme.hoverFill : "transparent")
@@ -65,6 +66,9 @@ Rectangle {
         anchors.bottom: parent.bottom
         anchors.margins: 1
         width: 3
+        // Follows the card's left corners, so it never pokes out past their curve.
+        topLeftRadius: Theme.inner(root.radius, 1)
+        bottomLeftRadius: Theme.inner(root.radius, 1)
         color: root.accent
         opacity: root.critical ? 0.9 : 0.55
     }
@@ -83,6 +87,7 @@ Rectangle {
             Layout.alignment: Qt.AlignTop
             implicitWidth: root.iconSize
             implicitHeight: root.iconSize
+            radius: Theme.radiusItem
             color: Qt.rgba(1, 1, 1, 0.06)
 
             IconImage {
@@ -215,6 +220,9 @@ Rectangle {
         anchors.right: parent.right
         anchors.bottom: parent.bottom
         anchors.margins: 1
+        // Clear of the rounded corners, when there are any.
+        anchors.leftMargin: Math.max(1, root.radius)
+        anchors.rightMargin: Math.max(1, root.radius)
         visible: root.progress >= 0
         height: 2
         color: Theme.divider
