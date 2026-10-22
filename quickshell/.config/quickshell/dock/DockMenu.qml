@@ -65,9 +65,16 @@ PopupWindow {
 
         NumberAnimation on opacity {
             to: 1
-            duration: Theme.animMs
+            duration: Theme.animSlideMs
             easing.type: Easing.OutCubic
             running: root.visible
+        }
+
+        // Eases out of the dock as it fades in.
+        transform: Translate {
+            readonly property real away: Theme.popupSlide * (1 - panel.opacity)
+            x: root.side === "left" ? -away : root.side === "right" ? away : 0
+            y: root.side === "bottom" ? away : 0
         }
 
         focus: true

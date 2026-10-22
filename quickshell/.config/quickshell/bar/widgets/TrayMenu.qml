@@ -64,9 +64,16 @@ PopupWindow {
 
         NumberAnimation on opacity {
             to: 1
-            duration: Theme.animMs
+            duration: Theme.animSlideMs
             easing.type: Easing.OutCubic
             running: root.visible
+        }
+
+        // Eases out of the bar as it fades in; submenus just fade.
+        transform: Translate {
+            readonly property real away: Theme.popupSlide * (1 - panel.opacity)
+            x: root.nested ? 0 : BarService.left ? -away : BarService.right ? away : 0
+            y: root.nested ? 0 : BarService.top ? -away : BarService.bottom ? away : 0
         }
 
         focus: true

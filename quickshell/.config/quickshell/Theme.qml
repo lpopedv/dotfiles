@@ -52,6 +52,8 @@ Singleton {
 
     readonly property int animMs: 90
     readonly property int animSlideMs: 140
+    // Bar popups ease in from the bar by this much as they fade in.
+    readonly property int popupSlide: 6
 
     // Curves are [cx1, cy1, cx2, cy2, 1, 1] for `easing.type: Easing.BezierSpline`.
     // Reveal/collapse of the bar's items: one long, decelerating curve (ease-out-quint)
