@@ -34,10 +34,13 @@ for cmd in gum jq; do
     command -v "$cmd" >/dev/null || { echo "$cmd is required" >&2; exit 1; }
 done
 
-# Everything written below - credentials included - is readable by root only,
-# and /tmp on the live system is RAM.
-umask 077
+# The generated configs - credentials included - sit in a root-only directory,
+# and /tmp on the live system is RAM. A directory mode, not `umask 077`: the
+# umask would be inherited by archinstall and make the whole new system
+# root-only, so its D-Bus (not root) can't start.
+umask 022
 mkdir -p "$WORK"
+chmod 700 "$WORK"
 
 export GUM_CHOOSE_CURSOR_FOREGROUND=6 GUM_CHOOSE_SELECTED_FOREGROUND=6
 export GUM_CHOOSE_HEADER_FOREGROUND=7 GUM_INPUT_HEADER_FOREGROUND=7
