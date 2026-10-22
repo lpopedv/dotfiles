@@ -17,7 +17,7 @@ LazyLoader {
         // Order, actions and keybinds are the wlogout layout file this replaces.
         readonly property var entries: [
             { icon: "lock",      text: "Lock",      key: "l", action: ["loginctl", "lock-session"] },
-            { icon: "hibernate", text: "Hibernate", key: "h", action: ["systemctl", "hibernate"] },
+            { icon: "hibernate", text: "Hibernate", key: "h", action: ["systemctl", "hibernate"], needs: "canHibernate" },
             { icon: "logout",    text: "Logout",    key: "e", action: ["loginctl", "terminate-user", Quickshell.env("USER")] },
             { icon: "shutdown",  text: "Shutdown",  key: "s", action: ["systemctl", "poweroff"] },
             { icon: "suspend",   text: "Suspend",   key: "u", action: ["systemctl", "suspend"] },
@@ -40,7 +40,13 @@ LazyLoader {
         WlrLayershell.keyboardFocus: WlrKeyboardFocus.Exclusive
         color: Qt.rgba(0, 0, 0, 0.92)
 
+        // Entries naming a `needs` flag stay in place, dimmed, when SessionService says no.
+        function available(entry) {
+            return !entry.needs || SessionService[entry.needs] === true;
+        }
+
         function run(entry) {
+            if (!root.available(entry)) return;
             SessionService.close();
             Quickshell.execDetached(entry.action);
         }
@@ -100,6 +106,7 @@ LazyLoader {
                         id: button
 
                         required property var modelData
+                        readonly property bool available: root.available(modelData)
 
                         Layout.fillWidth: true
                         Layout.fillHeight: true
@@ -109,7 +116,7 @@ LazyLoader {
                         border.width: 1
                         border.color: mouse.containsMouse ? Theme.fgAct : Theme.border
                         // Dims the whole button rather than recolouring the icon; svgs stay fixed #cccccc.
-                        opacity: mouse.containsMouse ? 1.0 : 0.62
+                        opacity: !button.available ? 0.22 : mouse.containsMouse ? 1.0 : 0.62
 
                         Behavior on opacity {
                             NumberAnimation { duration: Theme.animMs; easing.type: Easing.OutQuad }
@@ -141,7 +148,7 @@ LazyLoader {
                         MouseArea {
                             id: mouse
                             anchors.fill: parent
-                            hoverEnabled: true
+                            hoverEnabled: button.available
                             onClicked: root.run(button.modelData)
                         }
                     }
