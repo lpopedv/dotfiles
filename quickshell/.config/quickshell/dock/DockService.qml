@@ -11,7 +11,7 @@ QtObject {
 
     // Matches what hypr/keybinds.lua binds, so a fresh install has a usable dock.
     readonly property var defaultPinned: [
-        "com.mitchellh.ghostty", "chromium", "org.gnome.Nautilus"
+        "com.mitchellh.ghostty", "zen", "org.gnome.Nautilus"
     ]
 
     readonly property var pinned: settings.apps ?? []
