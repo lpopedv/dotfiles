@@ -76,6 +76,9 @@ installs with `--silent`, then copies the repo into the new home and writes the 
 files (`~/.config/hypr/local.lua`, `~/.config/git/identity`). Its UI patterns and validation
 rules come from Omarchy's installer (MIT). It must keep working with the archinstall version
 releng ships — check archinstall's config schema when bumping anything disk-related.
+Graphics stay hardware-agnostic: the base config's `All open-source` covers AMD, Intel and VMs;
+only an NVIDIA card makes the installer ask (nvidia-open vs nouveau), and `hypr/environment.lua`
+sets NVIDIA's env vars only when its driver runs the sole GPU.
 
 **Releases and trust:** machines on the `stable` channel only install tags signed by a key in
 `.github/allowed_signers`, read from the version they already run (CI checks a new tag against

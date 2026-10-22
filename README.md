@@ -55,7 +55,9 @@ Every top-level directory except `system/` is a stow package: its contents mirro
 2. Write it to a USB stick (`sudo dd if=lethe-….iso of=/dev/sdX bs=4M status=progress oflag=sync`
    — check `/dev/sdX` with `lsblk` first) and boot from it, Secure Boot off for the install.
 3. Answer the installer: Wi-Fi (if no cable), keyboard, account, computer name, time zone, disk
-   and whether to encrypt it. It erases the chosen disk and installs unattended.
+   and whether to encrypt it. It erases the chosen disk and installs unattended. AMD, Intel and
+   virtual GPUs need nothing; an NVIDIA card gets a choice between NVIDIA's driver and the
+   open-source one, preselected by how new the card is.
 4. Reboot and log in on the text console: `bootstrap.sh` runs by itself on that first login.
    Reboot once more and the desktop is there. `bootstrap.sh` turns Secure Boot on when the
    firmware is in setup mode.
