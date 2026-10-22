@@ -169,6 +169,11 @@ PopupWindow {
                         title: "AUR"
                         packages: UpdatesService.aur
                     }
+
+                    PackageSection {
+                        title: "Dotfiles"
+                        packages: UpdatesService.dotfiles
+                    }
                 }
             }
 
