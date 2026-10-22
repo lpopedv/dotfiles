@@ -17,7 +17,8 @@ Rectangle {
     implicitWidth: label.implicitWidth + (root.quiet ? 14 : 20)
     implicitHeight: label.implicitHeight + 10
 
-    color: root.active ? Theme.activeFill
+    color: mouse.pressed ? Theme.pressFill
+        : root.active ? Theme.activeFill
         : mouse.containsMouse ? Theme.hoverFill
         : root.quiet ? "transparent" : Theme.divider
     border.width: root.quiet && !root.active && !mouse.containsMouse ? 0 : 1

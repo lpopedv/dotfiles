@@ -14,6 +14,7 @@ Singleton {
 
     readonly property color hoverFill: Qt.rgba(1, 1, 1, 0.08)
     readonly property color activeFill: Qt.rgba(1, 1, 1, 0.14)
+    readonly property color pressFill: Qt.rgba(1, 1, 1, 0.20)
     readonly property color accentLine: Qt.rgba(1, 1, 1, 0.35)
     readonly property color divider: Qt.rgba(1, 1, 1, 0.08)
 
