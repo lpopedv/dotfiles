@@ -98,6 +98,38 @@ PopupWindow {
                     }
                 }
             }
+
+            ShellText {
+                Layout.fillWidth: true
+                Layout.leftMargin: 10
+                Layout.topMargin: 8
+                Layout.bottomMargin: 4
+                text: "Logo"
+                color: Theme.subtle
+                font.pixelSize: Theme.fontSize - 2
+            }
+
+            // Stays open: the logo changes in place, right next to this panel.
+            GridLayout {
+                Layout.fillWidth: true
+                Layout.leftMargin: 10
+                Layout.rightMargin: 10
+                columns: BarService.logos.length
+                columnSpacing: 6
+
+                Repeater {
+                    model: BarService.logos
+
+                    Chip {
+                        required property var modelData
+
+                        Layout.fillWidth: true
+                        text: modelData.glyph
+                        active: BarService.logo === modelData.id
+                        onClicked: BarService.setLogo(modelData.id)
+                    }
+                }
+            }
         }
     }
 }

@@ -28,7 +28,11 @@ QtObject {
     readonly property string charging: cp(0xF0084)
     readonly property string dock: cp(0xF10A9)
     readonly property string packageUp: cp(0xF03D5)
+    // Bar logo choices (BarService.logos).
+    readonly property string waves: cp(0xF078D)
     readonly property string atom: cp(0xF0768)
+    readonly property string lambda: cp(0xF0627)
+    readonly property string drop: cp(0xF058C)
     readonly property string music: cp(0xF0387)
     readonly property string play: cp(0xF040A)
     readonly property string pause: cp(0xF03E4)

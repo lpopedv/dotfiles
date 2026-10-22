@@ -4,8 +4,9 @@ import Quickshell
 import "../.."
 import "../../ui"
 
-// The bar's "apple": an atom. Left click opens the launcher (same as
-// Super+Space), right click the bar settings.
+// The bar's "apple": waves by default, for Lethe's river; the glyph is picked
+// in the bar settings. Left click opens the launcher (same as Super+Space),
+// right click the bar settings.
 BarItem {
     id: root
 
@@ -25,7 +26,7 @@ BarItem {
     }
 
     ShellText {
-        text: Icons.atom
+        text: BarService.logoGlyph
         color: Theme.fgAct
         font.pixelSize: 18
     }
