@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
-# The live ISO's installer: a few questions on tty1, then archinstall does the
-# work unattended from a config built out of the answers. Nothing here needs
-# Arch knowledge - that is the point of it.
+# Lethe's installer, on the live ISO's tty1: a few questions, then archinstall
+# does the work unattended from a config built out of the answers. Nothing here
+# needs Arch knowledge - that is the point of it.
 #
 #   install.sh                  the wizard (started by .zlogin on tty1)
 #   install.sh --answers FILE   unattended: KEY=value answers, no questions
@@ -33,7 +33,7 @@ DOTFILES=/root/Dotfiles
 BASE_CONFIG="$DOTFILES/system/install/archinstall.json"
 VERSION="$(cat "$DOTFILES/.iso-revision" 2>/dev/null || git -C "$DOTFILES" describe --tags --always 2>/dev/null || echo unknown)"
 TARGET=/mnt
-WORK=/tmp/dotfiles-install
+WORK=/tmp/lethe-install
 LOG="$WORK/install.log"
 
 for cmd in gum jq; do
@@ -85,14 +85,14 @@ unattended=0
 # theme's "subtle" grey, the one shade the 16 slots lack.
 PALETTE=(000000 cc5f5f 7abc5c d2a24c 6b6b6b b762bc 5bbfb1 999999
          333333 d89179 9bd183 d8c288 7fa6d4 ce8ad2 83d4c5 ffffff)
-C_RED=1 C_GREEN=2 C_AMBER=3 C_SUBTLE=4 C_FG=7 C_LINE=8 C_WHITE=15
+C_RED=1 C_AMBER=3 C_SUBTLE=4 C_FG=7 C_LINE=8 C_WHITE=15
 FONT="JetBrainsMono Nerd Font"
 
 # The kernel console's built-in font has no rounded corners or check marks.
 if [[ "${TERM:-}" == linux ]]; then
-    G_OK="+" G_CUR=">" G_NOW="*" G_TODO="-" G_FULL="=" G_EMPTY="-" G_SEG="==" G_DOT="-" G_X="x" BORDER=normal
+    G_OK="+" G_CUR=">" G_TODO="-" G_FULL="=" G_EMPTY="-" G_SEG="==" G_DOT="-" G_X="x" BORDER=normal
 else
-    G_OK="✓" G_CUR="›" G_NOW="●" G_TODO="○" G_FULL="━" G_EMPTY="─" G_SEG="━━━━" G_DOT="·" G_X="✕" BORDER=rounded
+    G_OK="✓" G_CUR="›" G_TODO="○" G_FULL="━" G_EMPTY="─" G_SEG="━━━━" G_DOT="·" G_X="✕" BORDER=rounded
 fi
 
 STEPS=(Keyboard Network Account Computer Disk Review)
@@ -174,7 +174,7 @@ progress() {
 brand() {
     printf '\e[H\e[2J'
     printf '\n%.0s' $(seq 1 "$TOP")
-    center "$C_WHITE" "d o t f i l e s" bold
+    center "$C_WHITE" "l e t h e" bold
     center "$C_SUBTLE" "arch linux $G_DOT hyprland $G_DOT $VERSION"
     echo
 }
@@ -256,7 +256,7 @@ run_in_kmscon() {
         hex="${PALETTE[$i]}"
         flags+=("--palette-${names[$i]}=$((16#${hex:0:2})),$((16#${hex:2:2})),$((16#${hex:4:2}))")
     done
-    flags+=(--palette-foreground=153,153,153 --palette-background=0,0,0)
+    flags+=("--palette-foreground=153,153,153" "--palette-background=0,0,0")
 
     while :; do
         rm -f "$WORK/started" "$WORK/relaunch"
@@ -314,7 +314,7 @@ step_welcome() {
     printf '\e[H\e[2J'
     printf '\n%.0s' $(seq 1 $(( ROWS / 2 - 5 > 1 ? ROWS / 2 - 5 : 1 )))
     # The wordmark types itself out, then the rule under it draws.
-    local word="d o t f i l e s" i
+    local word="l e t h e" i
     printf '\e[?25l'
     for (( i = 1; i <= ${#word}; i += 2 )); do
         printf '\r'
@@ -322,7 +322,7 @@ step_welcome() {
         sleep 0.045
     done
     echo
-    for (( i = 1; i <= 15; i += 2 )); do
+    for (( i = 1; i <= 13; i += 2 )); do
         printf '\r'
         center "$C_LINE" "$(printf '%*s' "$i" '' | sed "s/ /$G_EMPTY/g")" | tr -d '\n'
         sleep 0.02
@@ -544,7 +544,8 @@ disk_label() {
 
 step_confirm() {
     screen 5 "Ready when you are" "Check everything once more."
-    local k v="$(fg "$C_WHITE")" s="$(fg "$C_SUBTLE")"
+    local v s
+    v="$(fg "$C_WHITE")" s="$(fg "$C_SUBTLE")"
     {
         printf '%s%-14s%s%s\n' "$s" Keyboard "$v" "$keyboard_label"
         printf '%s%-14s%s%s\n' "$s" Username "$v" "$username"

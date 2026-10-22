@@ -40,7 +40,7 @@ version="$(git -C "$DOTFILES" describe --exact-match --tags --match 'v*' HEAD 2>
     version="$(git -C "$DOTFILES" rev-parse --short HEAD)"
 
 # git clone, not cp/archive: only committed objects ship, and .git survives
-# so `dotfiles update` works on the installed system without a re-clone.
+# so `lethe update` works on the installed system without a re-clone.
 # Cloned with tags: an installed machine verifies release tags against them.
 git clone --quiet --no-hardlinks --branch "$ref" \
     "$DOTFILES" "$profile/airootfs/root/Dotfiles"
@@ -51,12 +51,12 @@ origin="$(git -C "$DOTFILES" remote get-url origin)"
 git -C "$profile/airootfs/root/Dotfiles" remote set-url origin "$origin"
 printf '%s\n' "$version" > "$profile/airootfs/root/Dotfiles/.iso-revision"
 
-# Named after this repo and its version, e.g. dotfiles-1.2.0-x86_64.iso.
+# Named after the distro and its version, e.g. lethe-1.2.0-x86_64.iso.
 # iso_label stays releng's: the boot entries find the medium by it.
 sed -i -E \
-    -e 's|^iso_name=.*|iso_name="dotfiles"|' \
+    -e 's|^iso_name=.*|iso_name="lethe"|' \
     -e "s|^iso_version=.*|iso_version=\"${version#v}\"|" \
-    -e 's|^iso_application=.*|iso_application="dotfiles - Arch Linux + Hyprland installer"|' \
+    -e 's|^iso_application=.*|iso_application="Lethe - Arch Linux + Hyprland installer"|' \
     "$profile/profiledef.sh"
 
 # mkarchiso copies with --no-preserve=mode, so every file lands 644 unless
