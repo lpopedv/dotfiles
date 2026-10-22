@@ -4,7 +4,10 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## What this is
 
-Personal dotfiles for Arch Linux + Hyprland, managed with GNU Stow. The same repo runs on more
+Personal dotfiles for Arch Linux + Hyprland, managed with GNU Stow - and the source of
+**Lethe**, the distro built from them (the installer ISO, releases, the `lethe` command). The
+repo and its path (`~/Dotfiles`) keep the dotfiles name; everything a user sees says Lethe.
+The same repo runs on more
 than one machine (an AMD desktop and a laptop), so system config must be hardware-agnostic:
 no CPU-vendor, GPU or driver assumptions - when something only fits some hardware,
 `bootstrap.sh` decides per machine (e.g. kernel lockdown is skipped where out-of-tree modules
@@ -28,11 +31,11 @@ meant to land in `$HOME`.
     maintenance timers → trace retention → firewall/sysctl hardening → Secure Boot →
     service enablement.
     Every step checks its own state before acting, so it's fine to run repeatedly.
-  - `dotfiles update` (`bin/.local/bin/dotfiles`; `dotup` in `zsh/.zshrc` is an alias) is the
+  - `lethe update` (`bin/.local/bin/lethe`; `dotup` in `zsh/.zshrc` is an alias) is the
     normal way changes reach a machine: on the `stable` channel it checks out the newest
     *signed* release tag, on `edge` it pulls `main`, then runs this script.
-    `dotfiles apply` re-runs it alone.
-- Cut a release (owner, from a clean `main` matching origin): `dotfiles release vX.Y.Z` —
+    `lethe apply` re-runs it alone.
+- Cut a release (owner, from a clean `main` matching origin): `lethe release vX.Y.Z` —
   SSH-signed tag, pushed; `.github/workflows/release.yml` builds and publishes the ISO.
 - Stow/unstow one package by hand from the repo root: `stow --restow <pkg>` / `stow -D <pkg>`
   (the root `.stowrc` adds `--no-folding`, so this must run from the repo root)
@@ -77,10 +80,10 @@ releng ships — check archinstall's config schema when bumping anything disk-re
 **Releases and trust:** machines on the `stable` channel only install tags signed by a key in
 `.github/allowed_signers`, read from the version they already run (CI checks a new tag against
 the previous release's copy). So a new signing key ships in a release signed by an old one.
-`dotfiles status --porcelain` feeds the bar's update indicator (`quickshell/.../UpdatesService.qml`).
+`lethe status --porcelain` feeds the bar's update indicator (`quickshell/.../UpdatesService.qml`).
 
-**Owner vs. everyone:** this repo is installed by other people too. `dotfiles.owner` in the
-repo's local `.git/config` (`dotfiles owner on`) adds the owner-only extras in `bootstrap.sh`:
+**Owner vs. everyone:** this repo is installed by other people too. `lethe.owner` in the
+repo's local `.git/config` (`lethe owner on`) adds the owner-only extras in `bootstrap.sh`:
 `OWNER_STOW_PACKAGES` (`claude`) and `aur-owner.txt` (Mullvad). Personal data never goes in
 tracked files: git identity is `~/.config/git/identity` (included by `git/.gitconfig`), and
 per-machine Hyprland settings are `~/.config/hypr/local.lua` (loaded last by `hyprland.lua`).

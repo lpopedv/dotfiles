@@ -1,7 +1,12 @@
-# Dotfiles
+# Lethe
 
-Personal configuration for an Arch Linux + Hyprland machine, managed with [GNU Stow](https://www.gnu.org/software/stow/).
-One directory per tool, one script to bring a machine up to match this repo.
+An amnesic Arch Linux + Hyprland desktop. In Greek myth, Lethe is the river of forgetfulness:
+the dead drank from it and forgot everything. This system does the same: logs, shell history,
+caches and browser state live in RAM, so every reboot forgets.
+
+Lethe is built from these dotfiles, managed with [GNU Stow](https://www.gnu.org/software/stow/):
+one directory per tool, one script to bring a machine up to match this repo, and an installer
+ISO for everyone else.
 
 ## Layout
 
@@ -10,7 +15,7 @@ Every top-level directory except `system/` is a stow package: its contents mirro
 
 | Package     | What it configures |
 |-------------|---------------------|
-| `bin`       | The `dotfiles` command: updates, release channel, releases |
+| `bin`       | The `lethe` command: updates, release channel, releases |
 | `claude`    | Claude Code user settings and English-learning skills (owner machines only) |
 | `flameshot` | Screenshot tool |
 | `ghostty`   | Terminal emulator |
@@ -38,16 +43,16 @@ Every top-level directory except `system/` is a stow package: its contents mirro
 
 ## Installing it
 
-1. Download the newest `dotfiles-*.iso` and its `.sha256` from
+1. Download the newest `lethe-*.iso` and its `.sha256` from
    [Releases](https://github.com/lpopedv/dotfiles/releases) and check them:
 
    ```sh
-   sha256sum -c dotfiles-*.iso.sha256
-   gh attestation verify dotfiles-*.iso --repo lpopedv/dotfiles
+   sha256sum -c lethe-*.iso.sha256
+   gh attestation verify lethe-*.iso --repo lpopedv/dotfiles
    ```
 
    The attestation proves the image was built by this repo's release workflow from a signed tag.
-2. Write it to a USB stick (`sudo dd if=dotfiles-….iso of=/dev/sdX bs=4M status=progress oflag=sync`
+2. Write it to a USB stick (`sudo dd if=lethe-….iso of=/dev/sdX bs=4M status=progress oflag=sync`
    — check `/dev/sdX` with `lsblk` first) and boot from it, Secure Boot off for the install.
 3. Answer the installer: Wi-Fi (if no cable), keyboard, account, computer name, time zone, disk
    and whether to encrypt it. It erases the chosen disk and installs unattended.
@@ -71,12 +76,12 @@ Installed machines follow **releases**: signed `vX.Y.Z` tags. The bar's update i
 new release next to package updates, and *Update* installs both. By hand:
 
 ```sh
-dotfiles status            # this machine's version, and whether a newer one exists
-dotfiles update            # install the newest release and re-run bootstrap.sh
-dotfiles apply             # re-run bootstrap.sh without updating
+lethe status            # this machine's version, and whether a newer one exists
+lethe update            # install the newest release and re-run bootstrap.sh
+lethe apply             # re-run bootstrap.sh without updating
 ```
 
-`dotfiles update` only installs a tag signed by a key in `.github/allowed_signers` — read from
+`lethe update` only installs a tag signed by a key in `.github/allowed_signers` — read from
 the version the machine already runs — and refuses when `~/Dotfiles` has local changes.
 Per-machine tweaks belong outside the repo, where updates never touch them:
 `~/.config/hypr/local.lua` (the installer puts the keyboard layout there) and
@@ -84,15 +89,15 @@ Per-machine tweaks belong outside the repo, where updates never touch them:
 
 Two settings live in the repo's own `.git/config`, so they are per machine:
 
-- `dotfiles channel stable|edge` — `edge` follows `main` instead of releases (`dotup` keeps
-  working as an alias for `dotfiles update`).
-- `dotfiles owner on|off` — owner machines also get the owner-only extras: the `claude` package
+- `lethe channel stable|edge` — `edge` follows `main` instead of releases (`dotup` keeps
+  working as an alias for `lethe update`).
+- `lethe owner on|off` — owner machines also get the owner-only extras: the `claude` package
   and always-on Mullvad (`system/install/aur-owner.txt`).
 
 ### Cutting a release (owner)
 
 ```sh
-dotfiles release v1.2.0    # from a clean main that matches origin
+lethe release v1.2.0    # from a clean main that matches origin
 ```
 
 It makes an SSH-signed tag and pushes it; `.github/workflows/release.yml` re-checks the signature
@@ -131,4 +136,4 @@ Builds on top of the installed `archiso` package's `releng` profile plus `system
 and clones this repo's current committed state (no local/untracked changes) into the image.
 Needs 10+ GB of scratch space; defaults to `/var/tmp/archiso-work` rather than `/tmp` since
 `/tmp` is usually a RAM-backed tmpfs. The image is named after the release tag checked out
-(`dotfiles-1.2.0-x86_64.iso`), or the commit otherwise; releases are built by CI, not by hand.
+(`lethe-1.2.0-x86_64.iso`), or the commit otherwise; releases are built by CI, not by hand.
