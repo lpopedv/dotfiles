@@ -1,8 +1,9 @@
 pragma Singleton
 
 import QtQuick
+import Quickshell
 
-QtObject {
+Singleton {
     property bool open: false
 
     function toggle() {

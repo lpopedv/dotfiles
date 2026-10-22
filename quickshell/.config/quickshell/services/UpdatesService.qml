@@ -6,7 +6,7 @@ import Quickshell.Io
 
 // One checker for every screen's bar: a per-widget Process would sync the
 // mirrors once per monitor.
-QtObject {
+Singleton {
     id: root
 
     readonly property int pollMs: 30 * 60 * 1000
@@ -64,7 +64,7 @@ QtObject {
 
     // checkupdates, not `pacman -Sy`: syncs into a throwaway db, so it needs no
     // root and never leaves the system in a partial-upgrade state.
-    property Process repoCheck: Process {
+    Process {
         id: repoCheck
 
         command: ["checkupdates", "--nocolor"]
@@ -80,7 +80,7 @@ QtObject {
 
     // paru exits 1 both for "nothing to update" and for errors, so stderr is
     // the only way to tell them apart.
-    property Process aurCheck: Process {
+    Process {
         id: aurCheck
 
         command: ["paru", "-Qua", "--color", "never"]
@@ -96,7 +96,7 @@ QtObject {
     // Prints `lethe vA -> vB` when a newer release (or, on the edge channel,
     // a newer main) is published, nothing when up to date. ls-remote only: no
     // fetch, nothing changes in the repo.
-    property Process letheCheck: Process {
+    Process {
         id: letheCheck
 
         command: [root.letheCli, "status", "--porcelain"]
@@ -108,7 +108,7 @@ QtObject {
         }
     }
 
-    property Timer poll: Timer {
+    Timer {
         interval: root.failed ? root.retryMs : root.pollMs
         running: true
         repeat: true
@@ -117,21 +117,21 @@ QtObject {
     }
 
     // Clears the indicator as soon as an upgrade lands, however it was run.
-    property FileView pacmanLog: FileView {
+    FileView {
         path: "/var/log/pacman.log"
         preload: false
         watchChanges: true
         onFileChanged: settle.restart()
     }
 
-    property Timer settle: Timer {
+    Timer {
         id: settle
 
         interval: root.settleMs
         onTriggered: root.refresh()
     }
 
-    property IpcHandler ipc: IpcHandler {
+    IpcHandler {
         target: "updates"
 
         function refresh(): void { root.refresh(); }

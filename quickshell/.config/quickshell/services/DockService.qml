@@ -6,7 +6,7 @@ import Quickshell.Io
 import Quickshell.Wayland
 
 // Windows come from wlr foreign-toplevel, not Hyprland IPC: compositor-agnostic.
-QtObject {
+Singleton {
     id: root
 
     // Matches what hypr/keybinds.lua binds, so a fresh install has a usable dock.
@@ -18,7 +18,7 @@ QtObject {
 
     // State, not config: lives beside shell state, not in the repo.
     // watchChanges keeps a second monitor's dock window in sync with this one.
-    property FileView store: FileView {
+    FileView {
         id: store
 
         path: Quickshell.statePath("dock.json")
@@ -110,7 +110,7 @@ QtObject {
     // Resolving an app id can walk the whole application list; the dock asks per rebuild, so cache it.
     property var entryCache: ({})
 
-    property Connections catalogue: Connections {
+    Connections {
         target: DesktopEntries
 
         // Otherwise an app installed mid-session stays unrecognised until reload.
@@ -218,7 +218,8 @@ QtObject {
     // One bouncing tile at a time on purpose - a queue would just be noise.
     property string launching: ""
 
-    property Timer launchTimer: Timer {
+    Timer {
+        id: launchTimer
         // Backstop for a cold start; normally the bounce ends once a window appears.
         interval: 8000
         onTriggered: root.launching = ""
@@ -229,7 +230,7 @@ QtObject {
         for (const tile of root.items) {
             if (tile.key === root.launching && tile.windows.length > 0) {
                 root.launching = "";
-                root.launchTimer.stop();
+                launchTimer.stop();
                 return;
             }
         }
@@ -239,7 +240,7 @@ QtObject {
         if (!tile.entry) return;
         tile.entry.execute();
         root.launching = tile.key;
-        root.launchTimer.restart();
+        launchTimer.restart();
     }
 
     function focus(toplevel) {

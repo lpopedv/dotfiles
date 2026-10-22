@@ -1,8 +1,9 @@
 pragma Singleton
 
 import QtQuick
+import Quickshell
 
-QtObject {
+Singleton {
     readonly property color bg: "#000000"
     readonly property color fg: "#999999"
     readonly property color fgAct: "#ffffff"

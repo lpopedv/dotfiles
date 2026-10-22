@@ -7,7 +7,7 @@ import Quickshell.Services.Notifications
 // Toast timeout/close only hides the toast - stays alive in history. Only
 // explicit removal (x, Clear all, invoking an action) tells the sender it's
 // gone. Sender withdrawing its own notification removes it everywhere.
-QtObject {
+Singleton {
     id: root
 
     readonly property int maxHistory: 50
@@ -177,7 +177,7 @@ QtObject {
     property double now: Date.now()
 
     // Single shared ticker, not one per panel, so two lists never disagree on age.
-    readonly property Timer clock: Timer {
+    Timer {
         running: root.popupList.length > 0 || root.historyOpen
         interval: 5000
         repeat: true
@@ -291,7 +291,7 @@ QtObject {
         return entry ? root.resolveIcon(entry.icon) : "";
     }
 
-    readonly property NotificationServer server: NotificationServer {
+    NotificationServer {
         keepOnReload: false
         persistenceSupported: true
         bodySupported: true
