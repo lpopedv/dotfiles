@@ -19,6 +19,19 @@ BarItem {
         else root.togglePanel();
     }
 
+    // Assigned, never bound: it must still hold the old count when the change arrives.
+    property int lastUnread: 0
+    Component.onCompleted: root.lastUnread = NotificationsService.unread
+
+    Connections {
+        target: NotificationsService
+
+        function onUnreadChanged() {
+            if (NotificationsService.unread > root.lastUnread) ripple.restart();
+            root.lastUnread = NotificationsService.unread;
+        }
+    }
+
     IpcHandler {
         target: "notifications"
 
@@ -55,9 +68,12 @@ BarItem {
                 radius: width / 2
                 color: Theme.red
 
+                // A few ripples per new arrival, then a still dot: an endless one would redraw
+                // the bar every frame for as long as anything sits unread.
                 SequentialAnimation {
-                    running: badge.visible
-                    loops: Animation.Infinite
+                    id: ripple
+                    loops: 3
+                    onStopped: halo.opacity = 0
 
                     ParallelAnimation {
                         NumberAnimation {

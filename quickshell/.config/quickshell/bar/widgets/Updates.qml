@@ -16,6 +16,8 @@ BarItem {
     }
 
     ShellText {
+        id: glyph
+
         text: Icons.packageUp
         color: root.active ? Theme.red
             : root.hovered || panel.visible ? Theme.fgAct : Theme.fg
@@ -25,14 +27,11 @@ BarItem {
             ColorAnimation { duration: Theme.animMs }
         }
 
-        // Same slow pulse as the Claude usage alert.
-        SequentialAnimation on opacity {
-            running: root.active
-            loops: Animation.Infinite
-            alwaysRunToEnd: true
-
-            NumberAnimation { to: 0.45; duration: 1600; easing.type: Easing.InOutQuad }
-            NumberAnimation { to: 1.0; duration: 1600; easing.type: Easing.InOutQuad }
+        // Same slow pulse as the Claude usage alert; the red stays once it settles.
+        Pulse {
+            target: glyph
+            when: root.active
+            halfMs: 1600
         }
     }
 

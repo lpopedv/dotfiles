@@ -81,6 +81,8 @@ BarItem {
     }
 
     ShellText {
+        id: glyph
+
         text: Icons.robot
         color: !root.ready
             ? Theme.border
@@ -88,13 +90,10 @@ BarItem {
                 root.hovered || panel.visible ? Theme.fgAct : Theme.fg)
         font.weight: Theme.isAlert(root.worst / 100) ? Font.DemiBold : Font.Normal
 
-        SequentialAnimation on opacity {
-            running: root.ready && root.worst / 100 >= Theme.dangerAt
-            loops: Animation.Infinite
-            alwaysRunToEnd: true
-
-            NumberAnimation { to: 0.45; duration: 1600; easing.type: Easing.InOutQuad }
-            NumberAnimation { to: 1.0; duration: 1600; easing.type: Easing.InOutQuad }
+        Pulse {
+            target: glyph
+            when: root.ready && root.worst / 100 >= Theme.dangerAt
+            halfMs: 1600
         }
     }
 }

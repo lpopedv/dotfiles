@@ -21,7 +21,12 @@ BarItem {
     visible: present
     leadGap: 10
 
+    // Breathes again at every percent lost while critical, not once and never again.
+    onPercentChanged: if (root.drained >= Theme.dangerAt) pulse.trigger()
+
     ShellText {
+        id: label
+
         // Stacked on a side bar: icon and percentage side by side would overflow it.
         text: (root.charging ? Icons.charging : Icons.batteryIcon(root.level))
             + (root.vertical ? "\n" : " ") + root.percent + "%"
@@ -30,13 +35,10 @@ BarItem {
             root.hovered || root.charging ? Theme.fgAct : Theme.fg)
         font.weight: root.charging || root.alerting ? Font.DemiBold : Font.Normal
 
-        SequentialAnimation on opacity {
-            running: root.drained >= Theme.dangerAt
-            loops: Animation.Infinite
-            alwaysRunToEnd: true
-
-            NumberAnimation { to: 0.45; duration: 900; easing.type: Easing.InOutQuad }
-            NumberAnimation { to: 1.0; duration: 900; easing.type: Easing.InOutQuad }
+        Pulse {
+            id: pulse
+            target: label
+            when: root.drained >= Theme.dangerAt
         }
     }
 }
