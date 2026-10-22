@@ -14,9 +14,9 @@ STOW_PACKAGES=(
 
 # The repo's owner gets a few personal extras on top (Claude Code setup,
 # always-on Mullvad); everyone else who installs it doesn't. Kept in the repo's
-# own .git/config, so it is per machine: `dotfiles owner on`.
+# own .git/config, so it is per machine: `lethe owner on`.
 OWNER=0
-[[ "$(git -C "$DOTFILES" config --type=bool --get dotfiles.owner 2>/dev/null)" == true ]] && OWNER=1
+[[ "$(git -C "$DOTFILES" config --type=bool --get lethe.owner 2>/dev/null)" == true ]] && OWNER=1
 OWNER_STOW_PACKAGES=(claude)
 (( OWNER )) && STOW_PACKAGES+=("${OWNER_STOW_PACKAGES[@]}")
 
