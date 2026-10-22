@@ -30,6 +30,17 @@ cp -r "$SELF/overlay/airootfs/." "$profile/airootfs/"
 
 cat "$SELF/overlay/packages.extra" >> "$profile/packages.x86_64"
 
+# squashfs-tools 4.7 through 4.7.5 can die mid-image with "xz uncompress failed
+# with error code 9": a data race in duplicate checking, likelier under memory
+# pressure (plougher/squashfs-tools#361, fixed upstream after 4.7.5). Skipping
+# duplicate checking avoids the racy path for a slightly larger image; the
+# version gate drops the workaround once a fixed release is installed.
+squashfs="$(pacman -Q squashfs-tools | awk '{ print $2 }')"
+squashfs="${squashfs%-*}"
+if (( $(vercmp "$squashfs" 4.7) >= 0 && $(vercmp "$squashfs" 4.7.5) <= 0 )); then
+    printf "\nairootfs_image_tool_options+=('-no-duplicates')\n" >> "$profile/profiledef.sh"
+fi
+
 log "Embedding the dotfiles"
 # A branch for local builds, or the release tag CI checks out (a detached HEAD).
 ref="$(git -C "$DOTFILES" symbolic-ref --quiet --short HEAD)" ||
