@@ -7,7 +7,9 @@ import qs.ui
 PopupWindow {
     id: root
 
-    property var tile: null
+    // A key, read live: a snapshot of the tile would keep listing a window closed meanwhile.
+    property string key: ""
+    readonly property var tile: root.key ? DockService.tileFor(root.key) : null
     property var anchorItem: null
     // Tile centre along the dock's long axis, in anchorItem coordinates.
     property real centre: 0

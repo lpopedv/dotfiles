@@ -208,6 +208,20 @@ Singleton {
         return tiles;
     }
 
+    // The dock's model is just the keys (see Dock.qml); each tile looks its live data up
+    // here, so a window opening or closing updates one tile instead of rebuilding them all.
+    readonly property var keys: root.items.map(tile => tile.key)
+    readonly property var tilesByKey: {
+        const byKey = {};
+        for (const tile of root.items) byKey[tile.key] = tile;
+        return byKey;
+    }
+
+    // Stand-in for a key whose tile is already gone but whose delegate isn't yet.
+    function tileFor(key) {
+        return root.tilesByKey[key] ?? { key: key, entry: null, name: "", icon: "", windows: [], pinned: false };
+    }
+
     // Counted off actual tiles, not the pin list: runningOnly can make them differ.
     readonly property int pinnedCount: {
         let count = 0;

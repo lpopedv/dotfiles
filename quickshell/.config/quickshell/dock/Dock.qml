@@ -208,16 +208,20 @@ Variants {
                         }
                     }
 
+                    // Keyed, so tiles survive a window opening elsewhere: a plain array model
+                    // would destroy and rebuild every one, dropping hover and bounce mid-way.
                     Repeater {
-                        model: dock.tiles
+                        model: ScriptModel {
+                            values: DockService.keys
+                        }
 
                         DockItem {
                             id: entry
 
                             required property int index
-                            required property var modelData
+                            required property string modelData
 
-                            tile: entry.modelData
+                            tile: DockService.tileFor(entry.modelData)
                             x: dock.vertical ? 0 : entry.index * dock.slot
                             y: dock.vertical ? entry.index * dock.slot : 0
 
@@ -227,7 +231,7 @@ Variants {
                             }
 
                             onMenuRequested: {
-                                menu.tile = entry.modelData;
+                                menu.key = entry.modelData;
                                 menu.centre = row.centreOf(entry.index);
                                 menu.visible = true;
                             }
