@@ -24,7 +24,7 @@ QtObject {
         adapter: JsonAdapter {
             id: settings
 
-            property string position: "bottom"
+            property string position: "left"
             property bool pinned: false
             property string logo: "waves"
         }
@@ -59,9 +59,9 @@ QtObject {
         if (root.logos.some(l => l.id === id)) settings.logo = id;
     }
 
-    // Validated like the dock's: an unknown value in the file falls back to bottom.
+    // Validated like the dock's: an unknown value in the file falls back to left, the default.
     readonly property string position: root.positions.some(p => p.id === settings.position)
-        ? settings.position : "bottom"
+        ? settings.position : "left"
     readonly property bool top: root.position === "top"
     readonly property bool bottom: root.position === "bottom"
     readonly property bool left: root.position === "left"
