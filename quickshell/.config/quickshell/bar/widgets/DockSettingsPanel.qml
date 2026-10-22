@@ -76,13 +76,8 @@ BarPopup {
             color: Theme.divider
         }
 
-        ShellText {
-            Layout.fillWidth: true
-            Layout.leftMargin: 10
-            Layout.bottomMargin: 4
+        SectionLabel {
             text: "Position"
-            color: Theme.subtle
-            font.pixelSize: Theme.fontSize - 2
         }
 
         RowLayout {
@@ -113,13 +108,8 @@ BarPopup {
             color: Theme.divider
         }
 
-        ShellText {
-            Layout.fillWidth: true
-            Layout.leftMargin: 10
-            Layout.bottomMargin: 4
+        SectionLabel {
             text: "Icon size"
-            color: Theme.subtle
-            font.pixelSize: Theme.fontSize - 2
         }
 
         RowLayout {

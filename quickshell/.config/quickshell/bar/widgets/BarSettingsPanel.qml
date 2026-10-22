@@ -29,13 +29,8 @@ BarPopup {
             font.weight: Theme.weightMedium
         }
 
-        ShellText {
-            Layout.fillWidth: true
-            Layout.leftMargin: 10
-            Layout.bottomMargin: 4
+        SectionLabel {
             text: "Position"
-            color: Theme.subtle
-            font.pixelSize: Theme.fontSize - 2
         }
 
         // Two by two: four chips side by side wouldn't fit the panel.
@@ -65,14 +60,8 @@ BarPopup {
             }
         }
 
-        ShellText {
-            Layout.fillWidth: true
-            Layout.leftMargin: 10
-            Layout.topMargin: 8
-            Layout.bottomMargin: 4
+        SectionLabel {
             text: "Logo"
-            color: Theme.subtle
-            font.pixelSize: Theme.fontSize - 2
         }
 
         // Stays open: the logo changes in place, right next to this panel.
