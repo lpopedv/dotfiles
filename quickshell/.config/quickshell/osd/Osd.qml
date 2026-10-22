@@ -143,7 +143,7 @@ Scope {
                     Item { Layout.fillWidth: true }
 
                     ShellText {
-                        text: root.muted ? "mudo" : Math.round(root.fraction * 100) + "%"
+                        text: root.muted ? "Muted" : Math.round(root.fraction * 100) + "%"
                         color: root.muted ? Theme.fg : Theme.fgAct
                         font.weight: Font.DemiBold
                     }

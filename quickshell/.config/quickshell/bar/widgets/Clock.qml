@@ -42,7 +42,7 @@ BarItem {
     ShellText {
         visible: !root.vertical
         text: root.showDate
-            ? Qt.formatDateTime(clock.date, "dddd, dd 'de' MMMM 'de' yyyy")
+            ? clock.date.toLocaleDateString(Qt.locale(), Locale.LongFormat)
             : Icons.clock + "  " + Qt.formatDateTime(clock.date, "dd MMM  HH:mm")
         color: root.tone
         font.weight: Font.DemiBold
