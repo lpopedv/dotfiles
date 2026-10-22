@@ -1,6 +1,5 @@
 import QtQuick
 import Quickshell
-import Quickshell.Io
 import qs
 import qs.services
 import qs.ui
@@ -13,16 +12,6 @@ BarItem {
     onClicked: button => {
         if (button === Qt.RightButton) panel.active = !panel.active;
         else DockService.toggleMode();
-    }
-
-    IpcHandler {
-        target: "dock"
-
-        function pin(): void { DockService.setMode("pinned"); }
-        function auto(): void { DockService.setMode("auto"); }
-        function off(): void { DockService.setMode("hidden"); }
-        function toggle(): void { DockService.toggleMode(); }
-        function mode(): string { return DockService.mode; }
     }
 
     ShellText {

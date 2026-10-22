@@ -2,6 +2,7 @@ pragma Singleton
 
 import QtQuick
 import Quickshell
+import Quickshell.Io
 import Quickshell.Services.Notifications
 
 // Toast timeout/close only hides the toast - stays alive in history. Only
@@ -309,5 +310,16 @@ Singleton {
             root.history = updated;
             root.trimPopups();
         }
+    }
+
+    // Each screen's bell answers it if it sits on the focused screen; see NotificationCenter.
+    signal historyToggleRequested
+
+    IpcHandler {
+        target: "notifications"
+
+        function toggle(): void { root.historyToggleRequested(); }
+        function clear(): void { root.clearAll(); }
+        function dnd(): void { root.toggleSilent(); }
     }
 }

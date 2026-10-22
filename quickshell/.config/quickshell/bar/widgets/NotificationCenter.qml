@@ -1,6 +1,5 @@
 import QtQuick
 import Quickshell
-import Quickshell.Io
 import qs
 import qs.services
 import qs.ui
@@ -33,12 +32,14 @@ BarItem {
         }
     }
 
-    IpcHandler {
-        target: "notifications"
+    // `qs ipc call notifications toggle` opens the list on the screen being worked on only.
+    Connections {
+        target: NotificationsService
 
-        function toggle(): void { root.togglePanel(); }
-        function clear(): void { NotificationsService.clearAll(); }
-        function dnd(): void { NotificationsService.toggleSilent(); }
+        function onHistoryToggleRequested() {
+            if (root.QsWindow.window && root.QsWindow.window.screen === ScreenService.focused)
+                root.togglePanel();
+        }
     }
 
     ShellText {

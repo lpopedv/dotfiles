@@ -288,4 +288,16 @@ Singleton {
         // slice(): closing a window mutates the live list mid-iteration otherwise.
         for (const toplevel of tile.windows.slice()) toplevel.close();
     }
+
+    // `qs ipc call dock pin|auto|off|toggle|mode`. Here, not in the bar's dock button: that
+    // exists once per screen and is rebuilt whenever the bar changes side.
+    IpcHandler {
+        target: "dock"
+
+        function pin(): void { root.setMode("pinned"); }
+        function auto(): void { root.setMode("auto"); }
+        function off(): void { root.setMode("hidden"); }
+        function toggle(): void { root.toggleMode(); }
+        function mode(): string { return root.mode; }
+    }
 }
