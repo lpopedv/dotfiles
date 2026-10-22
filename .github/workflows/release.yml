@@ -1,5 +1,5 @@
 # A signed vX.Y.Z tag becomes a GitHub release with the installer ISO, its
-# checksum and a build-provenance attestation. Cut one with `dotfiles release`.
+# checksum and a build-provenance attestation. Cut one with `lethe release`.
 name: Release
 
 on:
@@ -28,7 +28,7 @@ jobs:
           persist-credentials: false
 
       # Checked against the signers of the previous release, the same anchor
-      # `dotfiles update` uses: a tag can't vouch for itself by adding its own
+      # `lethe update` uses: a tag can't vouch for itself by adding its own
       # key. Only the very first release falls back to its own file.
       - name: Verify the tag signature
         run: |
@@ -85,9 +85,9 @@ jobs:
           The attestation proves this image was built by this repository's release
           workflow from the signed tag \`$GITHUB_REF_NAME\`. Boot it and follow the installer.
 
-          Already installed? Run \`dotfiles update\`, or click Update in the bar.
+          Already installed? Run \`lethe update\`, or click Update in the bar.
 
           EOF
-          gh release create "$GITHUB_REF_NAME" --verify-tag --title "$GITHUB_REF_NAME" \
+          gh release create "$GITHUB_REF_NAME" --verify-tag --title "Lethe $GITHUB_REF_NAME" \
             --notes-file "$RUNNER_TEMP/notes.md" --generate-notes "${flags[@]}" \
             system/iso/out/*.iso system/iso/out/*.sha256
