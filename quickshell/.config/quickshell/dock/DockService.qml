@@ -34,7 +34,8 @@ QtObject {
             id: settings
 
             property var apps: root.defaultPinned.slice()
-            property string mode: "auto"
+            // Always shown on a fresh install, so it is there to be found.
+            property string mode: "pinned"
             property bool showOnDesktop: true
             property bool runningOnly: false
             property int iconSize: 40
@@ -43,7 +44,7 @@ QtObject {
     }
 
     // Fallbacks handle a dock.json missing a key (older version, or hand-edited).
-    readonly property string mode: settings.mode ?? "auto"
+    readonly property string mode: settings.mode ?? "pinned"
     readonly property bool showOnDesktop: settings.showOnDesktop ?? true
     readonly property bool runningOnly: settings.runningOnly ?? false
 
