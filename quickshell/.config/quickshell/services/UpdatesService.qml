@@ -45,7 +45,9 @@ Singleton {
         Quickshell.execDetached([
             "ghostty", "--gtk-single-instance=false",
             "--class=org.dotfiles.updates", "--title=System update",
-            "--wait-after-command=true", "-e", "sh", "-c", "paru && " + root.letheCli + " update"
+            "--wait-after-command=true", "-e",
+            // The path goes in as an argument, never spliced into the script.
+            "sh", "-c", 'paru && "$1" update', "sh", root.letheCli
         ]);
     }
 
