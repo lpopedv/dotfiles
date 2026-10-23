@@ -273,14 +273,17 @@ Singleton {
     }
 
     // Image draws Qt's magenta placeholder for an unknown icon *name* instead
-    // of failing, so bare names must go through iconPath's checked overload; real URLs pass through.
+    // of failing, so bare names must go through iconPath's checked overload.
     readonly property string iconUrlPrefix: "image://icon/"
 
     function resolveIcon(name) {
         if (!name) return "";
         if (name.startsWith(iconUrlPrefix))
             return Quickshell.iconPath(name.substring(iconUrlPrefix.length), true);
-        if (name.startsWith("/") || name.indexOf("://") >= 0) return name;
+        // Local sources only: an http(s) icon would be fetched the moment the card is drawn.
+        if (name.startsWith("/") || name.startsWith("file://") || name.startsWith("image://"))
+            return name;
+        if (name.indexOf("://") >= 0) return "";
         return Quickshell.iconPath(name, true);
     }
 
