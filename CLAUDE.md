@@ -83,7 +83,7 @@ sets NVIDIA's env vars only when its driver runs the sole GPU.
 **Releases and trust:** machines on the `stable` channel only install tags signed by a key in
 `.github/allowed_signers`, read from the version they already run (CI checks a new tag against
 the previous release's copy). So a new signing key ships in a release signed by an old one.
-`lethe status --porcelain` feeds the bar's update indicator (`quickshell/.../UpdatesService.qml`).
+`lethe status --porcelain` feeds the bar's update indicator (`quickshell/.../services/UpdatesService.qml`).
 
 **Owner vs. everyone:** this repo is installed by other people too. `lethe.owner` in the
 repo's local `.git/config` (`lethe owner on`) adds the owner-only extras in `bootstrap.sh`:
@@ -99,7 +99,17 @@ with their own native `.conf` syntax and are not part of this Lua chain.
 
 **`quickshell/`** is a custom status bar/shell (not a config for someone else's bar) written in
 QML against the Quickshell toolkit. `shell.qml` is the composition root, importing `bar/`,
-`notifications/`, `osd/`, `session/` as sibling QML component folders. `scripts/` holds Python
+`dock/`, `notifications/`, `osd/`, `session/` as sibling QML component folders. State and
+system access live once in `services/` (`Singleton` roots, imported as `qs.services`): never
+a `Process`, `Timer` or `IpcHandler` inside a widget, since the bar exists once per screen and
+is rebuilt when it changes side. `ui/` holds the primitives; `Theme.qml` holds the palette,
+font weights and the square/rounded corner choice (state, toggled from the bar settings or
+`qs ipc call appearance`). Imports are `qs.*` modules,
+not relative paths. Popups derive from `bar/BarPopup.qml` and are built by a `LazyLoader` only
+while open; models that change at runtime go through `ScriptModel`; nothing animates endlessly
+(an infinite animation redraws the bar and makes Hyprland re-blur it every frame). Quickshell
+hot-reloads every saved file, so edit in a git worktree and run it with `qs -p <path>`; Super+
+Shift+Escape restarts the shell if an overlay ever holds the keyboard. `scripts/` holds Python
 helpers (`claude-usage-collect.py`, `claude-usage-panel.py`) that feed Claude API usage stats
 into a bar widget.
 
