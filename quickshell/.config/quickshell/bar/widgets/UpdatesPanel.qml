@@ -1,3 +1,5 @@
+pragma ComponentBehavior: Bound
+
 import QtQuick
 import QtQuick.Layouts
 import Quickshell
@@ -45,6 +47,8 @@ BarPopup {
             model: section.packages
 
             RowLayout {
+                id: row
+
                 required property var modelData
 
                 Layout.fillWidth: true
@@ -55,13 +59,13 @@ BarPopup {
 
                 ShellText {
                     Layout.fillWidth: true
-                    text: modelData.name
+                    text: row.modelData.name
                     elide: Text.ElideRight
                 }
 
                 ShellText {
                     Layout.maximumWidth: 140
-                    text: modelData.to
+                    text: row.modelData.to
                     color: Theme.subtle
                     font.pixelSize: Theme.fontSize - 1
                     elide: Text.ElideMiddle
