@@ -42,8 +42,25 @@ BarItem {
     readonly property bool live: LogoService.running
         && !LogoService.covered(root.QsWindow.window ? root.QsWindow.window.screen : null)
 
+    // A popup takes its place from its item once, when shown, and never follows it after.
+    // After a change of side the bar slides in from the edge, so the orbit waits for it to
+    // settle; leaving, it stays and fades out with the bar.
+    readonly property bool orbitWanted: root.width > 0 && root.height > 0
+        && (BarService.leaving === 0 || BarService.pending !== "")
+
+    // And it is moved along whenever the logo itself moves or resizes (the layout settling
+    // in a freshly built bar, another logo glyph).
+    function reanchor() {
+        if (orbitWindow.visible) orbitWindow.anchor.updateAnchor();
+    }
+
+    onXChanged: Qt.callLater(root.reanchor)
+    onYChanged: Qt.callLater(root.reanchor)
+    onWidthChanged: Qt.callLater(root.reanchor)
+    onHeightChanged: Qt.callLater(root.reanchor)
+
     function restoreOrbit() {
-        if (root.width > 0 && root.height > 0) orbitWindow.visible = true;
+        orbitWindow.visible = Qt.binding(() => root.orbitWanted);
     }
 
     // The hexagon and the streak of light orbiting it, in a surface of their own laid exactly
@@ -65,19 +82,31 @@ BarItem {
         implicitHeight: Math.max(1, Math.round(root.height))
         color: "transparent"
         mask: Region {}
-        visible: root.width > 0 && root.height > 0
+        visible: root.orbitWanted
 
-        // A compositor may dismiss any popup of ours (say, a click outside another one);
-        // this one has nothing to dismiss, so it comes straight back.
-        onVisibleChanged: if (!orbitWindow.visible) Qt.callLater(root.restoreOrbit)
+        onVisibleChanged: {
+            // Ready to fade in again the next time it shows.
+            if (!orbitWindow.visible) orbit.shown = 0;
+            // A compositor may dismiss any popup of ours (say, a click outside another one);
+            // this one has nothing to dismiss, so it comes straight back.
+            if (!orbitWindow.visible && root.orbitWanted) Qt.callLater(root.restoreOrbit);
+        }
 
         Shape {
             id: orbit
 
             anchors.fill: parent
-            // Fades with the rest of the bar when it changes side (a separate surface,
-            // so the bar's own fade doesn't reach it).
-            opacity: 1 - BarService.leaving
+            // Fades in once shown, and out with the rest of the bar when it changes side (a
+            // separate surface, so the bar's own fade doesn't reach it).
+            property real shown: 0
+            opacity: orbit.shown * (1 - BarService.leaving)
+
+            NumberAnimation on shown {
+                to: 1
+                duration: Theme.animSlideMs
+                easing.type: Easing.OutCubic
+                running: orbitWindow.visible
+            }
 
             // Analytic antialiasing: multisampling broke the slanted 1px edges
             // of the faint outline into what looked like a dotted line.
