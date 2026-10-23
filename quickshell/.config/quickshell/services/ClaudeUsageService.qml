@@ -12,8 +12,16 @@ Singleton {
     readonly property string collector: Quickshell.shellPath("scripts/claude-usage-collect.py")
 
     property var record: null
-    readonly property bool ready: root.record !== null && root.record.ready === true
+    // Claude Code is in use here at all: local stats or limits. Not every Lethe install has
+    // it (the `claude` package is the owner's), and the widget hides where it would only
+    // ever show a dead icon.
+    readonly property bool present: root.record !== null && root.record.ready === true
+    readonly property bool ready: root.present
         && root.record.limits !== undefined && root.record.limits.length > 0
+
+    // Every minute where it is used; elsewhere a slow look, so it shows up once it is.
+    readonly property int pollMs: 60 * 1000
+    readonly property int idlePollMs: 15 * 60 * 1000
 
     function limitPct(window) {
         if (!root.ready) return 0;
@@ -50,7 +58,7 @@ Singleton {
     }
 
     Timer {
-        interval: 60000
+        interval: root.present ? root.pollMs : root.idlePollMs
         running: true
         repeat: true
         triggeredOnStart: true

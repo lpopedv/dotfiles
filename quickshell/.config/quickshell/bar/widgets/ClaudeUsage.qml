@@ -11,6 +11,8 @@ BarItem {
 
     readonly property real worst: ClaudeUsageService.worst / 100
 
+    visible: ClaudeUsageService.present
+
     onClicked: button => {
         if (button === Qt.RightButton) {
             ClaudeUsageService.refresh(true);
