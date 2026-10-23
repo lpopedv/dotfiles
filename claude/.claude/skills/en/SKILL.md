@@ -57,8 +57,9 @@ Rules:
   friends ("pretend", "actually", "push"), missing subjects ("Is working" → "It's
   working"), prepositions ("depends of"), question forms ("You can run?"),
   "say me" → "tell me", "make a question" → "ask a question", "since 2 years" → "for 2 years".
-- **Register:** chat with me is informal, so "u", lowercase starts and dropped
-  subjects are *worth a mention* (because I'll carry them into Slack/interviews), but
+- **Capitalization never counts:** don't fix, mention or log it (lowercase starts,
+  "i", "cpu", "english" are all fine).
+- **Register:** chat with me is informal, so "u" and dropped subjects are *worth a mention* (because I'll carry them into Slack/interviews), but
   don't treat them as big mistakes.
 - If my message is correct and professional: **✅ Solid** plus **one** upgrade (a more
   precise word, or a phrase useful in interviews/work).
@@ -79,7 +80,7 @@ python3 ~/.claude/skills/en/scripts/entool.py log <<'ENJSON'
 ENJSON
 ```
 
-- `errors[].type` must be one of: `spelling`, `capitalization`, `punctuation`,
+- `errors[].type` must be one of: `spelling`, `punctuation`,
   `verb-tense`, `verb-form`, `subject-verb-agreement`, `article`, `preposition`,
   `plural`, `pronoun`, `word-order`, `question-form`, `missing-word`,
   `sentence-structure`, `infinitive-gerund`, `word-choice`, `vocabulary`,
