@@ -114,8 +114,8 @@ fetches `<img>` sources, http included; notification bodies are the one markup o
 `NotificationsService.sanitize()`, and icons/images load from local sources only. Quickshell
 hot-reloads every saved file, so edit in a git worktree and run it with `qs -p <path>`;
 Super+Shift+Escape restarts the shell if an overlay ever holds the keyboard. `scripts/` holds
-Python helpers (`claude-usage-collect.py`, `claude-usage-panel.py`) that feed Claude API usage
-stats into a bar widget.
+`claude-usage-collect.py` (vendored from Omarchy, refreshed rather than edited) that feeds
+Claude usage stats into a bar widget, hidden where Claude Code isn't used, and `cava.conf`.
 
 **`nvim/`** uses Neovim's built-in `vim.pack` plugin manager (declared in `init.lua`), not
 lazy.nvim/packer — `nvim-pack-lock.json` pins plugin revisions. Plugin config lives one-file-
