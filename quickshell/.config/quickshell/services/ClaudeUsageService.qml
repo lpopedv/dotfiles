@@ -22,6 +22,8 @@ Singleton {
     // Every minute where it is used; elsewhere a slow look, so it shows up once it is.
     readonly property int pollMs: 60 * 1000
     readonly property int idlePollMs: 15 * 60 * 1000
+    // The collector asks for this when its probe hit no network (e.g. before DHCP at login).
+    readonly property int retryMs: 15 * 1000
 
     function limitPct(window) {
         if (!root.ready) return 0;
@@ -61,6 +63,7 @@ Singleton {
                 } catch (e) {
                     root.record = null;
                 }
+                if (root.record && root.record.retryAdvised) retry.restart();
             }
         }
 
@@ -77,6 +80,12 @@ Singleton {
         running: true
         repeat: true
         triggeredOnStart: true
+        onTriggered: root.refresh(false)
+    }
+
+    Timer {
+        id: retry
+        interval: root.retryMs
         onTriggered: root.refresh(false)
     }
 
