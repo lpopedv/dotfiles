@@ -189,7 +189,8 @@ Rectangle {
                 text: root.notif.body
                 color: root.low ? Theme.subtle : Theme.fg
                 // Spec body markup is <b>/<i>/<u>/<a>; StyledText, not Markdown
-                // (which would eat literal asterisks/underscores in prose).
+                // (which would eat literal asterisks/underscores in prose). The service
+                // has already dropped anything else, <img> above all.
                 textFormat: Text.StyledText
                 wrapMode: Text.Wrap
                 maximumLineCount: root.compact ? 3 : 5

@@ -58,7 +58,7 @@ Singleton {
         property string desktopEntry: notification ? notification.desktopEntry : ""
         property string image: notification ? notification.image : ""
         property string summary: notification ? notification.summary : ""
-        property string body: notification ? notification.body : ""
+        property string body: notification ? wrapper.service.sanitize(notification.body) : ""
         property int urgency: notification ? notification.urgency : NotificationUrgency.Normal
         // transient = skip history; resident = survive its own action being invoked.
         property bool isTransient: notification ? notification.transient : false
@@ -107,7 +107,7 @@ Singleton {
             wrapper.desktopEntry = sender.desktopEntry;
             wrapper.image = sender.image;
             wrapper.summary = sender.summary;
-            wrapper.body = sender.body;
+            wrapper.body = wrapper.service.sanitize(sender.body);
             wrapper.urgency = sender.urgency;
             wrapper.isTransient = sender.transient;
             wrapper.isResident = sender.resident;
@@ -261,6 +261,15 @@ Singleton {
         const action = root.defaultAction(notif);
         if (action) root.invoke(notif, action);
         else root.hidePopup(notif);
+    }
+
+    // Body markup the spec defines, minus <img>: StyledText fetches an image's src, http
+    // included, so a sender could learn when (and from where) its notification was shown.
+    // Every other `<` is escaped rather than stripped, so prose like "a < b" survives and no
+    // removal can splice a new tag together out of the pieces either side of it.
+    function sanitize(text) {
+        if (!text) return "";
+        return text.replace(/<(?!\/?(?:b|i|u|br)\s*\/?>|a(?:\s[^<>]*)?>|\/a\s*>)/gi, "&lt;");
     }
 
     // Image draws Qt's magenta placeholder for an unknown icon *name* instead
