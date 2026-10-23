@@ -1,7 +1,12 @@
-# Dotfiles
+# Lethe
 
-Personal configuration for an Arch Linux + Hyprland machine, managed with [GNU Stow](https://www.gnu.org/software/stow/).
-One directory per tool, one script to bring a machine up to match this repo.
+An amnesic Arch Linux + Hyprland desktop. In Greek myth, Lethe is the river of forgetfulness:
+the dead drank from it and forgot everything. This system does the same: logs, shell history,
+caches and browser state live in RAM, so every reboot forgets.
+
+Lethe is built from these dotfiles, managed with [GNU Stow](https://www.gnu.org/software/stow/):
+one directory per tool, one script to bring a machine up to match this repo, and an installer
+ISO for everyone else.
 
 ## Layout
 
@@ -10,7 +15,8 @@ Every top-level directory except `system/` is a stow package: its contents mirro
 
 | Package     | What it configures |
 |-------------|---------------------|
-| `claude`    | Claude Code user settings (`settings.json` only) |
+| `bin`       | The `lethe` command: updates, release channel, releases |
+| `claude`    | Claude Code user settings and English-learning skills (owner machines only) |
 | `flameshot` | Screenshot tool |
 | `ghostty`   | Terminal emulator |
 | `git`       | Git identity and aliases |
@@ -33,27 +39,84 @@ Every top-level directory except `system/` is a stow package: its contents mirro
   `archinstall.json` profile used for the initial OS install, and `etc/` drop-ins bootstrap
   installs into `/etc` (DNS-over-TLS, firewall, sysctl hardening, log retention).
 - `system/iso/` — builds a custom Arch live ISO that embeds this repo and boots straight into
-  the installer.
+  a guided installer.
 
-## Bringing up a machine
+## Installing it
 
-1. Install Arch with `system/install/archinstall.json` as the `archinstall` profile (or boot
-   a custom ISO built from `system/iso/build.sh`, which embeds this repo and the profile).
-2. Clone this repo to `~/Dotfiles`.
-3. Run the bootstrap script:
+1. Download the newest `lethe-*.iso` and its `.sha256` from
+   [Releases](https://github.com/lpopedv/dotfiles/releases) and check them:
 
    ```sh
-   system/install/bootstrap.sh              # apply
-   system/install/bootstrap.sh --dry-run     # preview, changes nothing
+   sha256sum -c lethe-*.iso.sha256
+   gh attestation verify lethe-*.iso --repo lpopedv/dotfiles
    ```
 
-   It installs official and AUR packages, stows every package above, installs the pinned
-   toolchain versions via `mise`, and applies system hardening (DNS, firewall, sysctl, log
-   retention, maintenance timers). Every step checks its own state first, so it's safe to
-   re-run at any time.
+   The attestation proves the image was built by this repo's release workflow from a signed tag.
+2. Write it to a USB stick (`sudo dd if=lethe-….iso of=/dev/sdX bs=4M status=progress oflag=sync`
+   — check `/dev/sdX` with `lsblk` first) and boot from it, Secure Boot off for the install.
+3. Answer the installer: Wi-Fi (if no cable), keyboard, account, computer name, time zone, disk
+   and whether to encrypt it. It erases the chosen disk and installs unattended. AMD, Intel and
+   virtual GPUs need nothing; an NVIDIA card gets a choice between NVIDIA's driver and the
+   open-source one, preselected by how new the card is.
+4. Reboot and log in on the text console: `bootstrap.sh` runs by itself on that first login.
+   Reboot once more and the desktop is there. `bootstrap.sh` turns Secure Boot on when the
+   firmware is in setup mode.
 
-To pull the latest changes and re-apply them, use the `dotup` shell function (defined in
-`zsh/.zshrc`): it's `git pull --ff-only` followed by `bootstrap.sh`.
+The installer is `system/iso/overlay/airootfs/root/install.sh`: a `gum` wizard that writes an
+archinstall config (based on `system/install/archinstall.json`), validates it with archinstall's
+`--dry-run` before touching the disk, then runs archinstall `--silent`. It also takes
+`--answers FILE` for unattended installs and `--dry-run` to print the config it would use.
+
+Already on Arch? Clone this repo to `~/Dotfiles` and run `system/install/bootstrap.sh`
+(`--dry-run` previews it). It installs official and AUR packages, stows every package above,
+installs the pinned toolchain via `mise`, and applies the system hardening. Every step checks its
+own state first, so it's safe to re-run at any time.
+
+## Updates and releases
+
+Installed machines follow **releases**: signed `vX.Y.Z` tags. The bar's update indicator lists a
+new release next to package updates, and *Update* installs both. By hand:
+
+```sh
+lethe status            # this machine's version, and whether a newer one exists
+lethe update            # install the newest release and re-run bootstrap.sh
+lethe apply             # re-run bootstrap.sh without updating
+```
+
+`lethe update` only installs a tag signed by a key in `.github/allowed_signers` — read from
+the version the machine already runs — and refuses when `~/Dotfiles` has local changes.
+Per-machine tweaks belong outside the repo, where updates never touch them:
+`~/.config/hypr/local.lua` (the installer puts the keyboard layout there) and
+`~/.config/git/identity` (name and email).
+
+Two settings live in the repo's own `.git/config`, so they are per machine:
+
+- `lethe channel stable|edge` — `edge` follows `main` instead of releases (`dotup` keeps
+  working as an alias for `lethe update`).
+- `lethe owner on|off` — owner machines also get the owner-only extras: the `claude` package
+  and always-on Mullvad (`system/install/aur-owner.txt`).
+
+### Cutting a release (owner)
+
+```sh
+lethe release v1.2.0    # from a clean main that matches origin
+```
+
+It makes an SSH-signed tag and pushes it; `.github/workflows/release.yml` re-checks the signature
+against the previous release's signers, builds the ISO in an Arch container, attests it and
+publishes it with generated notes. Signing needs, in `~/.config/git/identity`:
+
+```ini
+[user]
+	signingkey = ~/.ssh/<key>.pub
+[gpg]
+	format = ssh
+[tag]
+	gpgSign = true
+```
+
+and that public key in `.github/allowed_signers` (shipped in a release signed by a key already
+listed there).
 
 ## Working with individual packages
 
@@ -74,4 +137,5 @@ sudo system/iso/build.sh [workdir]
 Builds on top of the installed `archiso` package's `releng` profile plus `system/iso/overlay/`,
 and clones this repo's current committed state (no local/untracked changes) into the image.
 Needs 10+ GB of scratch space; defaults to `/var/tmp/archiso-work` rather than `/tmp` since
-`/tmp` is usually a RAM-backed tmpfs.
+`/tmp` is usually a RAM-backed tmpfs. The image is named after the release tag checked out
+(`lethe-1.2.0-x86_64.iso`), or the commit otherwise; releases are built by CI, not by hand.

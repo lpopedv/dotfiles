@@ -1,0 +1,93 @@
+# A signed vX.Y.Z tag becomes a GitHub release with the installer ISO, its
+# checksum and a build-provenance attestation. Cut one with `lethe release`.
+name: Release
+
+on:
+  push:
+    tags: ["v*"]
+
+permissions: {}
+
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    permissions:
+      contents: write          # create the release
+      id-token: write          # sign the attestation (Sigstore, keyless)
+      attestations: write      # store it
+      artifact-metadata: write
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0       # build.sh embeds the full history and its tags
+          persist-credentials: false
+
+      # Checked against the signers of the previous release, the same anchor
+      # `lethe update` uses: a tag can't vouch for itself by adding its own
+      # key. Only the very first release falls back to its own file.
+      - name: Verify the tag signature
+        run: |
+          [[ "$GITHUB_REF_NAME" =~ ^v[0-9]+\.[0-9]+\.[0-9]+(-[0-9A-Za-z.]+)?$ ]] ||
+            { echo "::error::$GITHUB_REF_NAME is not vMAJOR.MINOR.PATCH[-pre]"; exit 1; }
+          # checkout may have fetched the tag peeled; get the signed object itself.
+          git fetch --force origin "+refs/tags/$GITHUB_REF_NAME:refs/tags/$GITHUB_REF_NAME"
+          anchor="$(git describe --tags --abbrev=0 --match 'v*' "$GITHUB_REF_NAME^" 2>/dev/null)" &&
+            git cat-file -e "$anchor:.github/allowed_signers" 2>/dev/null ||
+            anchor="$GITHUB_REF_NAME"
+          git show "$anchor:.github/allowed_signers" > "$RUNNER_TEMP/allowed_signers"
+          echo "Trusting the signers listed at $anchor"
+          git -c gpg.ssh.allowedSignersFile="$RUNNER_TEMP/allowed_signers" verify-tag "$GITHUB_REF_NAME"
+
+      - name: Free disk space
+        run: sudo rm -rf /usr/share/dotnet /usr/local/lib/android /opt/ghc /opt/hostedtoolcache
+
+      # mkarchiso needs Arch's pacman and mount namespaces: an Arch container,
+      # privileged. Rolling release, so the image tag is always "latest".
+      - name: Build the ISO
+        run: |
+          docker run --rm --privileged -v "$PWD:/repo" -w /repo archlinux:latest bash -euo pipefail -c '
+            pacman -Syu --noconfirm --needed archiso git
+            git config --global --add safe.directory "*"
+            system/iso/build.sh /var/tmp/archiso-work
+          '
+          iso=(system/iso/out/*.iso)
+          size=$(stat -c %s "${iso[0]}")
+          # GitHub refuses release assets of 2 GiB or more.
+          (( size < 2 * 1024**3 )) || { echo "::error::ISO is $size bytes, over the 2 GiB asset limit"; exit 1; }
+          echo "Built ${iso[0]} ($(( size / 1024**2 )) MiB)"
+
+      - uses: actions/attest@1e69f48acb82d1966a394da916b4c1698aa569d6 # v4.2.2
+        with:
+          subject-path: system/iso/out/*.iso
+
+      - name: Publish the release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          flags=()
+          [[ "$GITHUB_REF_NAME" == *-* ]] && flags+=(--prerelease)
+          iso="$(basename system/iso/out/*.iso)"
+          cat > "$RUNNER_TEMP/notes.md" <<EOF
+          ### Install
+
+          Download \`$iso\` and check it before writing it to a USB stick:
+
+          \`\`\`sh
+          sha256sum -c $iso.sha256
+          gh attestation verify $iso --repo $GITHUB_REPOSITORY
+          \`\`\`
+
+          The attestation proves this image was built by this repository's release
+          workflow from the signed tag \`$GITHUB_REF_NAME\`. Boot it and follow the installer.
+
+          Already installed? Run \`lethe update\`, or click Update in the bar.
+
+          EOF
+          gh release create "$GITHUB_REF_NAME" --verify-tag --title "Lethe $GITHUB_REF_NAME" \
+            --notes-file "$RUNNER_TEMP/notes.md" --generate-notes "${flags[@]}" \
+            system/iso/out/*.iso system/iso/out/*.sha256

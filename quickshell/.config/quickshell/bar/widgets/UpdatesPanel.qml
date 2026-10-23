@@ -169,6 +169,11 @@ PopupWindow {
                         title: "AUR"
                         packages: UpdatesService.aur
                     }
+
+                    PackageSection {
+                        title: "Lethe"
+                        packages: UpdatesService.lethe
+                    }
                 }
             }
 

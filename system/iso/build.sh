@@ -30,18 +30,45 @@ cp -r "$SELF/overlay/airootfs/." "$profile/airootfs/"
 
 cat "$SELF/overlay/packages.extra" >> "$profile/packages.x86_64"
 
+# squashfs-tools 4.7 through 4.7.5 can die mid-image with "xz uncompress failed
+# with error code 9": a data race in duplicate checking, likelier under memory
+# pressure (plougher/squashfs-tools#361, fixed upstream after 4.7.5). Skipping
+# duplicate checking avoids the racy path for a slightly larger image; the
+# version gate drops the workaround once a fixed release is installed.
+squashfs="$(pacman -Q squashfs-tools | awk '{ print $2 }')"
+squashfs="${squashfs%-*}"
+if (( $(vercmp "$squashfs" 4.7) >= 0 && $(vercmp "$squashfs" 4.7.5) <= 0 )); then
+    printf "\nairootfs_image_tool_options+=('-no-duplicates')\n" >> "$profile/profiledef.sh"
+fi
+
 log "Embedding the dotfiles"
-branch="$(git -C "$DOTFILES" symbolic-ref --quiet --short HEAD)" ||
-    { echo "build.sh needs a branch checked out, not a detached HEAD" >&2; exit 1; }
+# A branch for local builds, or the release tag CI checks out (a detached HEAD).
+ref="$(git -C "$DOTFILES" symbolic-ref --quiet --short HEAD)" ||
+    ref="$(git -C "$DOTFILES" describe --exact-match --tags HEAD 2>/dev/null)" ||
+    { echo "build.sh needs a branch or a tag checked out, not a bare detached HEAD" >&2; exit 1; }
+# The release tag when building one, otherwise the commit.
+version="$(git -C "$DOTFILES" describe --exact-match --tags --match 'v*' HEAD 2>/dev/null)" ||
+    version="$(git -C "$DOTFILES" rev-parse --short HEAD)"
 
 # git clone, not cp/archive: only committed objects ship, and .git survives
-# so dotup works on the installed system without a re-clone.
-git clone --quiet --no-hardlinks --branch "$branch" --single-branch \
+# so `lethe update` works on the installed system without a re-clone.
+# Cloned with tags: an installed machine verifies release tags against them.
+git clone --quiet --no-hardlinks --branch "$ref" \
     "$DOTFILES" "$profile/airootfs/root/Dotfiles"
-git -C "$profile/airootfs/root/Dotfiles" remote set-url origin \
-    "$(git -C "$DOTFILES" remote get-url origin)"
-printf '%s\n' "$(git -C "$DOTFILES" rev-parse --short HEAD)" \
-    > "$profile/airootfs/root/Dotfiles/.iso-revision"
+# HTTPS, not the SSH remote of the machine that built this: whoever installs it
+# can pull releases without a GitHub key. Pushing is the owner's business.
+origin="$(git -C "$DOTFILES" remote get-url origin)"
+[[ "$origin" == git@github.com:* ]] && origin="https://github.com/${origin#git@github.com:}"
+git -C "$profile/airootfs/root/Dotfiles" remote set-url origin "$origin"
+printf '%s\n' "$version" > "$profile/airootfs/root/Dotfiles/.iso-revision"
+
+# Named after the distro and its version, e.g. lethe-1.2.0-x86_64.iso.
+# iso_label stays releng's: the boot entries find the medium by it.
+sed -i -E \
+    -e 's|^iso_name=.*|iso_name="lethe"|' \
+    -e "s|^iso_version=.*|iso_version=\"${version#v}\"|" \
+    -e 's|^iso_application=.*|iso_application="Lethe - Arch Linux + Hyprland installer"|' \
+    "$profile/profiledef.sh"
 
 # mkarchiso copies with --no-preserve=mode, so every file lands 644 unless
 # named in file_permissions. Derive that list from git so a new executable
@@ -65,8 +92,9 @@ mkdir -p "$OUT"
 rm -rf "${WORK:?}/mkarchiso"
 mkarchiso -v -w "$WORK/mkarchiso" -o "$OUT" "$profile"
 
-# Checksum the image (not signed: built and used by the same person, there
-# is no one to prove authorship to). It catches a corrupt copy or USB write.
+# Checksum the image: it catches a corrupt download or USB write. Releases
+# also carry a build-provenance attestation from CI (.github/workflows/release.yml)
+# that proves which commit and workflow produced the image.
 iso="$(ls -t "$OUT"/*.iso | head -n1)"
 (cd "$OUT" && sha256sum "${iso##*/}" > "${iso##*/}.sha256")
 

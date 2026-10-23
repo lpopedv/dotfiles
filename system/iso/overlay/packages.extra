@@ -1,2 +1,11 @@
 git
 stow
+# The installer wizard (root/install.sh): its UI, and building archinstall configs.
+gum
+jq
+# The console it runs in: kmscon draws real fonts (pango + fontconfig) in the
+# desktop's own typeface, where the kernel console only has a bitmap font.
+kmscon
+pango
+fontconfig
+ttf-jetbrains-mono-nerd

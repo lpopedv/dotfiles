@@ -1,6 +1,8 @@
-[user]
-	name = Lucas Pope
-	email = lpopedv@proton.me
+# Who you are (user.name, user.email, and signing if you sign) is per person,
+# so it lives outside the repo; the installer writes it from your answers.
+# A missing file is simply skipped.
+[include]
+	path = ~/.config/git/identity
 
 [core]
 	editor = nvim

@@ -11,3 +11,12 @@ hl.monitor({
     position = "0x0",
     scale    = 1,
 })
+
+-- Any other screen: its own preferred mode, placed to the right, scaled by its
+-- PPI. Per-machine layouts go in local.lua (see hyprland.lua).
+hl.monitor({
+    output   = "",
+    mode     = "preferred",
+    position = "auto",
+    scale    = "auto",
+})

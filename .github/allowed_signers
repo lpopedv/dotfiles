@@ -1,0 +1,5 @@
+# Keys allowed to sign release tags, in ssh-keygen's allowed_signers format.
+# `lethe update` checks every release against the copy of this file the
+# machine already runs, so adding or rotating a key ships in a release signed
+# by a key that is already here.
+lpopedv@proton.me namespaces="git" ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIIqpq0d6PTiBesL2m2r6aEIFgOOywulaGkdT6IgTlQP+

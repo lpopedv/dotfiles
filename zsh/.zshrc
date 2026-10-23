@@ -44,8 +44,10 @@ alias t="tmux"
 alias hr="herdr"
 alias k="kubectl"
 
+# Kept for muscle memory: updates to the newest release (or main, on the edge
+# channel) and applies it. See `lethe help`.
 dotup() {
-  git -C ~/Dotfiles pull --ff-only && ~/Dotfiles/system/install/bootstrap.sh "$@"
+  lethe update "$@"
 }
 
 # History lives in tmpfs ($XDG_RUNTIME_DIR is /run/user/$UID), not on disk:

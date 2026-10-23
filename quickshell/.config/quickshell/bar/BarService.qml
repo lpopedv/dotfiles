@@ -24,8 +24,9 @@ QtObject {
         adapter: JsonAdapter {
             id: settings
 
-            property string position: "bottom"
+            property string position: "left"
             property bool pinned: false
+            property string logo: "waves"
         }
     }
 
@@ -44,9 +45,23 @@ QtObject {
         { id: "right",  text: "Right" }
     ]
 
-    // Validated like the dock's: an unknown value in the file falls back to bottom.
+    // The glyph in the bar's corner. Waves is Lethe's: the river of forgetfulness.
+    readonly property var logos: [
+        { id: "waves",  glyph: Icons.waves },
+        { id: "atom",   glyph: Icons.atom },
+        { id: "lambda", glyph: Icons.lambda },
+        { id: "drop",   glyph: Icons.drop }
+    ]
+    readonly property string logo: root.logos.some(l => l.id === settings.logo) ? settings.logo : "waves"
+    readonly property string logoGlyph: root.logos.find(l => l.id === root.logo).glyph
+
+    function setLogo(id) {
+        if (root.logos.some(l => l.id === id)) settings.logo = id;
+    }
+
+    // Validated like the dock's: an unknown value in the file falls back to left, the default.
     readonly property string position: root.positions.some(p => p.id === settings.position)
-        ? settings.position : "bottom"
+        ? settings.position : "left"
     readonly property bool top: root.position === "top"
     readonly property bool bottom: root.position === "bottom"
     readonly property bool left: root.position === "left"
@@ -124,6 +139,7 @@ QtObject {
         }
         function current(): string { return root.position; }
         function pin(): void { root.togglePinned(); }
+        function logo(id: string): void { root.setLogo(id); }
     }
 
     function setPosition(position) {
