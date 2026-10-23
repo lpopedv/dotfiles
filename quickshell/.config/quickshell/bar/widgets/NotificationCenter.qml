@@ -32,12 +32,8 @@ BarItem {
             if (NotificationsService.unread > root.lastUnread) ripple.restart();
             root.lastUnread = NotificationsService.unread;
         }
-    }
 
-    // `qs ipc call notifications toggle` opens the list on the screen being worked on only.
-    Connections {
-        target: NotificationsService
-
+        // `qs ipc call notifications toggle` opens the list on the screen being worked on only.
         function onHistoryToggleRequested() {
             if (root.QsWindow.window && root.QsWindow.window.screen === ScreenService.focused)
                 root.togglePanel();
