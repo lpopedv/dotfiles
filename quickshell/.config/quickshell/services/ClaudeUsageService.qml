@@ -35,9 +35,16 @@ Singleton {
     readonly property int weeklyPct: root.limitPct("7-day")
     readonly property int worst: Math.max(root.sessionPct, root.weeklyPct)
 
+    // A forced refresh asked for while a plain one runs; run once that one is done,
+    // or the click (or IPC call) would be dropped without a word.
+    property bool forcePending: false
+
     // `force` also rescans the transcripts for the panel's per-day and per-model tallies.
     function refresh(force) {
-        if (probe.running) return;
+        if (probe.running) {
+            if (force) root.forcePending = true;
+            return;
+        }
         probe.command = force
             ? ["python3", root.collector, "--force"]
             : ["python3", root.collector, "--limits-only"];
@@ -46,6 +53,7 @@ Singleton {
 
     Process {
         id: probe
+
         stdout: StdioCollector {
             onStreamFinished: {
                 try {
@@ -54,6 +62,13 @@ Singleton {
                     root.record = null;
                 }
             }
+        }
+
+        // Not in onExited: a Process still reports running inside its own handler.
+        onRunningChanged: {
+            if (probe.running || !root.forcePending) return;
+            root.forcePending = false;
+            Qt.callLater(() => root.refresh(true));
         }
     }
 
