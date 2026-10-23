@@ -17,7 +17,7 @@ LOG = BASE / "log.jsonl"
 VOCAB = BASE / "vocab.jsonl"
 
 TYPES = {
-    "spelling", "capitalization", "punctuation", "verb-tense", "verb-form",
+    "spelling", "punctuation", "verb-tense", "verb-form",
     "subject-verb-agreement", "article", "preposition", "plural", "pronoun",
     "word-order", "question-form", "missing-word", "sentence-structure",
     "infinitive-gerund", "word-choice", "vocabulary", "collocation",
@@ -25,6 +25,8 @@ TYPES = {
     "conditional", "comparative",
 }
 LEVELS = {"A1", "A2", "B1", "B2", "C1", "C2"}
+# Not taught or counted any more; dropped from older entries as they load.
+IGNORED = {"capitalization"}
 
 
 def load(days=None):
@@ -47,6 +49,7 @@ def load(days=None):
                 continue
             if ts < cutoff:
                 continue
+        e["errors"] = [err for err in e.get("errors", []) if err.get("type") not in IGNORED]
         entries.append(e)
     return entries
 

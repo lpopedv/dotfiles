@@ -80,7 +80,7 @@ Variants {
             // Fullscreen outranks even "always show pinned".
             if (dock.covered) return false;
             if (DockService.mode === "pinned") return true;
-            return dock.held || menu.visible
+            return dock.held || menu.active
                 || (DockService.showOnDesktop && dock.desktopBare);
         }
 
@@ -236,9 +236,9 @@ Variants {
                             }
 
                             onMenuRequested: {
-                                menu.key = entry.modelData;
-                                menu.centre = row.centreOf(entry.index);
-                                menu.visible = true;
+                                dock.menuKey = entry.modelData;
+                                dock.menuCentre = row.centreOf(entry.index);
+                                menu.active = true;
                             }
                         }
                     }
@@ -327,11 +327,23 @@ Variants {
             }
         }
 
-        DockMenu {
+        // Which tile the menu is for; set before it is built, read live while it is open.
+        property string menuKey: ""
+        property real menuCentre: 0
+
+        // Built on open, destroyed on close, like the bar popups: one per screen otherwise,
+        // each running its bindings against DockService all session.
+        LazyLoader {
             id: menu
-            anchorItem: plate
-            visible: false
-            grabFocus: true
+
+            DockMenu {
+                key: dock.menuKey
+                centre: dock.menuCentre
+                anchorItem: plate
+                grabFocus: true
+                visible: true
+                onVisibleChanged: if (!visible) menu.active = false
+            }
         }
     }
 }

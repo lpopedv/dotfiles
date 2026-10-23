@@ -12,8 +12,18 @@ Singleton {
     readonly property string collector: Quickshell.shellPath("scripts/claude-usage-collect.py")
 
     property var record: null
-    readonly property bool ready: root.record !== null && root.record.ready === true
+    // Claude Code is in use here at all: local stats or limits. Not every Lethe install has
+    // it (the `claude` package is the owner's), and the widget hides where it would only
+    // ever show a dead icon.
+    readonly property bool present: root.record !== null && root.record.ready === true
+    readonly property bool ready: root.present
         && root.record.limits !== undefined && root.record.limits.length > 0
+
+    // Every minute where it is used; elsewhere a slow look, so it shows up once it is.
+    readonly property int pollMs: 60 * 1000
+    readonly property int idlePollMs: 15 * 60 * 1000
+    // The collector asks for this when its probe hit no network (e.g. before DHCP at login).
+    readonly property int retryMs: 15 * 1000
 
     function limitPct(window) {
         if (!root.ready) return 0;
@@ -27,9 +37,16 @@ Singleton {
     readonly property int weeklyPct: root.limitPct("7-day")
     readonly property int worst: Math.max(root.sessionPct, root.weeklyPct)
 
+    // A forced refresh asked for while a plain one runs; run once that one is done,
+    // or the click (or IPC call) would be dropped without a word.
+    property bool forcePending: false
+
     // `force` also rescans the transcripts for the panel's per-day and per-model tallies.
     function refresh(force) {
-        if (probe.running) return;
+        if (probe.running) {
+            if (force) root.forcePending = true;
+            return;
+        }
         probe.command = force
             ? ["python3", root.collector, "--force"]
             : ["python3", root.collector, "--limits-only"];
@@ -38,6 +55,7 @@ Singleton {
 
     Process {
         id: probe
+
         stdout: StdioCollector {
             onStreamFinished: {
                 try {
@@ -45,15 +63,29 @@ Singleton {
                 } catch (e) {
                     root.record = null;
                 }
+                if (root.record && root.record.retryAdvised) retry.restart();
             }
+        }
+
+        // Not in onExited: a Process still reports running inside its own handler.
+        onRunningChanged: {
+            if (probe.running || !root.forcePending) return;
+            root.forcePending = false;
+            Qt.callLater(() => root.refresh(true));
         }
     }
 
     Timer {
-        interval: 60000
+        interval: root.present ? root.pollMs : root.idlePollMs
         running: true
         repeat: true
         triggeredOnStart: true
+        onTriggered: root.refresh(false)
+    }
+
+    Timer {
+        id: retry
+        interval: root.retryMs
         onTriggered: root.refresh(false)
     }
 

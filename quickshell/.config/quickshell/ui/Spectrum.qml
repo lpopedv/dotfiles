@@ -12,6 +12,10 @@ Item {
     property int count: CavaService.barCount
     property real spacing: 2
 
+    // cava runs while any Spectrum exists (and something plays); see CavaService.
+    Component.onCompleted: CavaService.viewers++
+    Component.onDestruction: CavaService.viewers--
+
     Row {
         anchors.fill: parent
         spacing: root.spacing
