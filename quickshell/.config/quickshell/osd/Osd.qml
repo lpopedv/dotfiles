@@ -65,11 +65,11 @@ Scope {
 
     Process {
         running: true
-        command: ["sh", "-c", "ls -1 /sys/class/backlight 2>/dev/null | head -n1"]
+        command: ["ls", "-1", "/sys/class/backlight"]
 
         stdout: StdioCollector {
             onStreamFinished: {
-                const name = this.text.trim();
+                const name = this.text.split("\n")[0].trim();
                 if (name) root.backlight = "/sys/class/backlight/" + name;
             }
         }
