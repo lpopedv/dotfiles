@@ -41,9 +41,11 @@ PopupWindow {
     implicitHeight: layout.implicitHeight + 20 + (DockService.vertical ? 0 : Theme.popupGap)
     color: "transparent"
 
+    // Act first, then close: hiding destroys the menu (it lives in a LazyLoader), and with
+    // it everything the action would read through `root`.
     function act(action) {
-        root.visible = false;
         action();
+        root.visible = false;
     }
 
     onVisibleChanged: {
