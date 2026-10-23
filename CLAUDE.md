@@ -108,14 +108,18 @@ font weights and the square/rounded corner choice (state, toggled from the bar s
 not relative paths. Popups derive from `bar/BarPopup.qml` and are built by a `LazyLoader` only
 while open; models that change at runtime go through `ScriptModel`; nothing animates endlessly
 (an infinite animation redraws the bar and makes Hyprland re-blur it every frame), which is why
-the cava spectrum only lives in the media panel. Text other programs supply (titles,
-notifications, tray menus) is untrusted: `ui/ShellText` is plain text, since Qt's rich text
-fetches `<img>` sources, http included; notification bodies are the one markup opt-in, after
-`NotificationsService.sanitize()`, and icons/images load from local sources only. Quickshell
-hot-reloads every saved file, so edit in a git worktree and run it with `qs -p <path>`;
-Super+Shift+Escape restarts the shell if an overlay ever holds the keyboard. `scripts/` holds
-`claude-usage-collect.py` (vendored from Omarchy, refreshed rather than edited) that feeds
-Claude usage stats into a bar widget, hidden where Claude Code isn't used, and `cava.conf`.
+the cava spectrum only lives in the media panel. The one exception, the streak orbiting the
+logo, is drawn in a popup surface of its own over the logo (a Qt window redraws all of itself,
+so this costs a logo-sized square instead of the bar), ticks at 24 fps from `LogoService`, and
+stops when the user is idle or a fullscreen window covers the bar. Text other programs supply
+(titles, notifications, tray menus) is untrusted: `ui/ShellText` is plain text, since Qt's rich
+text fetches `<img>` sources, http included; notification bodies are the one markup opt-in,
+after `NotificationsService.sanitize()`, and icons/images load from local sources only.
+Quickshell hot-reloads every saved file, so edit in a git worktree and run it with
+`qs -p <path>`; Super+Shift+Escape restarts the shell if an overlay ever holds the keyboard.
+`scripts/` holds `claude-usage-collect.py` (vendored from Omarchy, refreshed rather than
+edited) that feeds Claude usage stats into a bar widget, hidden where Claude Code isn't used,
+and `cava.conf`.
 
 **`nvim/`** uses Neovim's built-in `vim.pack` plugin manager (declared in `init.lua`), not
 lazy.nvim/packer — `nvim-pack-lock.json` pins plugin revisions. Plugin config lives one-file-
