@@ -1,5 +1,8 @@
+pragma ComponentBehavior: Bound
+
 import QtQuick
-import ".."
+import qs
+import qs.services
 
 // Mirrored bars driven by CavaService; grows from the centre line.
 Item {

@@ -1,15 +1,18 @@
+pragma ComponentBehavior: Bound
+
 import QtQuick
 import QtQuick.Layouts
 import Quickshell
-import "../.."
-import "../../ui"
+import qs
+import qs.bar
+import qs.services
+import qs.ui
 
-PopupWindow {
+BarPopup {
     id: root
 
     // Not `data`: every QObject has one, and shadowing it stops the popup mapping.
     property var record: null
-    property var anchorItem: null
 
     property date now: new Date()
 
@@ -36,19 +39,9 @@ PopupWindow {
     readonly property real modelPeak: models.length ? models[0].total : 1
     readonly property string today: Qt.formatDate(now, "yyyy-MM-dd")
 
-    anchor.item: anchorItem
-    anchor.edges: BarService.popupEdge
-    anchor.gravity: BarService.popupEdge
-    anchor.adjustment: BarService.popupAdjustment
-
-    implicitWidth: 360 + BarService.insetX
-    // Gap off the bar is transparent space inside the popup: the compositor
-    // clamps an anchored popup to the bar's edge, so anchor.margins can't do it.
-    implicitHeight: layout.implicitHeight + 28 + BarService.insetY
-    color: "transparent"
-
-    // Resets the fade-in for next open; can close via focus grab too, not just the button.
-    onVisibleChanged: if (!root.visible) panel.opacity = 0
+    panelWidth: 360
+    contentHeight: layout.implicitHeight
+    padding: 14
 
     Timer {
         interval: 1000
@@ -83,197 +76,171 @@ PopupWindow {
         return s;
     }
 
-    Rectangle {
-        id: panel
-
+    ColumnLayout {
+        id: layout
         anchors.fill: parent
-        anchors.topMargin: BarService.insetTop
-        anchors.bottomMargin: BarService.insetBottom
-        anchors.leftMargin: BarService.insetLeft
-        anchors.rightMargin: BarService.insetRight
-        color: Theme.glass
-        border.width: 1
-        border.color: Theme.border
+        spacing: 12
 
-        opacity: 0
-
-        NumberAnimation on opacity {
-            to: 1
-            duration: Theme.animMs
-            easing.type: Easing.OutCubic
-            running: root.visible
+        ShellText {
+            text: "Claude Code"
+                + (root.record && root.record.tierLabel
+                    ? "   ·   " + root.record.tierLabel : "")
+            color: Theme.fgAct
+            font.weight: Theme.weightMedium
         }
 
-        focus: true
-        Keys.onEscapePressed: root.visible = false
-
         ColumnLayout {
-            id: layout
-            anchors.fill: parent
-            anchors.margins: 14
-            spacing: 12
+            Layout.fillWidth: true
+            spacing: 6
+            visible: root.limits.length > 0
 
             ShellText {
-                text: "Claude Code"
-                    + (root.record && root.record.tierLabel
-                        ? "   ·   " + root.record.tierLabel : "")
-                color: Theme.fgAct
-                font.weight: Font.DemiBold
-            }
-
-            ColumnLayout {
-                Layout.fillWidth: true
-                spacing: 6
-                visible: root.limits.length > 0
-
-                ShellText {
-                    text: "LIMITS"
-                    color: Theme.border
-                    font.pixelSize: Theme.fontSize - 2
-                }
-
-                Repeater {
-                    model: root.limits
-
-                    RowLayout {
-                        id: limitRow
-                        required property var modelData
-
-                        Layout.fillWidth: true
-                        spacing: 8
-
-                        ShellText {
-                            text: limitRow.modelData.label.indexOf("5-hour") >= 0
-                                ? "Session" : "Weekly"
-                            Layout.preferredWidth: 54
-                        }
-
-                        Meter {
-                            Layout.fillWidth: true
-                            fraction: limitRow.modelData.percent || 0
-                        }
-
-                        ShellText {
-                            text: Math.round((limitRow.modelData.percent || 0) * 100) + "%"
-                            color: Theme.fgAct
-                            horizontalAlignment: Text.AlignRight
-                            Layout.preferredWidth: 34
-                        }
-
-                        ShellText {
-                            text: root.countdown(limitRow.modelData.resetsAt)
-                            color: Theme.border
-                            horizontalAlignment: Text.AlignRight
-                            Layout.preferredWidth: 58
-                        }
-                    }
-                }
-            }
-
-            ColumnLayout {
-                Layout.fillWidth: true
-                spacing: 4
-                visible: root.days.length > 0
-
-                ShellText {
-                    text: "TOKENS BY DAY"
-                    color: Theme.border
-                    font.pixelSize: Theme.fontSize - 2
-                    Layout.bottomMargin: 2
-                }
-
-                Repeater {
-                    model: root.days
-
-                    RowLayout {
-                        id: dayRow
-                        required property var modelData
-                        readonly property bool isToday: modelData.date === root.today
-                        readonly property real tokens: modelData.messageCount || 0
-
-                        Layout.fillWidth: true
-                        spacing: 8
-
-                        ShellText {
-                            text: new Date(dayRow.modelData.date).toLocaleDateString(Qt.locale("en_US"), "ddd dd")
-                            color: dayRow.isToday ? Theme.fgAct : Theme.fg
-                            font.weight: dayRow.isToday ? Font.DemiBold : Font.Normal
-                            Layout.preferredWidth: 54
-                        }
-
-                        Meter {
-                            Layout.fillWidth: true
-                            fraction: dayRow.tokens / root.dayPeak
-                        }
-
-                        ShellText {
-                            text: root.humanize(dayRow.tokens)
-                            color: dayRow.isToday ? Theme.fgAct : Theme.fg
-                            font.weight: dayRow.isToday ? Font.DemiBold : Font.Normal
-                            horizontalAlignment: Text.AlignRight
-                            Layout.preferredWidth: 58
-                        }
-                    }
-                }
-            }
-
-            ColumnLayout {
-                Layout.fillWidth: true
-                spacing: 4
-                visible: root.models.length > 0
-
-                ShellText {
-                    text: "TOKENS BY MODEL"
-                    color: Theme.border
-                    font.pixelSize: Theme.fontSize - 2
-                    Layout.bottomMargin: 2
-                }
-
-                Repeater {
-                    model: root.models
-
-                    RowLayout {
-                        id: modelRow
-                        required property var modelData
-
-                        Layout.fillWidth: true
-                        spacing: 8
-
-                        ShellText {
-                            text: root.shortModel(modelRow.modelData.name)
-                            Layout.preferredWidth: 86
-                            elide: Text.ElideRight
-                        }
-
-                        Meter {
-                            Layout.fillWidth: true
-                            fraction: modelRow.modelData.total / root.modelPeak
-                        }
-
-                        ShellText {
-                            text: root.humanize(modelRow.modelData.total)
-                            horizontalAlignment: Text.AlignRight
-                            Layout.preferredWidth: 58
-                        }
-                    }
-                }
-            }
-
-            ShellText {
-                Layout.topMargin: 2
+                text: "LIMITS"
                 color: Theme.border
                 font.pixelSize: Theme.fontSize - 2
-                text: {
-                    if (!root.record) return "";
-                    const bits = [];
-                    if (root.record.totalPrompts)
-                        bits.push(root.record.totalPrompts + " prompts");
-                    if (root.record.totalSessions)
-                        bits.push(root.record.totalSessions + " sessions");
-                    if (root.record.activeDays)
-                        bits.push(root.record.activeDays + " active days");
-                    return bits.join("  ·  ");
+            }
+
+            Repeater {
+                model: root.limits
+
+                RowLayout {
+                    id: limitRow
+                    required property var modelData
+
+                    Layout.fillWidth: true
+                    spacing: 8
+
+                    ShellText {
+                        text: limitRow.modelData.label.indexOf("5-hour") >= 0
+                            ? "Session" : "Weekly"
+                        Layout.preferredWidth: 54
+                    }
+
+                    Meter {
+                        Layout.fillWidth: true
+                        fraction: limitRow.modelData.percent || 0
+                    }
+
+                    ShellText {
+                        text: Math.round((limitRow.modelData.percent || 0) * 100) + "%"
+                        color: Theme.fgAct
+                        horizontalAlignment: Text.AlignRight
+                        Layout.preferredWidth: 34
+                    }
+
+                    ShellText {
+                        text: root.countdown(limitRow.modelData.resetsAt)
+                        color: Theme.border
+                        horizontalAlignment: Text.AlignRight
+                        Layout.preferredWidth: 58
+                    }
                 }
+            }
+        }
+
+        ColumnLayout {
+            Layout.fillWidth: true
+            spacing: 4
+            visible: root.days.length > 0
+
+            ShellText {
+                text: "TOKENS BY DAY"
+                color: Theme.border
+                font.pixelSize: Theme.fontSize - 2
+                Layout.bottomMargin: 2
+            }
+
+            Repeater {
+                model: root.days
+
+                RowLayout {
+                    id: dayRow
+                    required property var modelData
+                    readonly property bool isToday: modelData.date === root.today
+                    readonly property real tokens: modelData.messageCount || 0
+
+                    Layout.fillWidth: true
+                    spacing: 8
+
+                    ShellText {
+                        text: new Date(dayRow.modelData.date).toLocaleDateString(Qt.locale("en_US"), "ddd dd")
+                        color: dayRow.isToday ? Theme.fgAct : Theme.fg
+                        font.weight: dayRow.isToday ? Theme.weightMedium : Font.Normal
+                        Layout.preferredWidth: 54
+                    }
+
+                    Meter {
+                        Layout.fillWidth: true
+                        fraction: dayRow.tokens / root.dayPeak
+                    }
+
+                    ShellText {
+                        text: root.humanize(dayRow.tokens)
+                        color: dayRow.isToday ? Theme.fgAct : Theme.fg
+                        font.weight: dayRow.isToday ? Theme.weightMedium : Font.Normal
+                        horizontalAlignment: Text.AlignRight
+                        Layout.preferredWidth: 58
+                    }
+                }
+            }
+        }
+
+        ColumnLayout {
+            Layout.fillWidth: true
+            spacing: 4
+            visible: root.models.length > 0
+
+            ShellText {
+                text: "TOKENS BY MODEL"
+                color: Theme.border
+                font.pixelSize: Theme.fontSize - 2
+                Layout.bottomMargin: 2
+            }
+
+            Repeater {
+                model: root.models
+
+                RowLayout {
+                    id: modelRow
+                    required property var modelData
+
+                    Layout.fillWidth: true
+                    spacing: 8
+
+                    ShellText {
+                        text: root.shortModel(modelRow.modelData.name)
+                        Layout.preferredWidth: 86
+                        elide: Text.ElideRight
+                    }
+
+                    Meter {
+                        Layout.fillWidth: true
+                        fraction: modelRow.modelData.total / root.modelPeak
+                    }
+
+                    ShellText {
+                        text: root.humanize(modelRow.modelData.total)
+                        horizontalAlignment: Text.AlignRight
+                        Layout.preferredWidth: 58
+                    }
+                }
+            }
+        }
+
+        ShellText {
+            Layout.topMargin: 2
+            color: Theme.border
+            font.pixelSize: Theme.fontSize - 2
+            text: {
+                if (!root.record) return "";
+                const bits = [];
+                if (root.record.totalPrompts)
+                    bits.push(root.record.totalPrompts + " prompts");
+                if (root.record.totalSessions)
+                    bits.push(root.record.totalSessions + " sessions");
+                if (root.record.activeDays)
+                    bits.push(root.record.activeDays + " active days");
+                return bits.join("  ·  ");
             }
         }
     }

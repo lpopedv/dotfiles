@@ -76,3 +76,13 @@ hl.layer_rule({
     blur_popups  = true,
     ignore_alpha = 0.2,
 })
+
+-- rofi's translucent background gets the same blur as the shell's; same threshold, or its
+-- tint is left unblurred
+hl.layer_rule({
+    name         = "rofi-blur",
+    match        = { namespace = "^rofi$" },
+
+    blur         = true,
+    ignore_alpha = 0.2,
+})

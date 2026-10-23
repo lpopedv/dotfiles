@@ -1,8 +1,11 @@
+pragma ComponentBehavior: Bound
+
 import QtQuick
 import QtQuick.Layouts
 import Quickshell
 import Quickshell.Services.SystemTray
-import "../.."
+import qs
+import qs.services
 
 GridLayout {
     id: root
@@ -64,10 +67,10 @@ GridLayout {
                 onClicked: event => {
                     const item = entry.modelData;
                     if (event.button === Qt.LeftButton) {
-                        if (item.onlyMenu) menu.visible = true;
+                        if (item.onlyMenu) menu.active = true;
                         else item.activate();
                     } else if (event.button === Qt.RightButton) {
-                        if (item.hasMenu) menu.visible = true;
+                        if (item.hasMenu) menu.active = true;
                     } else {
                         item.secondaryActivate();
                     }
@@ -80,12 +83,17 @@ GridLayout {
                 }
             }
 
-            TrayMenu {
+            // Built on open, destroyed on close, like the bar popups: one per tray icon adds up.
+            LazyLoader {
                 id: menu
-                menu: entry.modelData.menu
-                anchorItem: entry
-                visible: false
-                grabFocus: true
+
+                TrayMenu {
+                    menu: entry.modelData.menu
+                    anchorItem: entry
+                    grabFocus: true
+                    visible: true
+                    onVisibleChanged: if (!visible) menu.active = false
+                }
             }
         }
     }

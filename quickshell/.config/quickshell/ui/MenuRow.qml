@@ -1,6 +1,6 @@
 import QtQuick
 import QtQuick.Layouts
-import ".."
+import qs
 
 Rectangle {
     id: root
@@ -19,8 +19,9 @@ Rectangle {
 
     Layout.fillWidth: true
     implicitHeight: label.implicitHeight + 12
+    radius: Theme.radiusItem
     opacity: root.enabled ? 1 : Theme.dimmedOpacity
-    color: mouse.containsMouse ? Theme.hoverFill : "transparent"
+    color: mouse.pressed ? Theme.pressFill : mouse.containsMouse ? Theme.hoverFill : "transparent"
 
     Behavior on color {
         ColorAnimation { duration: Theme.animMs }

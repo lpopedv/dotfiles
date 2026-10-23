@@ -21,3 +21,6 @@ systemd/.config/systemd/user/*.wants/
 
 # Built by system/iso/build.sh (1.5+ GB images); releases ship them, git never does.
 system/iso/out/
+
+# qmlls config: Quickshell swaps it for a link into its runtime dir (per machine, per boot).
+quickshell/.config/quickshell/.qmlls.ini

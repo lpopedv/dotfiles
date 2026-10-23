@@ -1,15 +1,18 @@
+pragma ComponentBehavior: Bound
+
 import QtQuick
 import QtQuick.Layouts
 import Quickshell
-import "../.."
-import "../../ui"
+import qs
+import qs.bar
+import qs.services
+import qs.ui
 
 // Hand-built grid, not QtQuick.Controls MonthGrid: avoids pulling in a
 // Controls style, and MonthGrid's `today` role never updates past midnight.
-PopupWindow {
+BarPopup {
     id: root
 
-    property var anchorItem: null
     // Fed by the bar clock so "today" rolls over at midnight without a timer of our own.
     property date today: new Date()
 
@@ -52,23 +55,12 @@ PopupWindow {
         viewYear === today.getFullYear() && viewMonth === today.getMonth()
         && sameDay(selected, today.getFullYear(), today.getMonth(), today.getDate())
 
-    anchor.item: root.anchorItem
-    anchor.edges: BarService.popupEdge
-    anchor.gravity: BarService.popupEdge
-    anchor.adjustment: BarService.popupAdjustment
+    panelWidth: layout.implicitWidth + root.padding * 2
+    contentHeight: layout.implicitHeight
+    padding: 14
 
-    implicitWidth: layout.implicitWidth + 28 + BarService.insetX
-    // Gap off the bar is transparent space inside the popup: the compositor
-    // clamps an anchored popup to the bar's edge, so anchor.margins can't do it.
-    implicitHeight: layout.implicitHeight + 28 + BarService.insetY
-    color: "transparent"
-
-    // Every open starts on today; the fade-in also resets here because the
-    // focus grab can close the popup without going through the clock.
-    onVisibleChanged: {
-        if (root.visible) root.goToday(false);
-        else panel.opacity = 0;
-    }
+    // Every open starts on today.
+    onVisibleChanged: if (root.visible) root.goToday(false)
 
     function sameDay(date, year, month, day) {
         return date.getFullYear() === year && date.getMonth() === month && date.getDate() === day;
@@ -140,6 +132,8 @@ PopupWindow {
     component NavButton: Rectangle {
         id: nav
 
+        radius: Theme.radiusItem
+
         property string icon
         signal clicked
 
@@ -167,292 +161,268 @@ PopupWindow {
         }
     }
 
-    Rectangle {
-        id: panel
+    onKeyPressed: event => {
+        const years = event.modifiers & Qt.ShiftModifier ? 12 : 1;
+        switch (event.key) {
+        case Qt.Key_Left: root.moveSelection(-1); break;
+        case Qt.Key_Right: root.moveSelection(1); break;
+        case Qt.Key_Up: root.moveSelection(-7); break;
+        case Qt.Key_Down: root.moveSelection(7); break;
+        case Qt.Key_PageUp: root.shiftMonths(-years); break;
+        case Qt.Key_PageDown: root.shiftMonths(years); break;
+        case Qt.Key_Home:
+        case Qt.Key_T: root.goToday(true); break;
+        default: return;
+        }
+        event.accepted = true;
+    }
+
+    ColumnLayout {
+        id: layout
 
         anchors.fill: parent
-        anchors.topMargin: BarService.insetTop
-        anchors.bottomMargin: BarService.insetBottom
-        anchors.leftMargin: BarService.insetLeft
-        anchors.rightMargin: BarService.insetRight
-        color: Theme.glass
-        border.width: 1
-        border.color: Theme.border
+        spacing: 10
 
-        opacity: 0
+        RowLayout {
+            Layout.fillWidth: true
+            spacing: 12
 
-        NumberAnimation on opacity {
-            to: 1
-            duration: Theme.animMs
-            easing.type: Easing.OutCubic
-            running: root.visible
-        }
-
-        focus: true
-        Keys.onPressed: event => {
-            const years = event.modifiers & Qt.ShiftModifier ? 12 : 1;
-            switch (event.key) {
-            case Qt.Key_Escape: root.visible = false; break;
-            case Qt.Key_Left: root.moveSelection(-1); break;
-            case Qt.Key_Right: root.moveSelection(1); break;
-            case Qt.Key_Up: root.moveSelection(-7); break;
-            case Qt.Key_Down: root.moveSelection(7); break;
-            case Qt.Key_PageUp: root.shiftMonths(-years); break;
-            case Qt.Key_PageDown: root.shiftMonths(years); break;
-            case Qt.Key_Home:
-            case Qt.Key_T: root.goToday(true); break;
-            default: return;
-            }
-            event.accepted = true;
-        }
-
-        ColumnLayout {
-            id: layout
-
-            anchors.fill: parent
-            anchors.margins: 14
-            spacing: 10
-
-            RowLayout {
+            ColumnLayout {
                 Layout.fillWidth: true
-                spacing: 12
-
-                ColumnLayout {
-                    Layout.fillWidth: true
-                    spacing: 2
-
-                    ShellText {
-                        text: root.locale.toString(root.today, "dddd").toUpperCase()
-                        color: Theme.subtle
-                        font.pixelSize: Theme.fontSize - 2
-                        font.letterSpacing: 1.5
-                    }
-
-                    RowLayout {
-                        spacing: 8
-
-                        ShellText {
-                            text: root.locale.toString(root.today, "d MMMM")
-                            color: Theme.fgAct
-                            font.pixelSize: Theme.fontSize + 9
-                            font.weight: Font.DemiBold
-                        }
-
-                        ShellText {
-                            Layout.alignment: Qt.AlignBaseline
-                            text: String(root.today.getFullYear())
-                            color: Theme.subtle
-                            font.pixelSize: Theme.fontSize + 2
-                        }
-                    }
-                }
-
-                ColumnLayout {
-                    Layout.alignment: Qt.AlignBottom
-                    spacing: 2
-
-                    ShellText {
-                        Layout.alignment: Qt.AlignRight
-                        text: "Week " + root.isoWeek(root.today)
-                        color: Theme.fg
-                        font.pixelSize: Theme.fontSize - 2
-                    }
-
-                    ShellText {
-                        Layout.alignment: Qt.AlignRight
-                        text: "Day " + root.dayOfYear(root.today)
-                        color: Theme.subtle
-                        font.pixelSize: Theme.fontSize - 2
-                    }
-                }
-            }
-
-            Divider {}
-
-            RowLayout {
-                Layout.fillWidth: true
-                // Fixed so the panel doesn't grow when the taller Today chip appears.
-                Layout.preferredHeight: 28
                 spacing: 2
 
+                ShellText {
+                    text: root.locale.toString(root.today, "dddd").toUpperCase()
+                    color: Theme.subtle
+                    font.pixelSize: Theme.fontSize - 2
+                    font.letterSpacing: 1.5
+                }
+
                 RowLayout {
-                    Layout.fillWidth: true
-                    Layout.leftMargin: 4
-                    spacing: 6
+                    spacing: 8
 
                     ShellText {
-                        text: root.locale.standaloneMonthName(root.viewMonth, Locale.LongFormat)
+                        text: root.locale.toString(root.today, "d MMMM")
                         color: Theme.fgAct
-                        font.weight: Font.DemiBold
+                        font.pixelSize: Theme.fontSize + 9
+                        font.weight: Theme.weightStrong
                     }
 
                     ShellText {
-                        text: String(root.viewYear)
-                        color: Theme.fg
-                    }
-                }
-
-                Chip {
-                    visible: !root.showingToday
-                    text: "Today"
-                    quiet: true
-                    onClicked: root.goToday(true)
-                }
-
-                NavButton {
-                    icon: Icons.chevronLeft
-                    onClicked: root.shiftMonths(-1)
-                }
-
-                NavButton {
-                    icon: Icons.chevronRight
-                    onClicked: root.shiftMonths(1)
-                }
-            }
-
-            Item {
-                Layout.alignment: Qt.AlignHCenter
-                implicitWidth: days.implicitWidth
-                implicitHeight: weekdayRow.implicitHeight + 6 + days.implicitHeight
-                clip: true
-
-                Row {
-                    id: weekdayRow
-
-                    spacing: root.cellGap
-
-                    Repeater {
-                        model: root.weekdays
-
-                        ShellText {
-                            required property int modelData
-
-                            width: root.cellWidth
-                            horizontalAlignment: Text.AlignHCenter
-                            text: root.locale.dayName(modelData, Locale.ShortFormat)
-                            color: root.locale.weekDays.indexOf(modelData) < 0 ? Theme.border : Theme.subtle
-                            font.pixelSize: Theme.fontSize - 2
-                        }
-                    }
-                }
-
-                Grid {
-                    id: days
-
-                    y: weekdayRow.implicitHeight + 6
-                    columns: 7
-                    spacing: root.cellGap
-
-                    ParallelAnimation {
-                        id: monthSwitch
-
-                        NumberAnimation {
-                            id: slide
-                            target: days
-                            property: "x"
-                            to: 0
-                            duration: Theme.animSlideMs
-                            easing.type: Easing.OutCubic
-                        }
-
-                        NumberAnimation {
-                            target: days
-                            property: "opacity"
-                            from: 0
-                            to: 1
-                            duration: Theme.animSlideMs
-                            easing.type: Easing.OutCubic
-                        }
-                    }
-
-                    Repeater {
-                        model: root.cells
-
-                        Rectangle {
-                            id: cell
-
-                            required property var modelData
-
-                            readonly property bool isToday:
-                                root.sameDay(root.today, modelData.year, modelData.month, modelData.day)
-                            readonly property bool isSelected:
-                                root.sameDay(root.selected, modelData.year, modelData.month, modelData.day)
-
-                            width: root.cellWidth
-                            height: root.cellHeight
-                            color: isToday ? Theme.fgAct
-                                : isSelected ? Theme.activeFill
-                                : cellMouse.containsMouse ? Theme.hoverFill
-                                : "transparent"
-                            border.width: isSelected && !isToday ? 1 : 0
-                            border.color: Theme.accentLine
-
-                            Behavior on color {
-                                ColorAnimation { duration: Theme.animMs }
-                            }
-
-                            ShellText {
-                                anchors.centerIn: parent
-                                text: String(cell.modelData.day)
-                                color: cell.isToday ? Theme.bg
-                                    : cellMouse.containsMouse || cell.isSelected ? Theme.fgAct
-                                    : !cell.modelData.inMonth ? Theme.border
-                                    : cell.modelData.weekend ? Theme.subtle
-                                    : Theme.fg
-                                font.weight: cell.isToday || cell.isSelected ? Font.DemiBold : Font.Normal
-                            }
-
-                            MouseArea {
-                                id: cellMouse
-                                anchors.fill: parent
-                                hoverEnabled: true
-                                cursorShape: Qt.PointingHandCursor
-                                onClicked: root.select(cell.modelData.year, cell.modelData.month, cell.modelData.day)
-                            }
-                        }
-                    }
-                }
-
-                // Below the cells so their hover still works; they don't take wheel
-                // events, which fall through to here. Touchpads send many small deltas.
-                MouseArea {
-                    anchors.fill: parent
-                    z: -1
-                    acceptedButtons: Qt.NoButton
-
-                    property int pending: 0
-
-                    onWheel: event => {
-                        pending += event.angleDelta.y;
-                        while (Math.abs(pending) >= 120) {
-                            root.shiftMonths(pending > 0 ? -1 : 1);
-                            pending -= pending > 0 ? 120 : -120;
-                        }
+                        Layout.alignment: Qt.AlignBaseline
+                        text: String(root.today.getFullYear())
+                        color: Theme.subtle
+                        font.pixelSize: Theme.fontSize + 2
                     }
                 }
             }
 
-            Divider {}
+            ColumnLayout {
+                Layout.alignment: Qt.AlignBottom
+                spacing: 2
+
+                ShellText {
+                    Layout.alignment: Qt.AlignRight
+                    text: "Week " + root.isoWeek(root.today)
+                    color: Theme.fg
+                    font.pixelSize: Theme.fontSize - 2
+                }
+
+                ShellText {
+                    Layout.alignment: Qt.AlignRight
+                    text: "Day " + root.dayOfYear(root.today)
+                    color: Theme.subtle
+                    font.pixelSize: Theme.fontSize - 2
+                }
+            }
+        }
+
+        Divider {}
+
+        RowLayout {
+            Layout.fillWidth: true
+            // Fixed so the panel doesn't grow when the taller Today chip appears.
+            Layout.preferredHeight: 28
+            spacing: 2
 
             RowLayout {
                 Layout.fillWidth: true
                 Layout.leftMargin: 4
-                Layout.rightMargin: 4
-                spacing: 12
+                spacing: 6
 
                 ShellText {
-                    Layout.fillWidth: true
-                    text: root.locale.toString(root.selected, "dddd, d MMMM")
+                    text: root.locale.standaloneMonthName(root.viewMonth, Locale.LongFormat)
+                    color: Theme.fgAct
+                    font.weight: Theme.weightMedium
+                }
+
+                ShellText {
+                    text: String(root.viewYear)
                     color: Theme.fg
-                    font.pixelSize: Theme.fontSize - 1
-                    elide: Text.ElideRight
+                }
+            }
+
+            Chip {
+                visible: !root.showingToday
+                text: "Today"
+                quiet: true
+                onClicked: root.goToday(true)
+            }
+
+            NavButton {
+                icon: Icons.chevronLeft
+                onClicked: root.shiftMonths(-1)
+            }
+
+            NavButton {
+                icon: Icons.chevronRight
+                onClicked: root.shiftMonths(1)
+            }
+        }
+
+        Item {
+            Layout.alignment: Qt.AlignHCenter
+            implicitWidth: days.implicitWidth
+            implicitHeight: weekdayRow.implicitHeight + 6 + days.implicitHeight
+            clip: true
+
+            Row {
+                id: weekdayRow
+
+                spacing: root.cellGap
+
+                Repeater {
+                    model: root.weekdays
+
+                    ShellText {
+                        required property int modelData
+
+                        width: root.cellWidth
+                        horizontalAlignment: Text.AlignHCenter
+                        text: root.locale.dayName(modelData, Locale.ShortFormat)
+                        color: root.locale.weekDays.indexOf(modelData) < 0 ? Theme.border : Theme.subtle
+                        font.pixelSize: Theme.fontSize - 2
+                    }
+                }
+            }
+
+            Grid {
+                id: days
+
+                y: weekdayRow.implicitHeight + 6
+                columns: 7
+                spacing: root.cellGap
+
+                ParallelAnimation {
+                    id: monthSwitch
+
+                    NumberAnimation {
+                        id: slide
+                        target: days
+                        property: "x"
+                        to: 0
+                        duration: Theme.animSlideMs
+                        easing.type: Easing.OutCubic
+                    }
+
+                    NumberAnimation {
+                        target: days
+                        property: "opacity"
+                        from: 0
+                        to: 1
+                        duration: Theme.animSlideMs
+                        easing.type: Easing.OutCubic
+                    }
                 }
 
-                ShellText {
-                    text: root.relative(root.selected) + "  ·  W" + root.isoWeek(root.selected)
-                    color: Theme.subtle
-                    font.pixelSize: Theme.fontSize - 2
+                Repeater {
+                    model: root.cells
+
+                    Rectangle {
+                        id: cell
+
+                        required property var modelData
+
+                        readonly property bool isToday:
+                            root.sameDay(root.today, modelData.year, modelData.month, modelData.day)
+                        readonly property bool isSelected:
+                            root.sameDay(root.selected, modelData.year, modelData.month, modelData.day)
+
+                        width: root.cellWidth
+                        height: root.cellHeight
+                        radius: Theme.radiusItem
+                        color: isToday ? Theme.fgAct
+                            : isSelected ? Theme.activeFill
+                            : cellMouse.containsMouse ? Theme.hoverFill
+                            : "transparent"
+                        border.width: isSelected && !isToday ? 1 : 0
+                        border.color: Theme.accentLine
+
+                        Behavior on color {
+                            ColorAnimation { duration: Theme.animMs }
+                        }
+
+                        ShellText {
+                            anchors.centerIn: parent
+                            text: String(cell.modelData.day)
+                            color: cell.isToday ? Theme.bg
+                                : cellMouse.containsMouse || cell.isSelected ? Theme.fgAct
+                                : !cell.modelData.inMonth ? Theme.border
+                                : cell.modelData.weekend ? Theme.subtle
+                                : Theme.fg
+                            font.weight: cell.isToday || cell.isSelected ? Theme.weightMedium : Font.Normal
+                        }
+
+                        MouseArea {
+                            id: cellMouse
+                            anchors.fill: parent
+                            hoverEnabled: true
+                            cursorShape: Qt.PointingHandCursor
+                            onClicked: root.select(cell.modelData.year, cell.modelData.month, cell.modelData.day)
+                        }
+                    }
                 }
+            }
+
+            // Below the cells so their hover still works; they don't take wheel
+            // events, which fall through to here. Touchpads send many small deltas.
+            MouseArea {
+                anchors.fill: parent
+                z: -1
+                acceptedButtons: Qt.NoButton
+
+                property int pending: 0
+
+                onWheel: event => {
+                    pending += event.angleDelta.y;
+                    while (Math.abs(pending) >= 120) {
+                        root.shiftMonths(pending > 0 ? -1 : 1);
+                        pending -= pending > 0 ? 120 : -120;
+                    }
+                }
+            }
+        }
+
+        Divider {}
+
+        RowLayout {
+            Layout.fillWidth: true
+            Layout.leftMargin: 4
+            Layout.rightMargin: 4
+            spacing: 12
+
+            ShellText {
+                Layout.fillWidth: true
+                text: root.locale.toString(root.selected, "dddd, d MMMM")
+                color: Theme.fg
+                font.pixelSize: Theme.fontSize - 1
+                elide: Text.ElideRight
+            }
+
+            ShellText {
+                text: root.relative(root.selected) + "  ·  W" + root.isoWeek(root.selected)
+                color: Theme.subtle
+                font.pixelSize: Theme.fontSize - 2
             }
         }
     }

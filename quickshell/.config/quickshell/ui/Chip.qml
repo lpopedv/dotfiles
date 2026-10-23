@@ -1,5 +1,5 @@
 import QtQuick
-import ".."
+import qs
 
 Rectangle {
     id: root
@@ -16,8 +16,10 @@ Rectangle {
 
     implicitWidth: label.implicitWidth + (root.quiet ? 14 : 20)
     implicitHeight: label.implicitHeight + 10
+    radius: Theme.radiusItem
 
-    color: root.active ? Theme.activeFill
+    color: mouse.pressed ? Theme.pressFill
+        : root.active ? Theme.activeFill
         : mouse.containsMouse ? Theme.hoverFill
         : root.quiet ? "transparent" : Theme.divider
     border.width: root.quiet && !root.active && !mouse.containsMouse ? 0 : 1

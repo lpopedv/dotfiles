@@ -3,8 +3,9 @@ import QtQuick.Layouts
 import Quickshell
 import Quickshell.Io
 import Quickshell.Services.Pipewire
-import ".."
-import "../ui"
+import qs
+import qs.services
+import qs.ui
 
 Scope {
     id: root
@@ -100,6 +101,7 @@ Scope {
 
         // Layer surface can't be faded, so it stays mapped until the panel's own fade finishes.
         visible: root.shown || panel.opacity > 0
+        screen: ScreenService.focused
         anchors.bottom: true
         margins.bottom: 120
 
@@ -111,6 +113,8 @@ Scope {
 
         Rectangle {
             id: panel
+
+            radius: Theme.radiusCard
 
             anchors.fill: parent
             color: Theme.glass
@@ -141,9 +145,9 @@ Scope {
                     Item { Layout.fillWidth: true }
 
                     ShellText {
-                        text: root.muted ? "mudo" : Math.round(root.fraction * 100) + "%"
+                        text: root.muted ? "Muted" : Math.round(root.fraction * 100) + "%"
                         color: root.muted ? Theme.fg : Theme.fgAct
-                        font.weight: Font.DemiBold
+                        font.weight: Theme.weightMedium
                     }
                 }
 

@@ -6,12 +6,12 @@ import Quickshell.Io
 
 // One inhibitor for every screen's bar, and state that outlives the bar: it is
 // rebuilt whenever it changes side, which would otherwise switch caffeine off.
-QtObject {
+Singleton {
     id: root
 
     // State, not config: beside bar.json in the shell's state dir, so it survives a
     // reboot as well as a config reload, and the machine comes back as it was left.
-    property FileView store: FileView {
+    FileView {
         id: store
 
         path: Quickshell.statePath("caffeine.json")
@@ -35,7 +35,7 @@ QtObject {
     function toggle() { settings.enabled = !settings.enabled; }
     function setEnabled(enabled) { settings.enabled = enabled; }
 
-    property Process inhibitor: Process {
+    Process {
         command: [
             "systemd-inhibit",
             "--what=idle",
@@ -46,7 +46,7 @@ QtObject {
         running: root.enabled
     }
 
-    property IpcHandler ipc: IpcHandler {
+    IpcHandler {
         target: "caffeine"
 
         function toggle(): void { root.toggle(); }

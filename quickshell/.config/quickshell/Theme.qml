@@ -1,8 +1,70 @@
 pragma Singleton
 
 import QtQuick
+import Quickshell
+import Quickshell.Io
 
-QtObject {
+Singleton {
+    id: root
+
+    // State, not config: beside bar.json in the shell's state dir.
+    FileView {
+        id: store
+
+        path: Quickshell.statePath("appearance.json")
+        watchChanges: true
+        onFileChanged: store.reload()
+        onAdapterUpdated: store.writeAdapter()
+
+        onLoadFailed: error => {
+            if (error === FileViewError.FileNotFound) store.writeAdapter();
+        }
+
+        adapter: JsonAdapter {
+            id: settings
+
+            // "square" or "rounded".
+            property string corners: "square"
+        }
+    }
+
+    readonly property var cornerStyles: [
+        { id: "square",  text: "Square" },
+        { id: "rounded", text: "Rounded" }
+    ]
+    readonly property bool rounded: settings.corners === "rounded"
+    readonly property string corners: root.rounded ? "rounded" : "square"
+
+    function setCorners(style) {
+        if (root.cornerStyles.some(c => c.id === style)) settings.corners = style;
+    }
+
+    // `qs ipc call appearance corners rounded`.
+    IpcHandler {
+        target: "appearance"
+
+        function corners(style: string): void { root.setCorners(style); }
+        function toggleCorners(): void { root.setCorners(root.rounded ? "square" : "rounded"); }
+    }
+
+    // Square by default; rounded softens every corner by a few pixels and no more. Radii stay
+    // concentric (an inner shape's radius is its container's minus the gap between them).
+    readonly property int radiusItem: root.rounded ? 3 : 0
+    readonly property int radiusMenu: root.rounded ? 6 : 0
+    readonly property int radiusPanel: root.rounded ? 6 : 0
+    readonly property int radiusCard: root.rounded ? 8 : 0
+    readonly property int radiusDock: root.rounded ? 10 : 0
+
+    // Capsules and discs (meters, window dots) only exist with rounded corners.
+    function pill(size) {
+        return root.rounded ? size / 2 : 0;
+    }
+
+    // The radius of a shape set `gap` inside one with radius `outer`.
+    function inner(outer, gap) {
+        return Math.max(0, outer - gap);
+    }
+
     readonly property color bg: "#000000"
     readonly property color fg: "#999999"
     readonly property color fgAct: "#ffffff"
@@ -13,6 +75,7 @@ QtObject {
 
     readonly property color hoverFill: Qt.rgba(1, 1, 1, 0.08)
     readonly property color activeFill: Qt.rgba(1, 1, 1, 0.14)
+    readonly property color pressFill: Qt.rgba(1, 1, 1, 0.20)
     readonly property color accentLine: Qt.rgba(1, 1, 1, 0.35)
     readonly property color divider: Qt.rgba(1, 1, 1, 0.08)
 
@@ -44,9 +107,15 @@ QtObject {
     readonly property string fontFamily: "JetBrainsMono Nerd Font"
     readonly property int fontSize: 13
     readonly property int iconSize: 15
+    // A monospace face goes heavy fast at UI sizes: emphasis is Medium, and the strong weight
+    // is kept for large display figures.
+    readonly property int weightMedium: Font.Medium
+    readonly property int weightStrong: Font.DemiBold
 
     readonly property int animMs: 90
     readonly property int animSlideMs: 140
+    // Bar popups ease in from the bar by this much as they fade in.
+    readonly property int popupSlide: 6
 
     // Curves are [cx1, cy1, cx2, cy2, 1, 1] for `easing.type: Easing.BezierSpline`.
     // Reveal/collapse of the bar's items: one long, decelerating curve (ease-out-quint)

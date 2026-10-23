@@ -1,8 +1,11 @@
+pragma ComponentBehavior: Bound
+
 import QtQuick
 import QtQuick.Layouts
 import Quickshell.Hyprland
-import "../.."
-import "../../ui"
+import qs
+import qs.services
+import qs.ui
 
 GridLayout {
     id: root
@@ -124,7 +127,7 @@ GridLayout {
                 color: slot.focused || slot.occupied || mouse.containsMouse
                     ? Theme.fgAct
                     : Theme.fg
-                font.weight: slot.occupied && !slot.focused ? Font.DemiBold : Font.Normal
+                font.weight: slot.occupied && !slot.focused ? Theme.weightMedium : Font.Normal
                 opacity: slot.focused ? 1 - dot.opacity : 1
             }
 

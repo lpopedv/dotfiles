@@ -1,6 +1,10 @@
+pragma ComponentBehavior: Bound
+
 import QtQuick
-import "../.."
-import "../../ui"
+import Quickshell
+import qs
+import qs.services
+import qs.ui
 
 // Pending updates count as "active", so the item stays pinned in red even
 // while its collapsible neighbours are tucked away.
@@ -11,34 +15,37 @@ BarItem {
 
     onClicked: button => {
         if (button === Qt.RightButton) UpdatesService.refresh();
-        else panel.visible = !panel.visible;
+        else panel.active = !panel.active;
     }
 
     ShellText {
+        id: glyph
+
         text: Icons.packageUp
         color: root.active ? Theme.red
-            : root.hovered || panel.visible ? Theme.fgAct : Theme.fg
+            : root.hovered || panel.active ? Theme.fgAct : Theme.fg
         font.pixelSize: Theme.iconSize
 
         Behavior on color {
             ColorAnimation { duration: Theme.animMs }
         }
 
-        // Same slow pulse as the Claude usage alert.
-        SequentialAnimation on opacity {
-            running: root.active
-            loops: Animation.Infinite
-            alwaysRunToEnd: true
-
-            NumberAnimation { to: 0.45; duration: 1600; easing.type: Easing.InOutQuad }
-            NumberAnimation { to: 1.0; duration: 1600; easing.type: Easing.InOutQuad }
+        // Same slow pulse as the Claude usage alert; the red stays once it settles.
+        Pulse {
+            target: glyph
+            when: root.active
+            halfMs: 1600
         }
     }
 
-    UpdatesPanel {
+    // Built on open, destroyed on close: a hidden popup still runs all its bindings.
+    LazyLoader {
         id: panel
-        anchorItem: root
-        visible: false
-        grabFocus: true
+
+        UpdatesPanel {
+            anchorItem: root
+            visible: true
+            onDismissed: panel.active = false
+        }
     }
 }

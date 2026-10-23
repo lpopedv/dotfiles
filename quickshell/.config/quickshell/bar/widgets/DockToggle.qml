@@ -1,7 +1,10 @@
+pragma ComponentBehavior: Bound
+
 import QtQuick
-import Quickshell.Io
-import "../.."
-import "../../ui"
+import Quickshell
+import qs
+import qs.services
+import qs.ui
 
 BarItem {
     id: root
@@ -9,18 +12,8 @@ BarItem {
     active: DockService.mode === "pinned"
 
     onClicked: button => {
-        if (button === Qt.RightButton) panel.visible = !panel.visible;
+        if (button === Qt.RightButton) panel.active = !panel.active;
         else DockService.toggleMode();
-    }
-
-    IpcHandler {
-        target: "dock"
-
-        function pin(): void { DockService.setMode("pinned"); }
-        function auto(): void { DockService.setMode("auto"); }
-        function off(): void { DockService.setMode("hidden"); }
-        function toggle(): void { DockService.toggleMode(); }
-        function mode(): string { return DockService.mode; }
     }
 
     ShellText {
@@ -40,10 +33,14 @@ BarItem {
         }
     }
 
-    DockSettingsPanel {
+    // Built on open, destroyed on close: a hidden popup still runs all its bindings.
+    LazyLoader {
         id: panel
-        anchorItem: root
-        visible: false
-        grabFocus: true
+
+        DockSettingsPanel {
+            anchorItem: root
+            visible: true
+            onDismissed: panel.active = false
+        }
     }
 }

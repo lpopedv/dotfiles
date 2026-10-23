@@ -1,8 +1,11 @@
+pragma ComponentBehavior: Bound
+
 import QtQuick
 import QtQuick.Shapes
 import Quickshell
-import "../.."
-import "../../ui"
+import qs
+import qs.services
+import qs.ui
 
 // The bar's "apple": waves by default, for Lethe's river; the glyph is picked
 // in the bar settings. Left click opens the launcher (same as Super+Space),
@@ -14,15 +17,19 @@ BarItem {
     // The ring is the hover cue; BarItem's square fill would fight it.
     color: "transparent"
     onClicked: button => {
-        if (button === Qt.RightButton) panel.visible = !panel.visible;
+        if (button === Qt.RightButton) panel.active = !panel.active;
         else Quickshell.execDetached(["rofi", "-show", "drun"]);
     }
 
-    BarSettingsPanel {
+    // Built on open, destroyed on close: a hidden popup still runs all its bindings.
+    LazyLoader {
         id: panel
-        anchorItem: root
-        visible: false
-        grabFocus: true
+
+        BarSettingsPanel {
+            anchorItem: root
+            visible: true
+            onDismissed: panel.active = false
+        }
     }
 
     ShellText {
@@ -31,8 +38,8 @@ BarItem {
         font.pixelSize: 18
     }
 
-    // A short streak of light orbiting a hexagon round the glyph. Reparented
-    // out of the content row so it can span the whole item instead of being laid out.
+    // A short streak of light orbiting a hexagon round the glyph while it is hovered.
+    // Reparented out of the content row so it can span the whole item instead of being laid out.
     Shape {
         id: orbit
 
@@ -105,11 +112,16 @@ BarItem {
             PathPolyline { path: orbit.streakPoints }
         }
 
+        // Hover only: a lap that never ends redraws the bar - and Hyprland re-blurs it - on
+        // every frame, all day. Leaving lets the lap finish, so the streak comes to rest at
+        // its start rather than freezing mid-edge.
         NumberAnimation on phase {
             from: 0
             to: 1
             duration: 3000
             loops: Animation.Infinite
+            running: root.hovered
+            alwaysRunToEnd: true
         }
     }
 }

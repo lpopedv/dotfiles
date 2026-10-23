@@ -1,16 +1,19 @@
+pragma ComponentBehavior: Bound
+
 import QtQuick
-import Quickshell.Io
-import "../.."
-import "../../ui"
+import Quickshell
+import qs
+import qs.services
+import qs.ui
 
 BarItem {
     id: root
 
-    active: panel.visible
+    active: panel.active
 
     function togglePanel() {
-        panel.visible = !panel.visible;
-        if (panel.visible) NotificationsService.markAllRead();
+        panel.active = !panel.active;
+        if (panel.active) NotificationsService.markAllRead();
     }
 
     onClicked: button => {
@@ -18,12 +21,27 @@ BarItem {
         else root.togglePanel();
     }
 
-    IpcHandler {
-        target: "notifications"
+    // Assigned, never bound: it must still hold the old count when the change arrives.
+    property int lastUnread: 0
+    Component.onCompleted: root.lastUnread = NotificationsService.unread
 
-        function toggle(): void { root.togglePanel(); }
-        function clear(): void { NotificationsService.clearAll(); }
-        function dnd(): void { NotificationsService.toggleSilent(); }
+    Connections {
+        target: NotificationsService
+
+        function onUnreadChanged() {
+            if (NotificationsService.unread > root.lastUnread) ripple.restart();
+            root.lastUnread = NotificationsService.unread;
+        }
+    }
+
+    // `qs ipc call notifications toggle` opens the list on the screen being worked on only.
+    Connections {
+        target: NotificationsService
+
+        function onHistoryToggleRequested() {
+            if (root.QsWindow.window && root.QsWindow.window.screen === ScreenService.focused)
+                root.togglePanel();
+        }
     }
 
     ShellText {
@@ -54,9 +72,12 @@ BarItem {
                 radius: width / 2
                 color: Theme.red
 
+                // A few ripples per new arrival, then a still dot: an endless one would redraw
+                // the bar every frame for as long as anything sits unread.
                 SequentialAnimation {
-                    running: badge.visible
-                    loops: Animation.Infinite
+                    id: ripple
+                    loops: 3
+                    onStopped: halo.opacity = 0
 
                     ParallelAnimation {
                         NumberAnimation {
@@ -82,10 +103,14 @@ BarItem {
         }
     }
 
-    NotificationHistoryPanel {
+    // Built on open, destroyed on close: a hidden popup still runs all its bindings.
+    LazyLoader {
         id: panel
-        anchorItem: root
-        visible: false
-        grabFocus: true
+
+        NotificationHistoryPanel {
+            anchorItem: root
+            visible: true
+            onDismissed: panel.active = false
+        }
     }
 }

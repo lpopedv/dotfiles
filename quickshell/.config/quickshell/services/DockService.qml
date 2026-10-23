@@ -6,7 +6,7 @@ import Quickshell.Io
 import Quickshell.Wayland
 
 // Windows come from wlr foreign-toplevel, not Hyprland IPC: compositor-agnostic.
-QtObject {
+Singleton {
     id: root
 
     // Matches what hypr/keybinds.lua binds, so a fresh install has a usable dock.
@@ -18,7 +18,7 @@ QtObject {
 
     // State, not config: lives beside shell state, not in the repo.
     // watchChanges keeps a second monitor's dock window in sync with this one.
-    property FileView store: FileView {
+    FileView {
         id: store
 
         path: Quickshell.statePath("dock.json")
@@ -110,7 +110,7 @@ QtObject {
     // Resolving an app id can walk the whole application list; the dock asks per rebuild, so cache it.
     property var entryCache: ({})
 
-    property Connections catalogue: Connections {
+    Connections {
         target: DesktopEntries
 
         // Otherwise an app installed mid-session stays unrecognised until reload.
@@ -208,6 +208,20 @@ QtObject {
         return tiles;
     }
 
+    // The dock's model is just the keys (see Dock.qml); each tile looks its live data up
+    // here, so a window opening or closing updates one tile instead of rebuilding them all.
+    readonly property var keys: root.items.map(tile => tile.key)
+    readonly property var tilesByKey: {
+        const byKey = {};
+        for (const tile of root.items) byKey[tile.key] = tile;
+        return byKey;
+    }
+
+    // Stand-in for a key whose tile is already gone but whose delegate isn't yet.
+    function tileFor(key) {
+        return root.tilesByKey[key] ?? { key: key, entry: null, name: "", icon: "", windows: [], pinned: false };
+    }
+
     // Counted off actual tiles, not the pin list: runningOnly can make them differ.
     readonly property int pinnedCount: {
         let count = 0;
@@ -218,7 +232,8 @@ QtObject {
     // One bouncing tile at a time on purpose - a queue would just be noise.
     property string launching: ""
 
-    property Timer launchTimer: Timer {
+    Timer {
+        id: launchTimer
         // Backstop for a cold start; normally the bounce ends once a window appears.
         interval: 8000
         onTriggered: root.launching = ""
@@ -229,7 +244,7 @@ QtObject {
         for (const tile of root.items) {
             if (tile.key === root.launching && tile.windows.length > 0) {
                 root.launching = "";
-                root.launchTimer.stop();
+                launchTimer.stop();
                 return;
             }
         }
@@ -239,7 +254,7 @@ QtObject {
         if (!tile.entry) return;
         tile.entry.execute();
         root.launching = tile.key;
-        root.launchTimer.restart();
+        launchTimer.restart();
     }
 
     function focus(toplevel) {
@@ -272,5 +287,17 @@ QtObject {
     function quit(tile) {
         // slice(): closing a window mutates the live list mid-iteration otherwise.
         for (const toplevel of tile.windows.slice()) toplevel.close();
+    }
+
+    // `qs ipc call dock pin|auto|off|toggle|mode`. Here, not in the bar's dock button: that
+    // exists once per screen and is rebuilt whenever the bar changes side.
+    IpcHandler {
+        target: "dock"
+
+        function pin(): void { root.setMode("pinned"); }
+        function auto(): void { root.setMode("auto"); }
+        function off(): void { root.setMode("hidden"); }
+        function toggle(): void { root.toggleMode(); }
+        function mode(): string { return root.mode; }
     }
 }

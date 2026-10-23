@@ -1,6 +1,7 @@
 import QtQuick
 import QtQuick.Layouts
-import "../.."
+import qs
+import qs.services
 
 Rectangle {
     id: root
@@ -54,7 +55,8 @@ Rectangle {
     // Squared, so the fade trails the width on the way in and leads it on the way out.
     opacity: root.shown * root.shown * root.emphasis
 
-    color: mouse.containsMouse ? Theme.hoverFill : "transparent"
+    color: mouse.pressed ? Theme.pressFill : mouse.containsMouse ? Theme.hoverFill : "transparent"
+    radius: Theme.radiusItem
     border.width: 1
     border.color: "transparent"
 

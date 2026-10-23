@@ -2,12 +2,13 @@ pragma Singleton
 
 import QtQuick
 import Quickshell
+import Quickshell.Io
 import Quickshell.Services.Notifications
 
 // Toast timeout/close only hides the toast - stays alive in history. Only
 // explicit removal (x, Clear all, invoking an action) tells the sender it's
 // gone. Sender withdrawing its own notification removes it everywhere.
-QtObject {
+Singleton {
     id: root
 
     readonly property int maxHistory: 50
@@ -44,11 +45,6 @@ QtObject {
         property bool closing: false
         // Bumped on replace; the toast's cue to restart its countdown.
         property int generation: 0
-
-        // popupList is a plain array: any change rebuilds every card, so the
-        // countdown reads from here instead of restarting each rebuild.
-        property double popupAt: Date.now()
-        onPopupChanged: if (wrapper.popup) wrapper.popupAt = Date.now();
 
         // Timed here, not in the card: a card destroyed mid-fade would never clear `popup`.
         property Timer exit: Timer {
@@ -93,8 +89,6 @@ QtObject {
             if (!wrapper.settled) return;
             wrapper.time = Date.now();
             wrapper.read = false;
-            // Set by hand: if popup was already true, its onPopupChanged won't refire.
-            wrapper.popupAt = Date.now();
             wrapper.generation++;
             if (wrapper.service.wantsPopup(wrapper.urgency)) {
                 wrapper.closing = false;
@@ -177,7 +171,7 @@ QtObject {
     property double now: Date.now()
 
     // Single shared ticker, not one per panel, so two lists never disagree on age.
-    readonly property Timer clock: Timer {
+    Timer {
         running: root.popupList.length > 0 || root.historyOpen
         interval: 5000
         repeat: true
@@ -291,7 +285,7 @@ QtObject {
         return entry ? root.resolveIcon(entry.icon) : "";
     }
 
-    readonly property NotificationServer server: NotificationServer {
+    NotificationServer {
         keepOnReload: false
         persistenceSupported: true
         bodySupported: true
@@ -316,5 +310,16 @@ QtObject {
             root.history = updated;
             root.trimPopups();
         }
+    }
+
+    // Each screen's bell answers it if it sits on the focused screen; see NotificationCenter.
+    signal historyToggleRequested
+
+    IpcHandler {
+        target: "notifications"
+
+        function toggle(): void { root.historyToggleRequested(); }
+        function clear(): void { root.clearAll(); }
+        function dnd(): void { root.toggleSilent(); }
     }
 }

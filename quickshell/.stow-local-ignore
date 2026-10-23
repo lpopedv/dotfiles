@@ -1,0 +1,10 @@
+# Stow's built-in ignore list stops applying once this file exists; these are the entries
+# from it that could ever turn up in this package.
+\.git
+\.gitignore
+.+~
+\#.*\#
+
+# The qmlls language-server config. Quickshell replaces it with a link into its own runtime
+# dir, so it is machine state: an empty one is created in ~/.config/quickshell, never stowed.
+\.qmlls\.ini

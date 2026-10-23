@@ -1,178 +1,133 @@
+pragma ComponentBehavior: Bound
+
 import QtQuick
 import QtQuick.Layouts
 import Quickshell
-import "../.."
-import "../../ui"
+import qs
+import qs.bar
+import qs.services
+import qs.ui
 
-PopupWindow {
+BarPopup {
     id: root
 
-    property var anchorItem: null
+    panelWidth: 250
+    contentHeight: layout.implicitHeight
 
-    anchor.item: root.anchorItem
-    anchor.edges: BarService.popupEdge
-    anchor.gravity: BarService.popupEdge
-    anchor.adjustment: BarService.popupAdjustment
-
-    implicitWidth: 250 + BarService.insetX
-    // Gap off the bar is transparent space inside the popup: the compositor
-    // clamps an anchored popup to the bar's edge, so anchor.margins can't do it.
-    implicitHeight: layout.implicitHeight + 20 + BarService.insetY
-    color: "transparent"
-
-    // Resets the fade-in for next open; can close via focus grab too, not just the button.
-    onVisibleChanged: if (!root.visible) panel.opacity = 0;
-
-    Rectangle {
-        id: panel
+    ColumnLayout {
+        id: layout
 
         anchors.fill: parent
-        anchors.topMargin: BarService.insetTop
-        anchors.bottomMargin: BarService.insetBottom
-        anchors.leftMargin: BarService.insetLeft
-        anchors.rightMargin: BarService.insetRight
-        color: Theme.glass
-        border.width: 1
-        border.color: Theme.border
+        spacing: 2
 
-        opacity: 0
-
-        NumberAnimation on opacity {
-            to: 1
-            duration: Theme.animMs
-            easing.type: Easing.OutCubic
-            running: root.visible
+        ShellText {
+            Layout.fillWidth: true
+            Layout.leftMargin: 10
+            Layout.bottomMargin: 4
+            text: "Dock"
+            color: Theme.fgAct
+            font.weight: Theme.weightMedium
         }
 
-        focus: true
-        Keys.onEscapePressed: root.visible = false
+        // Radio circles, not ticks: the three modes are mutually exclusive.
+        Repeater {
+            model: DockService.modes
 
-        ColumnLayout {
-            id: layout
+            MenuRow {
+                required property var modelData
 
-            anchors.fill: parent
-            anchors.margins: 10
-            spacing: 2
-
-            ShellText {
-                Layout.fillWidth: true
-                Layout.leftMargin: 10
-                Layout.bottomMargin: 4
-                text: "Dock"
-                color: Theme.fgAct
-                font.weight: Font.DemiBold
+                text: modelData.text
+                gutter: true
+                mark: DockService.mode === modelData.id
+                    ? Icons.radioOn : Icons.radioOff
+                onTriggered: DockService.setMode(modelData.id)
             }
+        }
 
-            // Radio circles, not ticks: the three modes are mutually exclusive.
+        Rectangle {
+            Layout.fillWidth: true
+            Layout.topMargin: 5
+            Layout.bottomMargin: 5
+            implicitHeight: 1
+            color: Theme.divider
+        }
+
+        MenuRow {
+            enabled: DockService.mode === "auto"
+            opacity: enabled ? 1 : Theme.dimmedOpacity
+            text: "Show on empty workspace"
+            gutter: true
+            mark: DockService.showOnDesktop ? Icons.check : ""
+            onTriggered: DockService.toggleShowOnDesktop()
+        }
+
+        MenuRow {
+            text: "Only running apps"
+            gutter: true
+            mark: DockService.runningOnly ? Icons.check : ""
+            onTriggered: DockService.toggleRunningOnly()
+        }
+
+        Rectangle {
+            Layout.fillWidth: true
+            Layout.topMargin: 5
+            Layout.bottomMargin: 5
+            implicitHeight: 1
+            color: Theme.divider
+        }
+
+        SectionLabel {
+            text: "Position"
+        }
+
+        RowLayout {
+            Layout.fillWidth: true
+            Layout.leftMargin: 10
+            Layout.rightMargin: 10
+            spacing: 6
+
             Repeater {
-                model: DockService.modes
+                model: DockService.positions
 
-                MenuRow {
+                Chip {
                     required property var modelData
 
+                    Layout.fillWidth: true
                     text: modelData.text
-                    gutter: true
-                    mark: DockService.mode === modelData.id
-                        ? Icons.radioOn : Icons.radioOff
-                    onTriggered: DockService.setMode(modelData.id)
+                    active: DockService.position === modelData.id
+                    onClicked: DockService.setPosition(modelData.id)
                 }
             }
+        }
 
-            Rectangle {
-                Layout.fillWidth: true
-                Layout.topMargin: 5
-                Layout.bottomMargin: 5
-                implicitHeight: 1
-                color: Theme.divider
-            }
+        Rectangle {
+            Layout.fillWidth: true
+            Layout.topMargin: 5
+            Layout.bottomMargin: 5
+            implicitHeight: 1
+            color: Theme.divider
+        }
 
-            MenuRow {
-                enabled: DockService.mode === "auto"
-                opacity: enabled ? 1 : Theme.dimmedOpacity
-                text: "Show on empty workspace"
-                gutter: true
-                mark: DockService.showOnDesktop ? Icons.check : ""
-                onTriggered: DockService.toggleShowOnDesktop()
-            }
+        SectionLabel {
+            text: "Icon size"
+        }
 
-            MenuRow {
-                text: "Only running apps"
-                gutter: true
-                mark: DockService.runningOnly ? Icons.check : ""
-                onTriggered: DockService.toggleRunningOnly()
-            }
+        RowLayout {
+            Layout.fillWidth: true
+            Layout.leftMargin: 10
+            Layout.rightMargin: 10
+            spacing: 6
 
-            Rectangle {
-                Layout.fillWidth: true
-                Layout.topMargin: 5
-                Layout.bottomMargin: 5
-                implicitHeight: 1
-                color: Theme.divider
-            }
+            Repeater {
+                model: DockService.sizes
 
-            ShellText {
-                Layout.fillWidth: true
-                Layout.leftMargin: 10
-                Layout.bottomMargin: 4
-                text: "Position"
-                color: Theme.subtle
-                font.pixelSize: Theme.fontSize - 2
-            }
+                Chip {
+                    required property var modelData
 
-            RowLayout {
-                Layout.fillWidth: true
-                Layout.leftMargin: 10
-                Layout.rightMargin: 10
-                spacing: 6
-
-                Repeater {
-                    model: DockService.positions
-
-                    Chip {
-                        required property var modelData
-
-                        Layout.fillWidth: true
-                        text: modelData.text
-                        active: DockService.position === modelData.id
-                        onClicked: DockService.setPosition(modelData.id)
-                    }
-                }
-            }
-
-            Rectangle {
-                Layout.fillWidth: true
-                Layout.topMargin: 5
-                Layout.bottomMargin: 5
-                implicitHeight: 1
-                color: Theme.divider
-            }
-
-            ShellText {
-                Layout.fillWidth: true
-                Layout.leftMargin: 10
-                Layout.bottomMargin: 4
-                text: "Icon size"
-                color: Theme.subtle
-                font.pixelSize: Theme.fontSize - 2
-            }
-
-            RowLayout {
-                Layout.fillWidth: true
-                Layout.leftMargin: 10
-                Layout.rightMargin: 10
-                spacing: 6
-
-                Repeater {
-                    model: DockService.sizes
-
-                    Chip {
-                        required property var modelData
-
-                        Layout.fillWidth: true
-                        text: modelData.text
-                        active: DockService.iconSize === modelData.size
-                        onClicked: DockService.setIconSize(modelData.size)
-                    }
+                    Layout.fillWidth: true
+                    text: modelData.text
+                    active: DockService.iconSize === modelData.size
+                    onClicked: DockService.setIconSize(modelData.size)
                 }
             }
         }

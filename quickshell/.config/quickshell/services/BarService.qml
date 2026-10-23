@@ -3,13 +3,13 @@ pragma Singleton
 import QtQuick
 import Quickshell
 import Quickshell.Io
-import ".."
+import qs
 
-QtObject {
+Singleton {
     id: root
 
     // State, not config: lives beside shell state, not in the repo (same as dock.json).
-    property FileView store: FileView {
+    FileView {
         id: store
 
         path: Quickshell.statePath("bar.json")
@@ -111,7 +111,8 @@ QtObject {
 
     readonly property int leaveMs: 160
 
-    property Timer switcher: Timer {
+    Timer {
+        id: switcher
         // A touch longer than the fade, so the switch lands on a fully hidden bar.
         interval: root.leaveMs + 40
         onTriggered: {
@@ -131,7 +132,7 @@ QtObject {
     }
 
     // `qs ipc call bar position left`, e.g. for a keybind.
-    property IpcHandler ipc: IpcHandler {
+    IpcHandler {
         target: "bar"
 
         function position(edge: string): void {
@@ -146,6 +147,6 @@ QtObject {
         if (position === root.position || root.pending !== "") return;
         root.pending = position;
         root.leaving = 1;
-        root.switcher.restart();
+        switcher.restart();
     }
 }

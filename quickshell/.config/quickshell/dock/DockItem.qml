@@ -1,9 +1,12 @@
+pragma ComponentBehavior: Bound
+
 import QtQuick
 import Quickshell
 import Quickshell.Wayland
 import Quickshell.Widgets
-import ".."
-import "../ui"
+import qs
+import qs.services
+import qs.ui
 
 Item {
     id: root
@@ -53,7 +56,7 @@ Item {
         text: (root.tile.name || root.tile.key).charAt(0).toUpperCase()
         color: root.focused ? Theme.fgAct : Theme.fg
         font.pixelSize: Math.round(DockService.iconSize * 0.42)
-        font.weight: Font.DemiBold
+        font.weight: Theme.weightMedium
     }
 
     QtObject {
@@ -98,6 +101,7 @@ Item {
             Rectangle {
                 implicitWidth: Theme.dockDot
                 implicitHeight: Theme.dockDot
+                radius: Theme.pill(width)
                 color: root.focused ? Theme.fgAct : Theme.subtle
                 opacity: root.focused ? 1 : 0.75
 

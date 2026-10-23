@@ -6,7 +6,7 @@ import Quickshell.Io
 
 // Audio spectrum from cava. Only runs while `enabled`, so it costs nothing
 // when nothing is playing.
-QtObject {
+Singleton {
     id: root
 
     readonly property int barCount: 28
@@ -19,7 +19,7 @@ QtObject {
 
     onEnabledChanged: if (!enabled) silence()
 
-    property Process proc: Process {
+    Process {
         running: root.enabled
         command: ["cava", "-p", Quickshell.shellPath("scripts/cava.conf")]
 

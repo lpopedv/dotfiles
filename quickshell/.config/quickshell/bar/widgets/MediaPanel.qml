@@ -1,14 +1,17 @@
+pragma ComponentBehavior: Bound
+
 import QtQuick
 import QtQuick.Layouts
 import Quickshell
-import "../.."
-import "../../ui"
+import qs
+import qs.bar
+import qs.services
+import qs.ui
 
-PopupWindow {
+BarPopup {
     id: root
 
     property var player: null
-    property var anchorItem: null
 
     readonly property bool hasPlayer: player !== null
     readonly property bool seekable:
@@ -19,16 +22,9 @@ PopupWindow {
     readonly property real fraction:
         seekable && !stale ? Math.max(0, Math.min(1, player.position / player.length)) : 0
 
-    anchor.item: anchorItem
-    anchor.edges: BarService.popupEdge
-    anchor.gravity: BarService.popupEdge
-    anchor.adjustment: BarService.popupAdjustment
-
-    implicitWidth: 340 + BarService.insetX
-    implicitHeight: layout.implicitHeight + 28 + BarService.insetY
-    color: "transparent"
-
-    onVisibleChanged: if (!root.visible) panel.opacity = 0
+    panelWidth: 340
+    contentHeight: layout.implicitHeight
+    padding: 14
 
     // MPRIS position doesn't tick on its own; poke it while it matters.
     Timer {
@@ -63,189 +59,169 @@ PopupWindow {
         return h > 0 ? h + ":" + String(m).padStart(2, "0") + ":" + r : m + ":" + r;
     }
 
-    Rectangle {
-        id: panel
+    onKeyPressed: event => {
+        if (event.key !== Qt.Key_Space || !root.hasPlayer) return;
+        root.player.togglePlaying();
+        event.accepted = true;
+    }
 
+    ColumnLayout {
+        id: layout
         anchors.fill: parent
-        anchors.topMargin: BarService.insetTop
-        anchors.bottomMargin: BarService.insetBottom
-        anchors.leftMargin: BarService.insetLeft
-        anchors.rightMargin: BarService.insetRight
-        color: Theme.glass
-        border.width: 1
-        border.color: Theme.border
+        spacing: 12
 
-        opacity: 0
-
-        NumberAnimation on opacity {
-            to: 1
-            duration: Theme.animMs
-            easing.type: Easing.OutCubic
-            running: root.visible
-        }
-
-        focus: true
-        Keys.onEscapePressed: root.visible = false
-        Keys.onSpacePressed: if (root.hasPlayer) root.player.togglePlaying()
-
-        ColumnLayout {
-            id: layout
-            anchors.fill: parent
-            anchors.margins: 14
+        RowLayout {
+            Layout.fillWidth: true
             spacing: 12
 
-            RowLayout {
-                Layout.fillWidth: true
-                spacing: 12
+            Rectangle {
+                visible: art.status === Image.Ready
+                Layout.preferredWidth: 72
+                Layout.preferredHeight: 72
+                color: "transparent"
+                border.width: 1
+                border.color: Theme.border
 
-                Rectangle {
-                    visible: art.status === Image.Ready
-                    Layout.preferredWidth: 72
-                    Layout.preferredHeight: 72
-                    color: "transparent"
-                    border.width: 1
-                    border.color: Theme.border
-
-                    Image {
-                        id: art
-                        anchors.fill: parent
-                        anchors.margins: 1
-                        source: root.hasPlayer ? root.player.trackArtUrl : ""
-                        fillMode: Image.PreserveAspectCrop
-                        asynchronous: true
-                        sourceSize.width: 144
-                        sourceSize.height: 144
-                    }
+                Image {
+                    id: art
+                    anchors.fill: parent
+                    anchors.margins: 1
+                    source: root.hasPlayer ? root.player.trackArtUrl : ""
+                    fillMode: Image.PreserveAspectCrop
+                    asynchronous: true
+                    sourceSize.width: 144
+                    sourceSize.height: 144
                 }
-
-                ColumnLayout {
-                    Layout.fillWidth: true
-                    spacing: 3
-
-                    ShellText {
-                        Layout.fillWidth: true
-                        text: root.hasPlayer ? (root.player.trackTitle || "Unknown") : ""
-                        color: Theme.fgAct
-                        font.weight: Font.DemiBold
-                        elide: Text.ElideRight
-                    }
-
-                    ShellText {
-                        Layout.fillWidth: true
-                        text: root.hasPlayer ? root.player.trackArtist : ""
-                        visible: text.length > 0
-                        elide: Text.ElideRight
-                    }
-
-                    ShellText {
-                        Layout.fillWidth: true
-                        text: root.hasPlayer ? root.player.identity : ""
-                        color: Theme.border
-                        font.pixelSize: Theme.fontSize - 2
-                        elide: Text.ElideRight
-                    }
-                }
-            }
-
-            Spectrum {
-                Layout.fillWidth: true
-                implicitHeight: 40
-                visible: root.hasPlayer && root.player.isPlaying
             }
 
             ColumnLayout {
                 Layout.fillWidth: true
-                spacing: 4
-                visible: root.seekable
+                spacing: 3
 
-                // Taller hit area than the 6px meter so seeking isn't fiddly.
-                Item {
+                ShellText {
                     Layout.fillWidth: true
-                    implicitHeight: 14
-
-                    Meter {
-                        anchors.left: parent.left
-                        anchors.right: parent.right
-                        anchors.verticalCenter: parent.verticalCenter
-                        fraction: root.fraction
-                        fill: Theme.fgAct
-                    }
-
-                    MouseArea {
-                        anchors.fill: parent
-                        enabled: root.hasPlayer && root.player.canSeek
-                        cursorShape: enabled ? Qt.PointingHandCursor : Qt.ArrowCursor
-                        onClicked: event => {
-                            root.player.position =
-                                Math.max(0, Math.min(1, event.x / width)) * root.player.length;
-                        }
-                    }
+                    text: root.hasPlayer ? (root.player.trackTitle || "Unknown") : ""
+                    color: Theme.fgAct
+                    font.weight: Theme.weightMedium
+                    elide: Text.ElideRight
                 }
 
-                RowLayout {
+                ShellText {
                     Layout.fillWidth: true
+                    text: root.hasPlayer ? root.player.trackArtist : ""
+                    visible: text.length > 0
+                    elide: Text.ElideRight
+                }
 
-                    ShellText {
-                        text: root.hasPlayer ? root.fmt(root.stale ? 0 : root.player.position) : ""
-                        color: Theme.border
-                        font.pixelSize: Theme.fontSize - 2
-                    }
-                    Item { Layout.fillWidth: true }
-                    ShellText {
-                        text: root.hasPlayer ? root.fmt(root.player.length) : ""
-                        color: Theme.border
-                        font.pixelSize: Theme.fontSize - 2
+                ShellText {
+                    Layout.fillWidth: true
+                    text: root.hasPlayer ? root.player.identity : ""
+                    color: Theme.border
+                    font.pixelSize: Theme.fontSize - 2
+                    elide: Text.ElideRight
+                }
+            }
+        }
+
+        Spectrum {
+            Layout.fillWidth: true
+            implicitHeight: 40
+            visible: root.hasPlayer && root.player.isPlaying
+        }
+
+        ColumnLayout {
+            Layout.fillWidth: true
+            spacing: 4
+            visible: root.seekable
+
+            // Taller hit area than the 6px meter so seeking isn't fiddly.
+            Item {
+                Layout.fillWidth: true
+                implicitHeight: 14
+
+                Meter {
+                    anchors.left: parent.left
+                    anchors.right: parent.right
+                    anchors.verticalCenter: parent.verticalCenter
+                    fraction: root.fraction
+                    fill: Theme.fgAct
+                }
+
+                MouseArea {
+                    anchors.fill: parent
+                    enabled: root.hasPlayer && root.player.canSeek
+                    cursorShape: enabled ? Qt.PointingHandCursor : Qt.ArrowCursor
+                    onClicked: event => {
+                        root.player.position =
+                            Math.max(0, Math.min(1, event.x / width)) * root.player.length;
                     }
                 }
             }
 
             RowLayout {
-                Layout.alignment: Qt.AlignHCenter
-                spacing: 8
+                Layout.fillWidth: true
 
-                Repeater {
-                    model: [
-                        { icon: "prev", enabled: "canGoPrevious" },
-                        { icon: "toggle", enabled: "canTogglePlaying" },
-                        { icon: "next", enabled: "canGoNext" }
-                    ]
+                ShellText {
+                    text: root.hasPlayer ? root.fmt(root.stale ? 0 : root.player.position) : ""
+                    color: Theme.border
+                    font.pixelSize: Theme.fontSize - 2
+                }
+                Item { Layout.fillWidth: true }
+                ShellText {
+                    text: root.hasPlayer ? root.fmt(root.player.length) : ""
+                    color: Theme.border
+                    font.pixelSize: Theme.fontSize - 2
+                }
+            }
+        }
 
-                    Rectangle {
-                        id: btn
-                        required property var modelData
-                        readonly property bool usable:
-                            root.hasPlayer && root.player[modelData.enabled]
+        RowLayout {
+            Layout.alignment: Qt.AlignHCenter
+            spacing: 8
 
-                        implicitWidth: 40
-                        implicitHeight: 32
-                        color: btnMouse.containsMouse && usable ? Theme.hoverFill : "transparent"
-                        opacity: usable ? 1 : Theme.dimmedOpacity
+            Repeater {
+                model: [
+                    { icon: "prev", enabled: "canGoPrevious" },
+                    { icon: "toggle", enabled: "canTogglePlaying" },
+                    { icon: "next", enabled: "canGoNext" }
+                ]
 
-                        Behavior on color {
-                            ColorAnimation { duration: Theme.animMs }
-                        }
+                Rectangle {
+                    id: btn
+                    required property var modelData
+                    readonly property bool usable:
+                        root.hasPlayer && root.player[modelData.enabled]
 
-                        ShellText {
-                            anchors.centerIn: parent
-                            font.pixelSize: Theme.iconSize + 3
-                            color: btnMouse.containsMouse ? Theme.fgAct : Theme.fg
-                            text: btn.modelData.icon === "prev" ? Icons.skipPrevious
-                                : btn.modelData.icon === "next" ? Icons.skipNext
-                                : (root.hasPlayer && root.player.isPlaying
-                                    ? Icons.pause : Icons.play)
-                        }
+                    implicitWidth: 40
+                    implicitHeight: 32
+                    radius: Theme.radiusItem
+                    color: btnMouse.containsMouse && usable ? Theme.hoverFill : "transparent"
+                    opacity: usable ? 1 : Theme.dimmedOpacity
 
-                        MouseArea {
-                            id: btnMouse
-                            anchors.fill: parent
-                            hoverEnabled: true
-                            enabled: btn.usable
-                            cursorShape: Qt.PointingHandCursor
-                            onClicked: {
-                                if (btn.modelData.icon === "prev") root.player.previous();
-                                else if (btn.modelData.icon === "next") root.player.next();
-                                else root.player.togglePlaying();
-                            }
+                    Behavior on color {
+                        ColorAnimation { duration: Theme.animMs }
+                    }
+
+                    ShellText {
+                        anchors.centerIn: parent
+                        font.pixelSize: Theme.iconSize + 3
+                        color: btnMouse.containsMouse ? Theme.fgAct : Theme.fg
+                        text: btn.modelData.icon === "prev" ? Icons.skipPrevious
+                            : btn.modelData.icon === "next" ? Icons.skipNext
+                            : (root.hasPlayer && root.player.isPlaying
+                                ? Icons.pause : Icons.play)
+                    }
+
+                    MouseArea {
+                        id: btnMouse
+                        anchors.fill: parent
+                        hoverEnabled: true
+                        enabled: btn.usable
+                        cursorShape: Qt.PointingHandCursor
+                        onClicked: {
+                            if (btn.modelData.icon === "prev") root.player.previous();
+                            else if (btn.modelData.icon === "next") root.player.next();
+                            else root.player.togglePlaying();
                         }
                     }
                 }

@@ -1,8 +1,11 @@
+pragma ComponentBehavior: Bound
+
 import QtQuick
 import Quickshell
 import Quickshell.Wayland
-import ".."
-import "../ui"
+import qs
+import qs.services
+import qs.ui
 
 Variants {
     model: Quickshell.screens
@@ -143,6 +146,8 @@ Variants {
             Rectangle {
                 id: plate
 
+                radius: Theme.radiusDock
+
                 // The float gap sits on the screen-edge side.
                 x: dock.side === "left" ? Theme.dockFloat : 0
                 width: dock.vertical ? dock.plateHeight : parent.width
@@ -181,6 +186,7 @@ Variants {
                     Rectangle {
                         id: highlight
 
+                        radius: Theme.inner(Theme.radiusDock, dock.padTop - 4)
                         width: dock.icon + 8
                         height: dock.icon + 8
                         readonly property real along: dock.restingIndex * dock.slot + (dock.slot - width) / 2
@@ -207,16 +213,20 @@ Variants {
                         }
                     }
 
+                    // Keyed, so tiles survive a window opening elsewhere: a plain array model
+                    // would destroy and rebuild every one, dropping hover and bounce mid-way.
                     Repeater {
-                        model: dock.tiles
+                        model: ScriptModel {
+                            values: DockService.keys
+                        }
 
                         DockItem {
                             id: entry
 
                             required property int index
-                            required property var modelData
+                            required property string modelData
 
-                            tile: entry.modelData
+                            tile: DockService.tileFor(entry.modelData)
                             x: dock.vertical ? 0 : entry.index * dock.slot
                             y: dock.vertical ? entry.index * dock.slot : 0
 
@@ -226,7 +236,7 @@ Variants {
                             }
 
                             onMenuRequested: {
-                                menu.tile = entry.modelData;
+                                menu.key = entry.modelData;
                                 menu.centre = row.centreOf(entry.index);
                                 menu.visible = true;
                             }
@@ -251,6 +261,8 @@ Variants {
             // Outside the mask (drawn above body), so its empty space never eats a click.
             Rectangle {
                 id: label
+
+                radius: Theme.radiusMenu
 
                 // Named off restingIndex so it keeps the last tile's name while fading out.
                 readonly property var tile: dock.tiles[dock.restingIndex] ?? null

@@ -12,6 +12,11 @@ hl.bind(mainMod .. " + Q", hl.dsp.window.close(), { description = "Close active 
 hl.bind(mainMod .. " + SHIFT + Q",
     hl.dsp.exec_cmd("command -v hyprshutdown >/dev/null 2>&1 && hyprshutdown || hyprctl dispatch 'hl.dsp.exit()'"),
     { description = "Exit Hyprland" })
+-- Escape hatch: the shell's overlays (session menu) take the whole keyboard, and a broken one
+-- would leave no way out short of a TTY. Compositor binds still fire, so this always works.
+hl.bind(mainMod .. " + SHIFT + Escape",
+    hl.dsp.exec_cmd("pkill -x qs; for _ in 1 2 3 4 5 6 7 8 9 10; do pgrep -x qs >/dev/null || break; sleep 0.1; done; pkill -9 -x qs; qs"),
+    { description = "Restart the shell" })
 hl.bind(mainMod .. " + N", hl.dsp.exec_cmd(fileManager), { description = "Open file manager" })
 hl.bind(mainMod .. " + CTRL + L", hl.dsp.exec_cmd("loginctl lock-session"), { description = "Lock screen" })
 hl.bind(mainMod .. " + T", hl.dsp.window.float(), { description = "Toggle floating" })

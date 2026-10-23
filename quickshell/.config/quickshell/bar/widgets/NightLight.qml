@@ -1,6 +1,7 @@
 import QtQuick
-import "../.."
-import "../../ui"
+import qs
+import qs.services
+import qs.ui
 
 BarItem {
     id: root

@@ -1,12 +1,17 @@
+pragma ComponentBehavior: Bound
+
 import QtQuick
 import QtQuick.Layouts
 import Quickshell
-import ".."
-import "../ui"
+import qs
+import qs.services
+import qs.ui
 PopupWindow {
     id: root
 
-    property var tile: null
+    // A key, read live: a snapshot of the tile would keep listing a window closed meanwhile.
+    property string key: ""
+    readonly property var tile: root.key ? DockService.tileFor(root.key) : null
     property var anchorItem: null
     // Tile centre along the dock's long axis, in anchorItem coordinates.
     property real centre: 0
@@ -48,6 +53,8 @@ PopupWindow {
     Rectangle {
         id: panel
 
+        radius: Theme.radiusMenu
+
         anchors.fill: parent
         anchors.bottomMargin: root.side === "bottom" ? Theme.popupGap : 0
         anchors.leftMargin: root.side === "left" ? Theme.popupGap : 0
@@ -60,9 +67,16 @@ PopupWindow {
 
         NumberAnimation on opacity {
             to: 1
-            duration: Theme.animMs
+            duration: Theme.animSlideMs
             easing.type: Easing.OutCubic
             running: root.visible
+        }
+
+        // Eases out of the dock as it fades in.
+        transform: Translate {
+            readonly property real away: Theme.popupSlide * (1 - panel.opacity)
+            x: root.side === "left" ? -away : root.side === "right" ? away : 0
+            y: root.side === "bottom" ? away : 0
         }
 
         focus: true
@@ -81,7 +95,7 @@ PopupWindow {
                 Layout.bottomMargin: 4
                 text: root.tile ? root.tile.name : ""
                 color: Theme.fgAct
-                font.weight: Font.DemiBold
+                font.weight: Theme.weightMedium
                 elide: Text.ElideRight
             }
 

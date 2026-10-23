@@ -1,29 +1,20 @@
+pragma ComponentBehavior: Bound
+
 import QtQuick
 import QtQuick.Layouts
 import Quickshell
-import "../.."
-import "../../ui"
+import qs
+import qs.bar
+import qs.services
+import qs.ui
 
-PopupWindow {
+BarPopup {
     id: root
-
-    property var anchorItem: null
 
     readonly property int maxListHeight: 320
 
-    anchor.item: root.anchorItem
-    anchor.edges: BarService.popupEdge
-    anchor.gravity: BarService.popupEdge
-    anchor.adjustment: BarService.popupAdjustment
-
-    implicitWidth: 320 + BarService.insetX
-    // Gap off the bar is transparent space inside the popup: the compositor
-    // clamps an anchored popup to the bar's edge, so anchor.margins can't do it.
-    implicitHeight: layout.implicitHeight + 20 + BarService.insetY
-    color: "transparent"
-
-    // Resets the fade-in for next open; can close via focus grab too, not just the button.
-    onVisibleChanged: if (!root.visible) panel.opacity = 0
+    panelWidth: 320
+    contentHeight: layout.implicitHeight
 
     component Divider: Rectangle {
         Layout.fillWidth: true
@@ -56,6 +47,8 @@ PopupWindow {
             model: section.packages
 
             RowLayout {
+                id: row
+
                 required property var modelData
 
                 Layout.fillWidth: true
@@ -66,13 +59,13 @@ PopupWindow {
 
                 ShellText {
                     Layout.fillWidth: true
-                    text: modelData.name
+                    text: row.modelData.name
                     elide: Text.ElideRight
                 }
 
                 ShellText {
                     Layout.maximumWidth: 140
-                    text: modelData.to
+                    text: row.modelData.to
                     color: Theme.subtle
                     font.pixelSize: Theme.fontSize - 1
                     elide: Text.ElideMiddle
@@ -81,133 +74,107 @@ PopupWindow {
         }
     }
 
-    Rectangle {
-        id: panel
+    ColumnLayout {
+        id: layout
 
         anchors.fill: parent
-        anchors.topMargin: BarService.insetTop
-        anchors.bottomMargin: BarService.insetBottom
-        anchors.leftMargin: BarService.insetLeft
-        anchors.rightMargin: BarService.insetRight
-        color: Theme.glass
-        border.width: 1
-        border.color: Theme.border
+        spacing: 2
 
-        opacity: 0
-
-        NumberAnimation on opacity {
-            to: 1
-            duration: Theme.animMs
-            easing.type: Easing.OutCubic
-            running: root.visible
-        }
-
-        focus: true
-        Keys.onEscapePressed: root.visible = false
-
-        ColumnLayout {
-            id: layout
-
-            anchors.fill: parent
-            anchors.margins: 10
-            spacing: 2
-
-            RowLayout {
-                Layout.fillWidth: true
-                Layout.leftMargin: 10
-                Layout.rightMargin: 10
-                Layout.bottomMargin: 4
-
-                ShellText {
-                    Layout.fillWidth: true
-                    text: "Updates"
-                    color: Theme.fgAct
-                    font.weight: Font.DemiBold
-                }
-
-                ShellText {
-                    text: UpdatesService.available
-                        ? UpdatesService.count + " pending"
-                        : UpdatesService.checked ? "Up to date" : ""
-                    color: UpdatesService.available ? Theme.red : Theme.subtle
-                    font.pixelSize: Theme.fontSize - 1
-                }
-            }
+        RowLayout {
+            Layout.fillWidth: true
+            Layout.leftMargin: 10
+            Layout.rightMargin: 10
+            Layout.bottomMargin: 4
 
             ShellText {
                 Layout.fillWidth: true
-                Layout.leftMargin: 10
-                Layout.rightMargin: 10
-                Layout.bottomMargin: 4
-                visible: UpdatesService.failed
-                text: "Couldn't reach the mirrors, showing the last result."
-                color: Theme.amber
+                text: "Updates"
+                color: Theme.fgAct
+                font.weight: Theme.weightMedium
+            }
+
+            ShellText {
+                text: UpdatesService.available
+                    ? UpdatesService.count + " pending"
+                    : UpdatesService.checked ? "Up to date" : ""
+                color: UpdatesService.available ? Theme.red : Theme.subtle
+                font.pixelSize: Theme.fontSize - 1
+            }
+        }
+
+        ShellText {
+            Layout.fillWidth: true
+            Layout.leftMargin: 10
+            Layout.rightMargin: 10
+            Layout.bottomMargin: 4
+            visible: UpdatesService.failed
+            text: "Couldn't reach the mirrors, showing the last result."
+            color: Theme.amber
+            font.pixelSize: Theme.fontSize - 2
+            wrapMode: Text.WordWrap
+        }
+
+        Flickable {
+            Layout.fillWidth: true
+            Layout.preferredHeight: Math.min(contentHeight, root.maxListHeight)
+            visible: UpdatesService.available
+            contentHeight: sections.implicitHeight
+            boundsBehavior: Flickable.StopAtBounds
+            clip: true
+
+            ColumnLayout {
+                id: sections
+
+                width: parent.width
+                spacing: 4
+
+                PackageSection {
+                    title: "Official"
+                    packages: UpdatesService.repo
+                }
+
+                PackageSection {
+                    title: "AUR"
+                    packages: UpdatesService.aur
+                }
+
+                PackageSection {
+                    title: "Lethe"
+                    packages: UpdatesService.lethe
+                }
+            }
+        }
+
+        Divider {}
+
+        RowLayout {
+            Layout.fillWidth: true
+            Layout.leftMargin: 10
+            spacing: 6
+
+            ShellText {
+                Layout.fillWidth: true
+                text: UpdatesService.checking ? "Checking…"
+                    : UpdatesService.checked
+                        ? "Checked " + Qt.formatTime(UpdatesService.lastChecked, "HH:mm")
+                        : ""
+                color: Theme.subtle
                 font.pixelSize: Theme.fontSize - 2
-                wrapMode: Text.WordWrap
             }
 
-            Flickable {
-                Layout.fillWidth: true
-                Layout.preferredHeight: Math.min(contentHeight, root.maxListHeight)
+            Chip {
+                text: "Refresh"
+                quiet: true
+                onClicked: UpdatesService.refresh()
+            }
+
+            Chip {
                 visible: UpdatesService.available
-                contentHeight: sections.implicitHeight
-                boundsBehavior: Flickable.StopAtBounds
-                clip: true
-
-                ColumnLayout {
-                    id: sections
-
-                    width: parent.width
-                    spacing: 4
-
-                    PackageSection {
-                        title: "Official"
-                        packages: UpdatesService.repo
-                    }
-
-                    PackageSection {
-                        title: "AUR"
-                        packages: UpdatesService.aur
-                    }
-
-                    PackageSection {
-                        title: "Lethe"
-                        packages: UpdatesService.lethe
-                    }
-                }
-            }
-
-            Divider {}
-
-            RowLayout {
-                Layout.fillWidth: true
-                Layout.leftMargin: 10
-                spacing: 6
-
-                ShellText {
-                    Layout.fillWidth: true
-                    text: UpdatesService.checking ? "Checking…"
-                        : UpdatesService.checked
-                            ? "Checked " + Qt.formatTime(UpdatesService.lastChecked, "HH:mm")
-                            : ""
-                    color: Theme.subtle
-                    font.pixelSize: Theme.fontSize - 2
-                }
-
-                Chip {
-                    text: "Refresh"
-                    quiet: true
-                    onClicked: UpdatesService.refresh()
-                }
-
-                Chip {
-                    visible: UpdatesService.available
-                    text: "Update"
-                    active: true
-                    onClicked: {
-                        UpdatesService.upgrade();
-                        root.visible = false;
-                    }
+                text: "Update"
+                active: true
+                onClicked: {
+                    UpdatesService.upgrade();
+                    root.visible = false;
                 }
             }
         }
